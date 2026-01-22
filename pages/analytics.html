@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Health Tracker</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .analytics-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .analytics-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        .chart-container.tall {
+            height: 350px;
+        }
+
+        .insights-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--color-info);
+        }
+
+        .insight-item.positive {
+            border-left-color: var(--color-success);
+        }
+
+        .insight-item.warning {
+            border-left-color: var(--color-warning);
+        }
+
+        .insight-item.negative {
+            border-left-color: var(--color-danger);
+        }
+
+        .insight-icon {
+            font-size: 1.5rem;
+        }
+
+        .insight-content {
+            flex: 1;
+        }
+
+        .insight-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .insight-category {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .suggestion-badge {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--color-primary), #d63e55);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .suggestion-text {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-box .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .stat-box .change {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .stat-box .change.up { color: var(--color-danger); }
+        .stat-box .change.down { color: var(--color-success); }
+        .stat-box .change.neutral { color: var(--text-muted); }
+
+        .exercise-select {
+            padding: 0.5rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .correlation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .correlation-item {
+            padding: 1rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            text-align: center;
+        }
+
+        .correlation-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .correlation-value.positive { color: var(--color-success); }
+        .correlation-value.negative { color: var(--color-danger); }
+        .correlation-value.neutral { color: var(--text-muted); }
+
+        .correlation-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .empty-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 1024px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .correlation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <h1>HEALTH TRACKER</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="../index.html" class="nav-link">Dashboard</a>
+            <a href="workouts.html" class="nav-link">Workouts</a>
+            <a href="nutrition.html" class="nav-link">Nutrition</a>
+            <a href="analytics.html" class="nav-link active">Analytics</a>
+        </nav>
+        <div class="header-right">
+            <a href="settings.html" class="settings-btn" title="Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <h2 class="page-title">Analytics & Insights</h2>
+
+        <div class="stats-row" id="statsRow">
+            <!-- Stats will be populated by JS -->
+        </div>
+
+        <div class="analytics-grid">
+            <!-- Weight Trend -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3>Weight Trend</h3>
+                    <div class="time-range-selector" data-chart="weightTrendChart">
+                        <button class="time-range-btn" data-days="7">7d</button>
+                        <button class="time-range-btn active" data-days="30">30d</button>
+                        <button class="time-range-btn" data-days="90">90d</button>
+                        <button class="time-range-btn" data-days="0">All</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weightTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Workout Frequency -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3>Workout Frequency</h3>
+                    <div class="time-range-selector" data-chart="workoutFrequencyChart">
+                        <button class="time-range-btn" data-weeks="4">4w</button>
+                        <button class="time-range-btn active" data-weeks="8">8w</button>
+                        <button class="time-range-btn" data-weeks="12">12w</button>
+                        <button class="time-range-btn" data-weeks="0">All</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="workoutFrequencyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Nutrition Trend -->
+            <div class="analytics-card full-width">
+                <div class="card-header">
+                    <h3>Nutrition Trend</h3>
+                    <div class="time-range-selector" data-chart="nutritionChart">
+                        <button class="time-range-btn" data-days="7">7d</button>
+                        <button class="time-range-btn active" data-days="30">30d</button>
+                        <button class="time-range-btn" data-days="90">90d</button>
+                        <button class="time-range-btn" data-days="0">All</button>
+                    </div>
+                </div>
+                <div class="chart-container tall">
+                    <canvas id="nutritionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Insights -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3>Insights</h3>
+                </div>
+                <div class="insights-list" id="insightsList">
+                    <!-- Insights will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Schedule Suggestions -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3>Schedule Optimization</h3>
+                </div>
+                <div class="suggestions-list" id="suggestionsList">
+                    <!-- Suggestions will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Workout Type Distribution -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3>Workout Distribution</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="workoutTypeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Exercise Progress -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3>Exercise Progress</h3>
+                    <select class="exercise-select" id="exerciseSelect">
+                        <option value="">Select exercise...</option>
+                    </select>
+                </div>
+                <div class="chart-container" id="exerciseProgressContainer">
+                    <canvas id="exerciseProgressChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/metrics.js"></script>
+    <script src="../js/workouts.js"></script>
+    <script src="../js/nutrition.js"></script>
+    <script src="../js/charts.js"></script>
+    <script src="../js/analytics.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStats();
+            renderCharts();
+            renderInsights();
+            renderSuggestions();
+            populateExerciseSelect();
+            setupEventListeners();
+        });
+
+        // Track current time ranges
+        const chartTimeRanges = {
+            weightTrendChart: 30,
+            workoutFrequencyChart: 8,
+            nutritionChart: 30
+        };
+
+        function setupEventListeners() {
+            document.getElementById('exerciseSelect').addEventListener('change', (e) => {
+                if (e.target.value) {
+                    Charts.createExerciseProgressChart('exerciseProgressChart', e.target.value);
+                }
+            });
+
+            // Setup time range selectors
+            document.querySelectorAll('.time-range-selector').forEach(selector => {
+                selector.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('time-range-btn')) {
+                        const chartId = selector.dataset.chart;
+
+                        // Update active button
+                        selector.querySelectorAll('.time-range-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        e.target.classList.add('active');
+
+                        // Get the value and update chart
+                        const days = e.target.dataset.days;
+                        const weeks = e.target.dataset.weeks;
+
+                        if (days !== undefined) {
+                            const daysNum = parseInt(days, 10);
+                            chartTimeRanges[chartId] = daysNum;
+                            updateChartWithTimeRange(chartId, daysNum === 0 ? 365 : daysNum);
+                        } else if (weeks !== undefined) {
+                            const weeksNum = parseInt(weeks, 10);
+                            chartTimeRanges[chartId] = weeksNum;
+                            updateChartWithTimeRange(chartId, weeksNum === 0 ? 52 : weeksNum);
+                        }
+                    }
+                });
+            });
+        }
+
+        function updateChartWithTimeRange(chartId, value) {
+            switch (chartId) {
+                case 'weightTrendChart':
+                    Charts.createWeightChart('weightTrendChart', value);
+                    break;
+                case 'workoutFrequencyChart':
+                    Charts.createWorkoutFrequencyChart('workoutFrequencyChart', value);
+                    break;
+                case 'nutritionChart':
+                    Charts.createNutritionChart('nutritionChart', value);
+                    break;
+            }
+        }
+
+        function renderStats() {
+            const weightTrend = Metrics.calculateWeightTrend();
+            const workoutStats = Workouts.getStats();
+            const nutritionStats = Nutrition.getStats(30);
+            const streak = Workouts.getStreakInfo();
+
+            document.getElementById('statsRow').innerHTML = `
+                <div class="stat-box">
+                    <div class="value">${weightTrend.currentWeight?.toFixed(1) || '--'}</div>
+                    <div class="label">Current Weight (lbs)</div>
+                    <div class="change ${weightTrend.weeklyChange < 0 ? 'down' : weightTrend.weeklyChange > 0 ? 'up' : 'neutral'}">
+                        ${weightTrend.weeklyChange ? (weightTrend.weeklyChange > 0 ? '+' : '') + weightTrend.weeklyChange + '/week' : '--'}
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">${workoutStats.last30Days}</div>
+                    <div class="label">Workouts (30 days)</div>
+                    <div class="change neutral">${workoutStats.averagePerWeek}/week avg</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">${nutritionStats.avgCalories || '--'}</div>
+                    <div class="label">Avg Daily Calories</div>
+                    <div class="change neutral">${nutritionStats.daysLogged} days logged</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">${streak.streak}</div>
+                    <div class="label">Workout Streak</div>
+                    <div class="change neutral">Last: ${streak.lastType || '--'}</div>
+                </div>
+            `;
+        }
+
+        function renderCharts() {
+            // Weight trend chart
+            const weightHistory = Metrics.getWeightHistory(30);
+            if (weightHistory.length > 0) {
+                Charts.createWeightChart('weightTrendChart', 30);
+            } else {
+                document.getElementById('weightTrendChart').parentElement.innerHTML =
+                    '<div class="empty-chart">Log weight data to see trends</div>';
+            }
+
+            // Workout frequency chart
+            const workoutStats = Workouts.getStats();
+            if (workoutStats.totalWorkouts > 0) {
+                Charts.createWorkoutFrequencyChart('workoutFrequencyChart', 8);
+            } else {
+                document.getElementById('workoutFrequencyChart').parentElement.innerHTML =
+                    '<div class="empty-chart">Log workouts to see frequency</div>';
+            }
+
+            // Nutrition chart
+            const nutritionStats = Nutrition.getStats(30);
+            if (nutritionStats.daysLogged > 0) {
+                Charts.createNutritionChart('nutritionChart', 30);
+            } else {
+                document.getElementById('nutritionChart').parentElement.innerHTML =
+                    '<div class="empty-chart">Log nutrition data to see trends</div>';
+            }
+
+            // Workout type chart
+            if (workoutStats.totalWorkouts > 0) {
+                Charts.createWorkoutTypeChart('workoutTypeChart');
+            } else {
+                document.getElementById('workoutTypeChart').parentElement.innerHTML =
+                    '<div class="empty-chart">Log workouts to see distribution</div>';
+            }
+        }
+
+        function renderInsights() {
+            const insights = Analytics.generateInsights();
+            const container = document.getElementById('insightsList');
+
+            const iconMap = {
+                positive: '✓',
+                warning: '⚠',
+                negative: '✗',
+                info: 'ℹ'
+            };
+
+            container.innerHTML = insights.map(insight => `
+                <div class="insight-item ${insight.type}">
+                    <div class="insight-icon">${iconMap[insight.type] || 'ℹ'}</div>
+                    <div class="insight-content">
+                        <div class="insight-text">${insight.text}</div>
+                        <div class="insight-category">${insight.category}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSuggestions() {
+            const suggestions = Analytics.getScheduleSuggestions();
+            const container = document.getElementById('suggestionsList');
+
+            container.innerHTML = suggestions.map(suggestion => {
+                if (suggestion.type === 'next_workout') {
+                    return `
+                        <div class="suggestion-item">
+                            <div class="suggestion-badge">${suggestion.workout}</div>
+                            <div class="suggestion-text">${suggestion.reason}</div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="suggestion-item">
+                            <div class="suggestion-text">${suggestion.text}</div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function populateExerciseSelect() {
+            const workouts = Storage.workouts.getAll();
+            const exercises = new Set();
+
+            workouts.forEach(workout => {
+                workout.exercises?.forEach(ex => {
+                    exercises.add(ex.name);
+                });
+            });
+
+            const select = document.getElementById('exerciseSelect');
+            Array.from(exercises).sort().forEach(exercise => {
+                const option = document.createElement('option');
+                option.value = exercise;
+                option.textContent = exercise;
+                select.appendChild(option);
+            });
+        }
+    </script>
+</body>
+</html>

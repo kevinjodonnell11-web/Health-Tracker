@@ -1,0 +1,282 @@
+{
+  "version": "1.0",
+  "exportedAt": "2026-01-20T12:00:00.000Z",
+  "workouts": [
+    {
+      "id": "sample-workout-1",
+      "date": "2026-01-15",
+      "type": "push",
+      "dayNumber": 1,
+      "preWeight": 225.0,
+      "exercises": [
+        {
+          "name": "Dumbbell Bench Press",
+          "sets": [
+            { "reps": 10, "weight": 45, "notes": "warmup" },
+            { "reps": 8, "weight": 55, "notes": null },
+            { "reps": 6, "weight": 60, "notes": null }
+          ]
+        },
+        {
+          "name": "Incline Dumbbell Press",
+          "sets": [
+            { "reps": 10, "weight": 40, "notes": null },
+            { "reps": 8, "weight": 45, "notes": null }
+          ]
+        },
+        {
+          "name": "Lateral Raises",
+          "sets": [
+            { "reps": 12, "weight": 15, "notes": null },
+            { "reps": 12, "weight": 15, "notes": null }
+          ]
+        }
+      ],
+      "cardio": null,
+      "notes": "Good session, felt strong",
+      "energyLevel": 8
+    },
+    {
+      "id": "sample-workout-2",
+      "date": "2026-01-17",
+      "type": "pull",
+      "dayNumber": 2,
+      "preWeight": 224.5,
+      "exercises": [
+        {
+          "name": "Pull-ups",
+          "sets": [
+            { "reps": 8, "weight": null, "notes": "bodyweight" },
+            { "reps": 6, "weight": null, "notes": null }
+          ]
+        },
+        {
+          "name": "Seated Cable Row",
+          "sets": [
+            { "reps": 10, "weight": 120, "notes": null },
+            { "reps": 8, "weight": 135, "notes": null }
+          ]
+        },
+        {
+          "name": "Bicep Curls",
+          "sets": [
+            { "reps": 12, "weight": 25, "notes": null },
+            { "reps": 10, "weight": 30, "notes": null }
+          ]
+        }
+      ],
+      "cardio": {
+        "type": "walk",
+        "distance": 1.5,
+        "duration": "25:00"
+      },
+      "notes": null,
+      "energyLevel": 7
+    },
+    {
+      "id": "sample-workout-3",
+      "date": "2026-01-19",
+      "type": "legs",
+      "dayNumber": 3,
+      "preWeight": 224.0,
+      "exercises": [
+        {
+          "name": "Squats",
+          "sets": [
+            { "reps": 10, "weight": 135, "notes": "warmup" },
+            { "reps": 8, "weight": 185, "notes": null },
+            { "reps": 6, "weight": 205, "notes": null }
+          ]
+        },
+        {
+          "name": "Leg Press",
+          "sets": [
+            { "reps": 12, "weight": 270, "notes": null },
+            { "reps": 10, "weight": 320, "notes": null }
+          ]
+        },
+        {
+          "name": "Leg Curl",
+          "sets": [
+            { "reps": 12, "weight": 90, "notes": null },
+            { "reps": 10, "weight": 100, "notes": null }
+          ]
+        }
+      ],
+      "cardio": null,
+      "notes": "Legs were tired but pushed through",
+      "energyLevel": 6
+    }
+  ],
+  "nutrition": [
+    {
+      "id": "sample-nutrition-1",
+      "date": "2026-01-15",
+      "foodWindow": { "start": "12:00", "end": "20:00" },
+      "steps": 8500,
+      "totalCalories": 1450,
+      "totalProtein": 145,
+      "meals": [
+        {
+          "time": "12:30",
+          "items": [
+            { "name": "Greek Yogurt", "calories": 100, "protein": 17 },
+            { "name": "Protein Shake", "calories": 160, "protein": 30 }
+          ]
+        },
+        {
+          "time": "15:00",
+          "items": [
+            { "name": "Chicken Breast (6oz)", "calories": 280, "protein": 53 },
+            { "name": "Rice (1 cup)", "calories": 200, "protein": 4 }
+          ]
+        },
+        {
+          "time": "19:00",
+          "items": [
+            { "name": "Salmon (6oz)", "calories": 350, "protein": 40 },
+            { "name": "Salad (no dressing)", "calories": 100, "protein": 5 }
+          ]
+        }
+      ],
+      "supplements": ["creatine", "protein shake"],
+      "alcohol": { "drinks": 0, "type": null },
+      "notes": null
+    },
+    {
+      "id": "sample-nutrition-2",
+      "date": "2026-01-16",
+      "foodWindow": { "start": "12:00", "end": "21:00" },
+      "steps": 7200,
+      "totalCalories": 1600,
+      "totalProtein": 130,
+      "meals": [
+        {
+          "time": "12:00",
+          "items": [
+            { "name": "JustSalad Wrap", "calories": 750, "protein": 42 },
+            { "name": "PopChips", "calories": 100, "protein": 1 }
+          ]
+        },
+        {
+          "time": "18:30",
+          "items": [
+            { "name": "Turkey Sandwich", "calories": 350, "protein": 25 },
+            { "name": "Protein Shake", "calories": 160, "protein": 30 }
+          ]
+        }
+      ],
+      "supplements": ["creatine"],
+      "alcohol": { "drinks": 2, "type": "beer" },
+      "notes": "Drinks with friends"
+    },
+    {
+      "id": "sample-nutrition-3",
+      "date": "2026-01-17",
+      "foodWindow": { "start": "13:00", "end": "20:00" },
+      "steps": 9100,
+      "totalCalories": 1380,
+      "totalProtein": 152,
+      "meals": [
+        {
+          "time": "13:00",
+          "items": [
+            { "name": "Chipotle Bowl", "calories": 700, "protein": 45 }
+          ]
+        },
+        {
+          "time": "17:00",
+          "items": [
+            { "name": "Quest Bar", "calories": 190, "protein": 21 },
+            { "name": "Almonds (1oz)", "calories": 165, "protein": 6 }
+          ]
+        },
+        {
+          "time": "19:30",
+          "items": [
+            { "name": "Chicken Breast (6oz)", "calories": 280, "protein": 53 },
+            { "name": "Cottage Cheese (1 cup)", "calories": 220, "protein": 28 }
+          ]
+        }
+      ],
+      "supplements": ["creatine", "protein shake", "fish oil"],
+      "alcohol": { "drinks": 0, "type": null },
+      "notes": "Great protein day"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "sample-metrics-1",
+      "date": "2026-01-15",
+      "weight": 225.0,
+      "sleepHours": 7.5,
+      "sleepQuality": 8,
+      "steps": 8500,
+      "energyLevel": 8,
+      "mood": 7,
+      "workoutCompleted": true,
+      "nutritionCompleted": true
+    },
+    {
+      "id": "sample-metrics-2",
+      "date": "2026-01-16",
+      "weight": 225.5,
+      "sleepHours": 6.0,
+      "sleepQuality": 5,
+      "steps": 7200,
+      "energyLevel": 6,
+      "mood": 6,
+      "workoutCompleted": false,
+      "nutritionCompleted": true
+    },
+    {
+      "id": "sample-metrics-3",
+      "date": "2026-01-17",
+      "weight": 224.5,
+      "sleepHours": 8.0,
+      "sleepQuality": 9,
+      "steps": 9100,
+      "energyLevel": 8,
+      "mood": 8,
+      "workoutCompleted": true,
+      "nutritionCompleted": true
+    },
+    {
+      "id": "sample-metrics-4",
+      "date": "2026-01-18",
+      "weight": 224.0,
+      "sleepHours": 7.0,
+      "sleepQuality": 7,
+      "steps": 6500,
+      "energyLevel": 7,
+      "mood": 7,
+      "workoutCompleted": false,
+      "nutritionCompleted": false
+    },
+    {
+      "id": "sample-metrics-5",
+      "date": "2026-01-19",
+      "weight": 224.0,
+      "sleepHours": 7.5,
+      "sleepQuality": 8,
+      "steps": 8000,
+      "energyLevel": 7,
+      "mood": 7,
+      "workoutCompleted": true,
+      "nutritionCompleted": true
+    }
+  ],
+  "goals": {
+    "weightGoal": 210,
+    "dailyCalories": 1500,
+    "dailyProtein": 150,
+    "weeklyWorkouts": 4,
+    "dailySteps": 10000,
+    "sleepHours": 7
+  },
+  "settings": {
+    "darkMode": true,
+    "workoutSplit": ["push", "pull", "legs"],
+    "defaultFastingWindow": { "start": "12:00", "end": "20:00" }
+  }
+}

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition - Health Tracker</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        .nutrition-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .nutrition-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+        }
+
+        .calendar-day {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            min-height: 80px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .calendar-day:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--color-primary);
+        }
+
+        .calendar-day.has-data {
+            background-color: rgba(0, 184, 148, 0.1);
+        }
+
+        .calendar-day.empty {
+            background-color: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .calendar-day.empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .day-macros {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .day-macros .cal {
+            color: var(--color-warning);
+        }
+
+        .day-macros .pro {
+            color: var(--color-info);
+        }
+
+        .day-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .day-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .day-dot.workout {
+            background-color: var(--color-success);
+        }
+
+        .day-dot.nutrition {
+            background-color: var(--color-warning);
+        }
+
+        .day-dot.weight {
+            background-color: var(--color-info);
+        }
+
+        .nutrition-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nutrition-entry {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .nutrition-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .nutrition-date {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .nutrition-totals {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nutrition-totals .total-item {
+            text-align: center;
+        }
+
+        .total-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .total-value.calories { color: var(--color-warning); }
+        .total-value.protein { color: var(--color-info); }
+        .total-value.steps { color: var(--color-success); }
+
+        .total-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .meals-list {
+            margin-bottom: 1rem;
+        }
+
+        .meal-item {
+            padding: 0.75rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+        }
+
+        .meal-time {
+            font-weight: 500;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .food-item:last-child {
+            border-bottom: none;
+        }
+
+        .food-name {
+            flex: 1;
+        }
+
+        .food-macros {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .nutrition-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .supplements-list {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .supplement-tag {
+            background-color: var(--bg-accent);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .food-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .food-item-row {
+            display: grid;
+            grid-template-columns: 2fr 80px 80px 40px;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .add-food-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .add-food-row .form-select {
+            flex: 1;
+        }
+
+        .meal-totals {
+            padding: 0.75rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .supplements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .supplement-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .supplement-checkbox input {
+            accent-color: var(--color-primary);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-nav h3 {
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <h1>HEALTH TRACKER</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="../index.html" class="nav-link">Dashboard</a>
+            <a href="workouts.html" class="nav-link">Workouts</a>
+            <a href="nutrition.html" class="nav-link active">Nutrition</a>
+            <a href="analytics.html" class="nav-link">Analytics</a>
+        </nav>
+        <div class="header-right">
+            <button id="logMealBtn" class="btn btn-secondary">+ Log Meal</button>
+            <button id="logDayBtn" class="btn btn-primary">+ Log Day</button>
+            <a href="settings.html" class="settings-btn" title="Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div class="page-header">
+            <h2 class="page-title">Nutrition Log</h2>
+        </div>
+
+        <div class="nutrition-stats" id="nutritionStats">
+            <!-- Stats will be populated by JS -->
+        </div>
+
+        <div class="card mb-2">
+            <div class="calendar-nav">
+                <button class="btn btn-secondary" id="prevMonth">&larr;</button>
+                <h3 id="currentMonth">January 2026</h3>
+                <button class="btn btn-secondary" id="nextMonth">&rarr;</button>
+            </div>
+            <div class="nutrition-calendar" id="nutritionCalendar">
+                <!-- Calendar will be populated by JS -->
+            </div>
+        </div>
+
+        <h3 class="mb-2">Recent Entries</h3>
+        <div class="nutrition-list" id="nutritionList">
+            <!-- Entries will be populated by JS -->
+        </div>
+    </main>
+
+    <!-- Nutrition Modal -->
+    <div class="modal" id="nutritionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="nutritionModalTitle">Log Nutrition</h2>
+                <button class="modal-close" id="nutritionModalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="nutritionModalBody">
+                <!-- Form will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/metrics.js"></script>
+    <script src="../js/nutrition.js"></script>
+    <script src="../js/dayview.js"></script>
+    <script>
+        let currentDate = new Date();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStats();
+            renderCalendar();
+            renderNutritionList();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('logMealBtn').addEventListener('click', () => openModal('meal'));
+            document.getElementById('logDayBtn').addEventListener('click', () => openModal('day'));
+
+            document.getElementById('nutritionModalClose').addEventListener('click', closeModal);
+            document.getElementById('nutritionModal').addEventListener('click', (e) => {
+                if (e.target.id === 'nutritionModal') closeModal();
+            });
+
+            document.getElementById('prevMonth').addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            document.getElementById('nextMonth').addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+        }
+
+        function renderStats() {
+            const stats = Nutrition.getStats(30);
+            const goals = Storage.goals.get();
+
+            document.getElementById('nutritionStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.avgCalories || '--'}</div>
+                    <div class="stat-label">Avg Daily Cal</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.avgProtein || '--'}g</div>
+                    <div class="stat-label">Avg Daily Pro</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.daysLogged}</div>
+                    <div class="stat-label">Days Logged (30d)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.daysUnderCalories}</div>
+                    <div class="stat-label">Days Under ${goals.dailyCalories}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.daysMetProtein}</div>
+                    <div class="stat-label">Days ${goals.dailyProtein}g+ Pro</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalAlcohol}</div>
+                    <div class="stat-label">Drinks (30d)</div>
+                </div>
+            `;
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            document.getElementById('currentMonth').textContent =
+                new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDay = firstDay.getDay();
+            const daysInMonth = lastDay.getDate();
+
+            // Get all data for the month
+            const startStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            const endStr = `${year}-${String(month + 1).padStart(2, '0')}-${daysInMonth}`;
+            const nutritionData = Storage.nutrition.getByDateRange(startStr, endStr);
+            const workoutData = Storage.workouts.getByDateRange(startStr, endStr);
+            const metricsData = Storage.metrics.getByDateRange(startStr, endStr);
+
+            const nutritionMap = new Map(nutritionData.map(n => [n.date, n]));
+            const workoutDates = new Set(workoutData.map(w => w.date));
+            const weightDates = new Set([
+                ...metricsData.filter(m => m.weight).map(m => m.date),
+                ...workoutData.filter(w => w.preWeight).map(w => w.date)
+            ]);
+
+            const today = Storage.getToday();
+
+            let html = `
+                <div class="calendar-header">Sun</div>
+                <div class="calendar-header">Mon</div>
+                <div class="calendar-header">Tue</div>
+                <div class="calendar-header">Wed</div>
+                <div class="calendar-header">Thu</div>
+                <div class="calendar-header">Fri</div>
+                <div class="calendar-header">Sat</div>
+            `;
+
+            // Empty cells for days before first of month
+            for (let i = 0; i < startDay; i++) {
+                html += `<div class="calendar-day empty"></div>`;
+            }
+
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const nutritionEntry = nutritionMap.get(dateStr);
+                const isToday = dateStr === today;
+                const hasNutrition = nutritionEntry && (nutritionEntry.totalCalories || nutritionEntry.meals?.length);
+                const hasWorkout = workoutDates.has(dateStr);
+                const hasWeight = weightDates.has(dateStr);
+
+                const indicators = [];
+                if (hasWorkout) indicators.push('<span class="day-dot workout" title="Workout"></span>');
+                if (hasNutrition) indicators.push('<span class="day-dot nutrition" title="Nutrition"></span>');
+                if (hasWeight) indicators.push('<span class="day-dot weight" title="Weight"></span>');
+
+                html += `
+                    <div class="calendar-day ${isToday ? 'today' : ''} ${hasNutrition ? 'has-data' : ''}"
+                         onclick="DayView.open('${dateStr}')">
+                        <div class="day-number">${day}</div>
+                        ${hasNutrition ? `
+                            <div class="day-macros">
+                                <span class="cal">${nutritionEntry.totalCalories || 0}</span>
+                                <span class="pro">${nutritionEntry.totalProtein || 0}g</span>
+                            </div>
+                        ` : ''}
+                        ${indicators.length > 0 ? `<div class="day-indicators">${indicators.join('')}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            document.getElementById('nutritionCalendar').innerHTML = html;
+        }
+
+        function renderNutritionList() {
+            const entries = Storage.nutrition.getLatest(10);
+            const container = document.getElementById('nutritionList');
+
+            if (entries.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No nutrition entries yet</h3>
+                        <p>Click "+ Log Day" to start tracking your nutrition!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = entries.map(entry => `
+                <div class="nutrition-entry">
+                    <div class="nutrition-header">
+                        <div class="nutrition-date">${Storage.formatDate(entry.date)}</div>
+                        <div class="nutrition-totals">
+                            <div class="total-item">
+                                <div class="total-value calories">${entry.totalCalories || 0}</div>
+                                <div class="total-label">Calories</div>
+                            </div>
+                            <div class="total-item">
+                                <div class="total-value protein">${entry.totalProtein || 0}g</div>
+                                <div class="total-label">Protein</div>
+                            </div>
+                            ${entry.steps ? `
+                                <div class="total-item">
+                                    <div class="total-value steps">${entry.steps.toLocaleString()}</div>
+                                    <div class="total-label">Steps</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    ${entry.meals && entry.meals.length > 0 ? `
+                        <div class="meals-list">
+                            ${entry.meals.map(meal => `
+                                <div class="meal-item">
+                                    <div class="meal-time">${meal.time}</div>
+                                    ${meal.items.map(item => `
+                                        <div class="food-item">
+                                            <span class="food-name">${item.name}</span>
+                                            <span class="food-macros">${item.calories} cal, ${item.protein}g</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <div class="nutrition-meta">
+                        ${entry.foodWindow?.start ? `
+                            <div class="meta-item">
+                                <span>Window: ${entry.foodWindow.start} - ${entry.foodWindow.end}</span>
+                            </div>
+                        ` : ''}
+                        ${entry.supplements && entry.supplements.length > 0 ? `
+                            <div class="supplements-list">
+                                ${entry.supplements.map(s => `<span class="supplement-tag">${s}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        ${entry.alcohol?.drinks > 0 ? `
+                            <div class="meta-item text-warning">
+                                Alcohol: ${entry.alcohol.drinks} ${entry.alcohol.type || 'drinks'}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(type, date = null) {
+            const modal = document.getElementById('nutritionModal');
+            const modalBody = document.getElementById('nutritionModalBody');
+            const modalTitle = document.getElementById('nutritionModalTitle');
+
+            if (type === 'meal') {
+                modalTitle.textContent = 'Log Meal';
+                modalBody.innerHTML = Nutrition.renderMealForm();
+                setupMealForm();
+            } else {
+                modalTitle.textContent = 'Log Day';
+                modalBody.innerHTML = Nutrition.renderDayForm(date);
+                setupDayForm();
+            }
+
+            modal.classList.add('active');
+        }
+
+        function openDayModal(date) {
+            openModal('day', date);
+        }
+
+        function closeModal() {
+            document.getElementById('nutritionModal').classList.remove('active');
+        }
+
+        let foodItemCount = 0;
+
+        function setupMealForm() {
+            const quickAddSelect = document.getElementById('foodQuickAdd');
+            const addCustomBtn = document.getElementById('addCustomFood');
+            const foodList = document.getElementById('foodItemsList');
+
+            // Add first custom item row
+            addFoodItem();
+
+            quickAddSelect.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    const food = Nutrition.FOOD_DATABASE[e.target.value];
+                    addFoodItem(e.target.value, food.calories, food.protein);
+                    e.target.value = '';
+                    updateMealTotals();
+                }
+            });
+
+            addCustomBtn.addEventListener('click', () => addFoodItem());
+
+            document.getElementById('mealForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                if (Nutrition.handleMealSubmit(formData)) {
+                    closeModal();
+                    renderStats();
+                    renderCalendar();
+                    renderNutritionList();
+                    foodItemCount = 0;
+                }
+            });
+        }
+
+        function addFoodItem(name = '', calories = '', protein = '') {
+            const foodList = document.getElementById('foodItemsList');
+            foodList.insertAdjacentHTML('beforeend', Nutrition.renderFoodItemRow(foodItemCount, name, calories, protein));
+
+            const row = foodList.querySelector(`[data-index="${foodItemCount}"]`);
+            row.querySelector('.remove-food').addEventListener('click', () => {
+                row.remove();
+                updateMealTotals();
+            });
+
+            row.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', updateMealTotals);
+            });
+
+            foodItemCount++;
+        }
+
+        function updateMealTotals() {
+            let totalCal = 0;
+            let totalPro = 0;
+
+            document.querySelectorAll('.food-item-row').forEach(row => {
+                const cal = parseInt(row.querySelector('.food-calories').value) || 0;
+                const pro = parseInt(row.querySelector('.food-protein').value) || 0;
+                totalCal += cal;
+                totalPro += pro;
+            });
+
+            document.getElementById('mealCalTotal').textContent = totalCal;
+            document.getElementById('mealProTotal').textContent = totalPro;
+        }
+
+        function setupDayForm() {
+            document.getElementById('nutritionDayForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                if (Nutrition.handleDaySubmit(formData)) {
+                    closeModal();
+                    renderStats();
+                    renderCalendar();
+                    renderNutritionList();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

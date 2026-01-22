@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Health Tracker</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .settings-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .settings-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setting-label span {
+            font-weight: 500;
+        }
+
+        .setting-label small {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .setting-input {
+            width: 120px;
+        }
+
+        .data-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-stat {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .data-stat .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .data-stat .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .data-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .split-config {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .split-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+
+        .split-tag button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+        }
+
+        .split-tag button:hover {
+            color: var(--color-danger);
+        }
+
+        .add-split {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .add-split select {
+            flex: 1;
+        }
+
+        .danger-zone {
+            border-color: var(--color-danger);
+        }
+
+        .danger-zone h3 {
+            color: var(--color-danger);
+        }
+
+        .danger-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--color-danger);
+            color: white;
+        }
+
+        .import-area {
+            margin-bottom: 1rem;
+        }
+
+        .import-area textarea {
+            width: 100%;
+            min-height: 150px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .success-message {
+            padding: 1rem;
+            background-color: rgba(0, 184, 148, 0.1);
+            border: 1px solid var(--color-success);
+            border-radius: var(--radius-sm);
+            color: var(--color-success);
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .error-message {
+            padding: 1rem;
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            color: var(--color-danger);
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <h1>HEALTH TRACKER</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="../index.html" class="nav-link">Dashboard</a>
+            <a href="workouts.html" class="nav-link">Workouts</a>
+            <a href="nutrition.html" class="nav-link">Nutrition</a>
+            <a href="analytics.html" class="nav-link">Analytics</a>
+        </nav>
+        <div class="header-right">
+            <a href="settings.html" class="settings-btn active" title="Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <h2 class="page-title">Settings</h2>
+
+        <div class="settings-grid">
+            <!-- Goals -->
+            <div class="settings-card">
+                <h3>Goals</h3>
+                <form id="goalsForm">
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span>Weight Goal</span>
+                            <small>Target weight in pounds</small>
+                        </div>
+                        <input type="number" class="form-input setting-input" name="weightGoal" step="0.5">
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span>Daily Calories</span>
+                            <small>Target calorie intake</small>
+                        </div>
+                        <input type="number" class="form-input setting-input" name="dailyCalories" step="50">
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span>Daily Protein</span>
+                            <small>Target protein in grams</small>
+                        </div>
+                        <input type="number" class="form-input setting-input" name="dailyProtein">
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span>Weekly Workouts</span>
+                            <small>Target workouts per week</small>
+                        </div>
+                        <input type="number" class="form-input setting-input" name="weeklyWorkouts" min="1" max="7">
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-label">
+                            <span>Daily Steps</span>
+                            <small>Target steps per day</small>
+                        </div>
+                        <input type="number" class="form-input setting-input" name="dailySteps" step="500">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Save Goals</button>
+                </form>
+            </div>
+
+            <!-- Workout Settings -->
+            <div class="settings-card">
+                <h3>Workout Settings</h3>
+                <div class="form-group">
+                    <label class="form-label">Workout Split</label>
+                    <small class="text-muted">Your workout rotation order</small>
+                    <div class="split-config" id="splitConfig">
+                        <!-- Split tags will be populated by JS -->
+                    </div>
+                    <div class="add-split">
+                        <select class="form-select" id="addSplitType">
+                            <option value="push">Push</option>
+                            <option value="pull">Pull</option>
+                            <option value="legs">Legs</option>
+                            <option value="upper">Upper</option>
+                            <option value="cardio">Cardio</option>
+                            <option value="superset">Superset</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" id="addSplitBtn">Add</button>
+                    </div>
+                </div>
+
+                <div class="form-group mt-2">
+                    <label class="form-label">Default Fasting Window</label>
+                    <div class="form-row">
+                        <input type="time" class="form-input" id="fastingStart" placeholder="Start">
+                        <input type="time" class="form-input" id="fastingEnd" placeholder="End">
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-1" id="saveFastingBtn">Save</button>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-card full-width">
+                <h3>Data Management</h3>
+
+                <div class="data-stats" id="dataStats">
+                    <!-- Stats will be populated by JS -->
+                </div>
+
+                <div class="data-actions">
+                    <button class="btn btn-primary" id="exportBtn">
+                        Export All Data (JSON)
+                    </button>
+                    <div class="file-input-wrapper">
+                        <button class="btn btn-secondary">Import Data (JSON)</button>
+                        <input type="file" id="importFile" accept=".json">
+                    </div>
+                    <button class="btn btn-primary" id="loadHistoricalBtn">
+                        Load Historical Data
+                    </button>
+                    <a href="../data/sample-import.json" download class="btn btn-secondary">
+                        Download Sample Template
+                    </a>
+                </div>
+
+                <div class="success-message" id="successMessage"></div>
+                <div class="error-message" id="errorMessage"></div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-card full-width danger-zone">
+                <h3>Danger Zone</h3>
+                <p class="text-muted mb-2">These actions cannot be undone. Make sure to export your data first.</p>
+                <div class="danger-actions">
+                    <button class="btn btn-danger" id="clearWorkoutsBtn">Clear All Workouts</button>
+                    <button class="btn btn-danger" id="clearNutritionBtn">Clear All Nutrition</button>
+                    <button class="btn btn-danger" id="clearMetricsBtn">Clear All Metrics</button>
+                    <button class="btn btn-danger" id="clearAllBtn">Clear Everything</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/metrics.js"></script>
+    <script src="../js/workouts.js"></script>
+    <script src="../js/nutrition.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGoals();
+            loadSettings();
+            renderDataStats();
+            setupEventListeners();
+        });
+
+        function loadGoals() {
+            const goals = Storage.goals.get();
+            const form = document.getElementById('goalsForm');
+
+            form.weightGoal.value = goals.weightGoal;
+            form.dailyCalories.value = goals.dailyCalories;
+            form.dailyProtein.value = goals.dailyProtein;
+            form.weeklyWorkouts.value = goals.weeklyWorkouts;
+            form.dailySteps.value = goals.dailySteps;
+        }
+
+        function loadSettings() {
+            const settings = Storage.settings.get();
+
+            // Workout split
+            renderSplitConfig(settings.workoutSplit || ['push', 'pull', 'legs']);
+
+            // Fasting window
+            if (settings.defaultFastingWindow) {
+                document.getElementById('fastingStart').value = settings.defaultFastingWindow.start || '';
+                document.getElementById('fastingEnd').value = settings.defaultFastingWindow.end || '';
+            }
+        }
+
+        function renderSplitConfig(split) {
+            const container = document.getElementById('splitConfig');
+            container.innerHTML = split.map((type, index) => `
+                <div class="split-tag">
+                    <span>${type}</span>
+                    <button type="button" onclick="removeSplitType(${index})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function renderDataStats() {
+            const workouts = Storage.workouts.getAll();
+            const nutrition = Storage.nutrition.getAll();
+            const metrics = Storage.metrics.getAll();
+
+            document.getElementById('dataStats').innerHTML = `
+                <div class="data-stat">
+                    <div class="value">${workouts.length}</div>
+                    <div class="label">Workouts</div>
+                </div>
+                <div class="data-stat">
+                    <div class="value">${nutrition.length}</div>
+                    <div class="label">Nutrition Days</div>
+                </div>
+                <div class="data-stat">
+                    <div class="value">${metrics.length}</div>
+                    <div class="label">Metrics Entries</div>
+                </div>
+            `;
+        }
+
+        function setupEventListeners() {
+            // Goals form
+            document.getElementById('goalsForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const goals = {
+                    weightGoal: parseFloat(formData.get('weightGoal')),
+                    dailyCalories: parseInt(formData.get('dailyCalories')),
+                    dailyProtein: parseInt(formData.get('dailyProtein')),
+                    weeklyWorkouts: parseInt(formData.get('weeklyWorkouts')),
+                    dailySteps: parseInt(formData.get('dailySteps'))
+                };
+                Storage.goals.set(goals);
+                showSuccess('Goals saved successfully!');
+            });
+
+            // Add split type
+            document.getElementById('addSplitBtn').addEventListener('click', () => {
+                const type = document.getElementById('addSplitType').value;
+                const settings = Storage.settings.get();
+                settings.workoutSplit = settings.workoutSplit || [];
+                settings.workoutSplit.push(type);
+                Storage.settings.set(settings);
+                renderSplitConfig(settings.workoutSplit);
+            });
+
+            // Save fasting window
+            document.getElementById('saveFastingBtn').addEventListener('click', () => {
+                const settings = Storage.settings.get();
+                settings.defaultFastingWindow = {
+                    start: document.getElementById('fastingStart').value,
+                    end: document.getElementById('fastingEnd').value
+                };
+                Storage.settings.set(settings);
+                showSuccess('Fasting window saved!');
+            });
+
+            // Export data
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                const data = Storage.exportAll();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `health-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showSuccess('Data exported successfully!');
+            });
+
+            // Import data
+            document.getElementById('importFile').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (Storage.importAll(data)) {
+                            showSuccess(`Data imported successfully! ${data.workouts?.length || 0} workouts, ${data.nutrition?.length || 0} nutrition days, ${data.metrics?.length || 0} metrics.`);
+                            renderDataStats();
+                            loadGoals();
+                            loadSettings();
+                        } else {
+                            showError('Failed to import data. Please check the file format.');
+                        }
+                    } catch (err) {
+                        showError('Invalid JSON file: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            // Load historical data
+            document.getElementById('loadHistoricalBtn').addEventListener('click', async () => {
+                try {
+                    const response = await fetch('../data/historical-import.json');
+                    if (!response.ok) {
+                        throw new Error('Historical data file not found');
+                    }
+                    const data = await response.json();
+
+                    if (confirm(`Load ${data.workouts?.length || 0} workouts, ${data.metrics?.length || 0} metrics entries, and updated goals?`)) {
+                        if (Storage.importAll(data)) {
+                            showSuccess(`Historical data loaded! ${data.workouts?.length || 0} workouts, ${data.metrics?.length || 0} metrics from July 2025 - January 2026.`);
+                            renderDataStats();
+                            loadGoals();
+                            loadSettings();
+                        } else {
+                            showError('Failed to import historical data.');
+                        }
+                    }
+                } catch (err) {
+                    showError('Error loading historical data: ' + err.message);
+                }
+            });
+
+            // Clear buttons
+            document.getElementById('clearWorkoutsBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete all workouts? This cannot be undone.')) {
+                    Storage.set(Storage.KEYS.WORKOUTS, []);
+                    renderDataStats();
+                    showSuccess('All workouts cleared.');
+                }
+            });
+
+            document.getElementById('clearNutritionBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete all nutrition data? This cannot be undone.')) {
+                    Storage.set(Storage.KEYS.NUTRITION, []);
+                    renderDataStats();
+                    showSuccess('All nutrition data cleared.');
+                }
+            });
+
+            document.getElementById('clearMetricsBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete all metrics? This cannot be undone.')) {
+                    Storage.set(Storage.KEYS.METRICS, []);
+                    renderDataStats();
+                    showSuccess('All metrics cleared.');
+                }
+            });
+
+            document.getElementById('clearAllBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete ALL data? This cannot be undone!')) {
+                    if (confirm('This will permanently delete all your health tracking data. Are you absolutely sure?')) {
+                        Storage.clearAll();
+                        renderDataStats();
+                        loadGoals();
+                        loadSettings();
+                        showSuccess('All data cleared.');
+                    }
+                }
+            });
+        }
+
+        function removeSplitType(index) {
+            const settings = Storage.settings.get();
+            settings.workoutSplit.splice(index, 1);
+            Storage.settings.set(settings);
+            renderSplitConfig(settings.workoutSplit);
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.classList.add('active');
+            document.getElementById('errorMessage').classList.remove('active');
+            setTimeout(() => el.classList.remove('active'), 3000);
+        }
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.classList.add('active');
+            document.getElementById('successMessage').classList.remove('active');
+            setTimeout(() => el.classList.remove('active'), 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1236 @@
+{
+  "version": "1.0",
+  "exportedAt": "2026-01-20T19:00:00.000Z",
+  "workouts": [
+    {
+      "id": "w-001",
+      "date": "2025-07-01",
+      "type": "pull",
+      "dayNumber": 1,
+      "preWeight": 227.0,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 60}, {"reps": 10, "weight": 60}, {"reps": 10, "weight": 60}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": null},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-002",
+      "date": "2025-07-07",
+      "type": "push",
+      "dayNumber": 2,
+      "preWeight": 229.6,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 40, "notes": "fail"}, {"reps": 10, "weight": 40}, {"reps": 10, "weight": 40}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 30, "notes": "weak"}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 110}]},
+        {"name": "Dumbbell Flys", "sets": [{"reps": 5, "weight": 15, "notes": "weak"}, {"reps": 5, "weight": 15}, {"reps": 5, "weight": 15}]},
+        {"name": "Russian Twists", "sets": [{"reps": 25, "weight": 14}, {"reps": 25, "weight": 14}, {"reps": 25, "weight": 14}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-003",
+      "date": "2025-07-09",
+      "type": "legs",
+      "dayNumber": 3,
+      "preWeight": 228.4,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 12, "weight": 170}, {"reps": 12, "weight": 170}, {"reps": 12, "weight": 170}]},
+        {"name": "Leg Curl", "sets": [{"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 40}, {"reps": 15, "weight": 40}, {"reps": 15, "weight": 40}]},
+        {"name": "Hip Abduction", "sets": [{"reps": 12, "weight": 70}, {"reps": 12, "weight": 70}, {"reps": 12, "weight": 70}]}
+      ],
+      "cardio": {"type": "walk", "distance": null, "duration": "warmup"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c001",
+      "date": "2025-07-11",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": 229.0,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.25, "duration": "25:00"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-004",
+      "date": "2025-07-14",
+      "type": "pull",
+      "dayNumber": 4,
+      "preWeight": 229.6,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]},
+        {"name": "Russian Twists", "sets": [{"reps": 25, "weight": 14}, {"reps": 25, "weight": 14}, {"reps": 25, "weight": 14}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-005",
+      "date": "2025-07-16",
+      "type": "push",
+      "dayNumber": 5,
+      "preWeight": 229.0,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 8, "weight": 40}, {"reps": 8, "weight": 40}, {"reps": 8, "weight": 40}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 50}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 70}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]}
+      ],
+      "cardio": {"type": "run", "distance": 0.75, "duration": null},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-006",
+      "date": "2025-07-21",
+      "type": "legs",
+      "dayNumber": 6,
+      "preWeight": 229.4,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 12, "weight": 190}, {"reps": 12, "weight": 190}, {"reps": 12, "weight": 190}]},
+        {"name": "Leg Curl", "sets": [{"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 40}, {"reps": 15, "weight": 40}, {"reps": 15, "weight": 40}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": {"type": "walk", "distance": null, "duration": "warmup"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-007",
+      "date": "2025-07-23",
+      "type": "pull",
+      "dayNumber": 7,
+      "preWeight": 232.2,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 100}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": {"type": "walk", "distance": null, "duration": "warmup"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-008",
+      "date": "2025-07-28",
+      "type": "push",
+      "dayNumber": 8,
+      "preWeight": 227.8,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 35}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 70}, {"reps": 10, "weight": 55}, {"reps": 10, "weight": 55}]},
+        {"name": "Lateral Raises", "sets": [{"reps": 12, "weight": 15}, {"reps": 12, "weight": 15}, {"reps": 12, "weight": 15}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-009",
+      "date": "2025-07-30",
+      "type": "pull",
+      "dayNumber": 9,
+      "preWeight": 231.4,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 12, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 75}, {"reps": 10, "weight": 75}, {"reps": 10, "weight": 75}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 12, "weight": 110}, {"reps": 12, "weight": 110}, {"reps": 12, "weight": 110}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 30, "notes": "MAX"}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-010",
+      "date": "2025-08-05",
+      "type": "push",
+      "dayNumber": 10,
+      "preWeight": 229.2,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 40}, {"reps": 10, "weight": 45}, {"reps": 10, "weight": 45}, {"reps": 5, "weight": 50}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 70}, {"reps": 10, "weight": 55}, {"reps": 10, "weight": 55}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": "Short on time, skipped lateral raises",
+      "energyLevel": null
+    },
+    {
+      "id": "w-011",
+      "date": "2025-08-06",
+      "type": "legs",
+      "dayNumber": 11,
+      "preWeight": 230.0,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 12, "weight": 130}, {"reps": 12, "weight": 190}, {"reps": 12, "weight": 190}, {"reps": 12, "weight": 210}]},
+        {"name": "Leg Curl", "sets": [{"reps": 12, "weight": 70}, {"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}, {"reps": 10, "weight": 100}]},
+        {"name": "Walking Lunges", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Calf Raises", "sets": [{"reps": 20, "weight": 45}, {"reps": 20, "weight": 45}, {"reps": 20, "weight": 45}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": {"type": "walk", "distance": 0.5, "duration": "warmup"},
+      "notes": "Feel like not getting true leg pump, calves feel it but not quads and hamstrings. Need to push more",
+      "energyLevel": null
+    },
+    {
+      "id": "w-012",
+      "date": "2025-08-07",
+      "type": "pull",
+      "dayNumber": 12,
+      "preWeight": 231.0,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 12, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 70}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 100}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 8, "weight": 120}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 12, "weight": 50}, {"reps": 10, "weight": 65}, {"reps": 10, "weight": 65}, {"reps": 10, "weight": 65}, {"reps": 10, "weight": 65}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 35, "notes": "MAX"}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": "Heavy/Low Rep phase starting",
+      "energyLevel": null
+    },
+    {
+      "id": "w-013",
+      "date": "2025-08-11",
+      "type": "push",
+      "dayNumber": 13,
+      "preWeight": 229.0,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 8, "weight": 40, "notes": "explosive"}, {"reps": 6, "weight": 50}, {"reps": 6, "weight": 50}, {"reps": 6, "weight": 50}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 6, "weight": 50}, {"reps": 6, "weight": 60}, {"reps": 6, "weight": 60}, {"reps": 6, "weight": 60}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 6, "weight": 55}, {"reps": 6, "weight": 80}, {"reps": 6, "weight": 80}, {"reps": 6, "weight": 80}]},
+        {"name": "Lateral Raises", "sets": [{"reps": 12, "weight": 15}, {"reps": 12, "weight": 15}, {"reps": 12, "weight": 15}]}
+      ],
+      "cardio": null,
+      "notes": "Heavy/Low Rep",
+      "energyLevel": null
+    },
+    {
+      "id": "w-014",
+      "date": "2025-08-13",
+      "type": "pull",
+      "dayNumber": 14,
+      "preWeight": 228.6,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30, "notes": "failed at 8"}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 6, "weight": 110}, {"reps": 8, "weight": 110}, {"reps": 6, "weight": 110}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 8, "weight": 90}, {"reps": 6, "weight": 130}, {"reps": 8, "weight": 130}, {"reps": 6, "weight": 130}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 12, "weight": 80}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 40, "notes": "MAX"}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 10, "weight": null}, {"reps": 10, "weight": null}, {"reps": 10, "weight": null}]}
+      ],
+      "cardio": null,
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c002",
+      "date": "2025-08-18",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 1.72, "duration": "14:30"},
+      "notes": "Work from home period - focusing on cardio",
+      "energyLevel": null
+    },
+    {
+      "id": "w-c003",
+      "date": "2025-08-19",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.0, "duration": "15:40"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c004",
+      "date": "2025-08-21",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.37, "duration": "20:00"},
+      "notes": "Intervals - 5 min warmup jog, run 1 min fast, walk/jog 2 min, repeat 5x",
+      "energyLevel": null
+    },
+    {
+      "id": "w-c005",
+      "date": "2025-08-22",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.02, "duration": "16:54"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c006",
+      "date": "2025-08-24",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.01, "duration": "17:25"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c007",
+      "date": "2025-08-25",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.25, "duration": "17:43"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c008",
+      "date": "2025-08-27",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.76, "duration": "23:15"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c009",
+      "date": "2025-08-30",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.01, "duration": "17:03"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-015",
+      "date": "2025-09-02",
+      "type": "legs",
+      "dayNumber": 15,
+      "preWeight": 228.0,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 12, "weight": 170}, {"reps": 12, "weight": 225}, {"reps": 12, "weight": 225}, {"reps": 12, "weight": 225}]},
+        {"name": "Leg Curl", "sets": [{"reps": 12, "weight": 70}, {"reps": 12, "weight": 70}, {"reps": 12, "weight": 70}, {"reps": 12, "weight": 90}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 40}, {"reps": 15, "weight": 40}, {"reps": 15, "weight": 40}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": "Getting back into rhythm after 2 weeks off. Gym was packed.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-016",
+      "date": "2025-09-03",
+      "type": "push",
+      "dayNumber": 16,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 12, "weight": 45}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}, {"reps": 8, "weight": 50}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 55}, {"reps": 8, "weight": 55}, {"reps": 8, "weight": 70}]},
+        {"name": "Lateral Raises", "sets": [{"reps": 12, "weight": 12.5}, {"reps": 12, "weight": 12.5}, {"reps": 12, "weight": 12.5}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": "Felt good, no abs - grocery shopping. Target 55lbs chest press next!",
+      "energyLevel": null
+    },
+    {
+      "id": "w-017",
+      "date": "2025-09-08",
+      "type": "pull",
+      "dayNumber": 17,
+      "preWeight": 227.2,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}, {"reps": 14, "weight": 25, "notes": "burnout"}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 12, "weight": 80}, {"reps": 12, "weight": 100}, {"reps": 12, "weight": 100}, {"reps": 15, "weight": 80, "notes": "burnout"}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}, {"reps": 19, "weight": 90, "notes": "burnout - back/neck bothering"}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 12, "weight": 65}, {"reps": 12, "weight": 65}, {"reps": 12, "weight": 65}, {"reps": 15, "weight": 50}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 40, "notes": "MAX"}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-018",
+      "date": "2025-09-09",
+      "type": "push",
+      "dayNumber": 18,
+      "preWeight": 228.8,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 12, "weight": 45}, {"reps": 10, "weight": 50}, {"reps": 10, "weight": 50}, {"reps": 5, "weight": 55, "notes": "battle but success"}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 12, "weight": 40}, {"reps": 10, "weight": 50}, {"reps": 10, "weight": 50}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 55}, {"reps": 8, "weight": 55}, {"reps": 8, "weight": 70}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": "Back tweaked and uncomfortable. Going to CA so workouts stopping.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-c010",
+      "date": "2025-09-12",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 3.11, "duration": "27:03"},
+      "notes": "CA trip",
+      "energyLevel": null
+    },
+    {
+      "id": "w-c011",
+      "date": "2025-09-16",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.08, "duration": "17:39"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c012",
+      "date": "2025-09-18",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.79, "duration": "23:28"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-019",
+      "date": "2025-09-22",
+      "type": "pull",
+      "dayNumber": 19,
+      "preWeight": 227.4,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 12, "weight": 80}, {"reps": 12, "weight": 80}, {"reps": 12, "weight": 80}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 12, "weight": 110}, {"reps": 12, "weight": 110}, {"reps": 12, "weight": 110}, {"reps": 15, "weight": 110, "notes": "burnout"}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 12, "weight": 65}, {"reps": 12, "weight": 65}, {"reps": 12, "weight": 65}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 35, "notes": "MAX"}]},
+        {"name": "Russian Twists", "sets": [{"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}, {"reps": 20, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": "Sticking to 80lbs lat pulldown - where I hurt myself before",
+      "energyLevel": null
+    },
+    {
+      "id": "w-020",
+      "date": "2025-09-24",
+      "type": "legs",
+      "dayNumber": 20,
+      "preWeight": 225.8,
+      "exercises": [
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 135}, {"reps": 5, "weight": 185}, {"reps": 5, "weight": 185}]},
+        {"name": "Leg Press", "sets": [{"reps": 12, "weight": 170}, {"reps": 12, "weight": 210}, {"reps": 12, "weight": 210}]},
+        {"name": "Leg Curl", "sets": [{"reps": 12, "weight": 50}, {"reps": 12, "weight": 90}, {"reps": 12, "weight": 90}]},
+        {"name": "Walking Lunges", "sets": [{"reps": 10, "weight": 0}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 45}, {"reps": 15, "weight": 45}, {"reps": 15, "weight": 45}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": "Focus on slow, great form. Hip mobility issues with lunges.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-021",
+      "date": "2025-09-25",
+      "type": "push",
+      "dayNumber": 21,
+      "preWeight": 228.0,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 40}, {"reps": 10, "weight": 50}, {"reps": 10, "weight": 50}, {"reps": 5, "weight": 55}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 10, "weight": 50}, {"reps": 10, "weight": 40}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 55}, {"reps": 10, "weight": 70}, {"reps": 10, "weight": 70}]},
+        {"name": "Plank", "sets": [{"reps": 1, "weight": null, "notes": "1 min"}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 4.0 speed 7.5 incline"},
+      "notes": "Not a great workout but got in and moved. Low energy possibly from dieting.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-c015",
+      "date": "2025-09-26",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 2.5, "duration": "22:00"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-022",
+      "date": "2025-09-29",
+      "type": "pull",
+      "dayNumber": 22,
+      "preWeight": 225.2,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 90}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 65}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": 15, "weight": 40, "notes": "MAX"}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]},
+        {"name": "Plank", "sets": [{"reps": 1, "weight": null, "notes": "1 min"}, {"reps": 1, "weight": null, "notes": "1 min"}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Heavy/Low Rep. Left arm struggled more than right on curls.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-023",
+      "date": "2025-10-01",
+      "type": "legs",
+      "dayNumber": 23,
+      "preWeight": 223.2,
+      "exercises": [
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 135}, {"reps": 5, "weight": 185}, {"reps": 5, "weight": 205}]},
+        {"name": "Leg Press", "sets": [{"reps": 8, "weight": 190}, {"reps": 8, "weight": 230}, {"reps": 8, "weight": 250}, {"reps": 8, "weight": 250}]},
+        {"name": "Leg Curl", "sets": [{"reps": 8, "weight": 60}, {"reps": 8, "weight": 100}, {"reps": 8, "weight": 100}, {"reps": 8, "weight": 100}]},
+        {"name": "Walking Lunges", "sets": [{"reps": 10, "weight": 0}, {"reps": 10, "weight": 0}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.7 speed 7.5 incline"},
+      "notes": "Good workout, progressing. Tried 310 on leg press just for fun.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-024",
+      "date": "2025-10-02",
+      "type": "push",
+      "dayNumber": 24,
+      "preWeight": 224.2,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 8, "weight": 45}, {"reps": 7, "weight": 55}, {"reps": 7, "weight": 60}, {"reps": 6, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 40}, {"reps": 7, "weight": 50}, {"reps": 7, "weight": 60}, {"reps": 7, "weight": 60}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 7, "weight": 55}, {"reps": 8, "weight": 70}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Lateral Raises", "sets": [{"reps": 10, "weight": 15}, {"reps": 10, "weight": 15}, {"reps": 8, "weight": 15}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Broke through mental barriers with weight today. No abs but need to get something in this weekend.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-025",
+      "date": "2025-10-06",
+      "type": "pull",
+      "dayNumber": 25,
+      "preWeight": 225.8,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 90}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 90}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 65}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 40, "notes": "MAX"}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]},
+        {"name": "Plank", "sets": [{"reps": 1, "weight": null, "notes": "1 min push up position"}, {"reps": 1, "weight": null, "notes": "1 min"}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Battle but finished. Push up position plank felt easier than forearms.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-026",
+      "date": "2025-10-07",
+      "type": "legs",
+      "dayNumber": 26,
+      "preWeight": 223.2,
+      "exercises": [
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 135}, {"reps": 5, "weight": 185}, {"reps": 5, "weight": 205}]},
+        {"name": "Leg Press", "sets": [{"reps": 10, "weight": 190}, {"reps": 10, "weight": 230}, {"reps": 8, "weight": 250}, {"reps": 12, "weight": 250}]},
+        {"name": "Leg Curl", "sets": [{"reps": 10, "weight": 60}, {"reps": 8, "weight": 100}, {"reps": 8, "weight": 100}, {"reps": 12, "weight": 100}]},
+        {"name": "Walking Lunges", "sets": [{"reps": 10, "weight": 0}, {"reps": 10, "weight": 0}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:00"},
+      "notes": "Goal 295 for 1 on deadlift in future. Mile finisher with intervals.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-027",
+      "date": "2025-10-08",
+      "type": "push",
+      "dayNumber": 27,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 55}, {"reps": 6, "weight": 60}, {"reps": 4, "weight": 60, "notes": "failed"}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 40}, {"reps": 8, "weight": 60}, {"reps": 6, "weight": 70}, {"reps": 6, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 60}, {"reps": 8, "weight": 75}, {"reps": 6, "weight": 90}, {"reps": 6, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "First time going 3 days in a row - that's a win! Short on time.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-028",
+      "date": "2025-10-10",
+      "type": "pull",
+      "dayNumber": 28,
+      "preWeight": 222.6,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 8, "weight": 90}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}, {"reps": 6, "weight": 110}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 110}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}]},
+        {"name": "Single Dumbbell Curl", "sets": [{"reps": null, "weight": 40, "notes": "MAX"}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Shot from long week but got it in on Friday. Skipping social event to avoid alcohol.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-029",
+      "date": "2025-10-14",
+      "type": "push",
+      "dayNumber": 29,
+      "preWeight": 221.6,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 55}, {"reps": 8, "weight": 55}, {"reps": 6, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 5, "weight": 70, "notes": "failed"}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 60}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]},
+        {"name": "Plank", "sets": [{"reps": 1, "weight": null, "notes": "1 min"}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Focus on motion and reps over weight. Would like to expand chest workouts.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-030",
+      "date": "2025-10-15",
+      "type": "legs",
+      "dayNumber": 30,
+      "preWeight": 221.4,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 10, "weight": 190}, {"reps": 10, "weight": 230}, {"reps": 8, "weight": 250}, {"reps": 8, "weight": 250}]},
+        {"name": "Leg Curl", "sets": [{"reps": 10, "weight": 70}, {"reps": 10, "weight": 100}, {"reps": 10, "weight": 100}, {"reps": 12, "weight": 100}]},
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 155}, {"reps": 5, "weight": 205}, {"reps": 5, "weight": 225}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:10"},
+      "notes": "Skipped some stuff, becoming a habit. 7.1 avg pace, 177 cal.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-031",
+      "date": "2025-10-16",
+      "type": "pull",
+      "dayNumber": 31,
+      "preWeight": 221.8,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}, {"reps": 8, "weight": 30}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 90}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 110}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}]},
+        {"name": "Dumbbell Curl Finisher", "sets": [{"reps": 20, "weight": 20}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Got it in. Heavy weekend coming - away with family.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-032",
+      "date": "2025-10-20",
+      "type": "push",
+      "dayNumber": 32,
+      "preWeight": 223.0,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 55}, {"reps": 8, "weight": 55}, {"reps": 6, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 75}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]},
+        {"name": "Plank", "sets": [{"reps": 1, "weight": null, "notes": "1 min"}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Felt good after rest. Wondering if should up reps or weight. Want to hit 110 chest press.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-033",
+      "date": "2025-10-21",
+      "type": "legs",
+      "dayNumber": 33,
+      "preWeight": 221.6,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 15, "weight": 210}, {"reps": 10, "weight": 250}, {"reps": 8, "weight": 275}, {"reps": 8, "weight": 275}]},
+        {"name": "Leg Curl", "sets": [{"reps": 15, "weight": 90}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]},
+        {"name": "Walking Lunges", "sets": [{"reps": 10, "weight": 0}, {"reps": 10, "weight": 0}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}]},
+        {"name": "Sit Ups", "sets": [{"reps": 20, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.3, "duration": "11:00"},
+      "notes": "Making progress. Noticed didn't have great leg press setting - longer motion is harder. Want to add pull ups and shrugs.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-034",
+      "date": "2025-10-23",
+      "type": "pull",
+      "dayNumber": 34,
+      "preWeight": 223.0,
+      "exercises": [
+        {"name": "Bicep Curls", "sets": [{"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}, {"reps": 10, "weight": 25}]},
+        {"name": "Hammer Curls", "sets": [{"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}, {"reps": 12, "weight": 25}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 90}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}, {"reps": 8, "weight": 110}]},
+        {"name": "Seated Cable Row", "sets": [{"reps": 12, "weight": 110}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}, {"reps": 8, "weight": 130}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:30"},
+      "notes": "30 lb dumbbells were being used, had to switch things up. Movie tonight.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-035",
+      "date": "2025-10-27",
+      "type": "push",
+      "dayNumber": 35,
+      "preWeight": 222.4,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 12, "weight": 45}, {"reps": 10, "weight": 55}, {"reps": 8, "weight": 55}, {"reps": 5, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 12, "weight": 50}, {"reps": 10, "weight": 60}, {"reps": 10, "weight": 60}, {"reps": 8, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 75}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]},
+        {"name": "Plank", "sets": [{"reps": 1, "weight": null, "notes": "1 min"}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:30"},
+      "notes": "3rd set at 55 only got 8, failed earlier than wanted. Maybe do one more time then up 5 pounds.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-036",
+      "date": "2025-10-28",
+      "type": "legs",
+      "dayNumber": 36,
+      "preWeight": 220.4,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 15, "weight": 210}, {"reps": 10, "weight": 250}, {"reps": 8, "weight": 275}, {"reps": 8, "weight": 275}]},
+        {"name": "Leg Curl", "sets": [{"reps": 15, "weight": 90}, {"reps": 10, "weight": 110}, {"reps": 8, "weight": 120}, {"reps": 8, "weight": 120}]},
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 6, "weight": 155}, {"reps": 4, "weight": 205}, {"reps": 2, "weight": 245}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:15"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-037",
+      "date": "2025-10-29",
+      "type": "pull",
+      "dayNumber": 37,
+      "preWeight": 220.8,
+      "exercises": [
+        {"name": "Seated Cable Row", "sets": [{"reps": 10, "weight": 130}, {"reps": 10, "weight": 130}, {"reps": 10, "weight": 130}, {"reps": 10, "weight": 130}]},
+        {"name": "Assisted Pull-ups", "sets": [{"reps": 8, "weight": -85}, {"reps": 8, "weight": -85}, {"reps": 8, "weight": -85}]},
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Hammer Curls", "sets": [{"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}, {"reps": 10, "weight": 25}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "intervals"},
+      "notes": "Pull A. Need to find optimal order for workouts. Run finisher: 3 min run x4, 1 min walk x3.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-038",
+      "date": "2025-11-02",
+      "type": "push",
+      "dayNumber": 38,
+      "preWeight": 219.0,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 50}, {"reps": 6, "weight": 55}]},
+        {"name": "Incline Chest Press Machine", "sets": [{"reps": 10, "weight": 75}, {"reps": 8, "weight": 105}, {"reps": 8, "weight": 105}, {"reps": 8, "weight": 105}]},
+        {"name": "Shoulder Press Machine", "sets": [{"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.75, "duration": "~17:00"},
+      "notes": "Different gym today, adjusting weights. Lowest weight - under 220 threshold!",
+      "energyLevel": null
+    },
+    {
+      "id": "w-039",
+      "date": "2025-11-03",
+      "type": "pull",
+      "dayNumber": 39,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 140}, {"reps": 10, "weight": 140}, {"reps": 8, "weight": 140}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 8, "weight": 110}]}
+      ],
+      "cardio": {"type": "run", "distance": 2.0, "duration": "18:00"},
+      "notes": "Pull B (Arms + Finisher)",
+      "energyLevel": null
+    },
+    {
+      "id": "w-040",
+      "date": "2025-11-04",
+      "type": "push",
+      "dayNumber": 40,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 10, "weight": 55}, {"reps": 5, "weight": 65, "notes": "failed at 5"}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 12, "weight": 50}, {"reps": 9, "weight": 70, "notes": "failed at 9"}, {"reps": 8, "weight": 75}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 75}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 2.0, "duration": "18:00"},
+      "notes": "Proved I can move 65, which is almost 135 standard bench.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-041",
+      "date": "2025-11-05",
+      "type": "pull",
+      "dayNumber": 41,
+      "preWeight": 221.4,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 140}, {"reps": 10, "weight": 140}, {"reps": 8, "weight": 140}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "intervals"},
+      "notes": "Pull B. Vacation coming up.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-042",
+      "date": "2025-11-14",
+      "type": "push",
+      "dayNumber": 42,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 70}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "9:00"},
+      "notes": "Back from vacation - still moving 60lb dumbbells each hand.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-043",
+      "date": "2025-11-17",
+      "type": "pull",
+      "dayNumber": 43,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 25}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 140}, {"reps": 10, "weight": 140}, {"reps": 8, "weight": 140}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 75}, {"reps": 7, "weight": 90}, {"reps": 10, "weight": 75}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "intervals"},
+      "notes": "Pull B. The two lat pulldown machines are very different resistance.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-044",
+      "date": "2025-11-18",
+      "type": "legs",
+      "dayNumber": 44,
+      "preWeight": 221.8,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 10, "weight": 230}, {"reps": 8, "weight": 275}, {"reps": 8, "weight": 275}, {"reps": 8, "weight": 275}]},
+        {"name": "Leg Curl", "sets": [{"reps": 10, "weight": 75}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]},
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 155}, {"reps": 4, "weight": 205}, {"reps": 3, "weight": 245}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:15"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-045",
+      "date": "2025-11-20",
+      "type": "push",
+      "dayNumber": 45,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}, {"reps": 8, "weight": 75}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "4 min 3.9 speed 7.5 incline"},
+      "notes": "Late workout due to work running late. Last before Thanksgiving break.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-046",
+      "date": "2025-12-01",
+      "type": "pull",
+      "dayNumber": 46,
+      "preWeight": 221.8,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 8, "weight": 25}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 8, "weight": 80}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 140}, {"reps": 10, "weight": 140}, {"reps": 10, "weight": 140}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 100}, {"reps": 8, "weight": 100}, {"reps": 8, "weight": 100}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:00"},
+      "notes": "Pull B. Went quick, felt weaker without typical schedule and protein/creatine intake.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-047",
+      "date": "2025-12-02",
+      "type": "legs",
+      "dayNumber": 47,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 10, "weight": 230}, {"reps": 10, "weight": 290}, {"reps": 10, "weight": 290}, {"reps": 8, "weight": 310}]},
+        {"name": "Leg Curl", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]},
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 155}, {"reps": 3, "weight": 205}, {"reps": 1, "weight": 255}]},
+        {"name": "Calf Raises", "sets": [{"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}, {"reps": 15, "weight": 50}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:15"},
+      "notes": "Pushed it today, felt good. Only got 1 rep at 255 deadlift - consider raising reps with good form.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-048",
+      "date": "2025-12-03",
+      "type": "push",
+      "dayNumber": 48,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 6, "weight": 60}, {"reps": 6, "weight": 60}, {"reps": 6, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 6, "weight": 70}, {"reps": 6, "weight": 70}, {"reps": 6, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "5 min 3.9 speed 7.5 incline"},
+      "notes": "Poor showing - distracted, not locked in, foot injured. Still showed up.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-049",
+      "date": "2025-12-08",
+      "type": "pull",
+      "dayNumber": 49,
+      "preWeight": 220.4,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 8, "weight": 25}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 140}, {"reps": 10, "weight": 140}, {"reps": 8, "weight": 140}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:00"},
+      "notes": "Pull B. Went quick, need to get disciplined again.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-050",
+      "date": "2025-12-16",
+      "type": "pull",
+      "dayNumber": 50,
+      "preWeight": 220.8,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 130}, {"reps": 10, "weight": 130}, {"reps": 8, "weight": 130}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "7 min 3.9 speed 7.5 incline"},
+      "notes": "Pull B. Been slacking, need to snap back into it.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-051",
+      "date": "2025-12-17",
+      "type": "push",
+      "dayNumber": 51,
+      "preWeight": 221.0,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 5, "weight": 80, "notes": "failed"}, {"reps": 8, "weight": 70}, {"reps": 8, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 6, "weight": 100, "notes": "failed"}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:45"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-c013",
+      "date": "2025-12-25",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": null,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 3.5, "duration": "32:00"},
+      "notes": "Christmas run with sisters",
+      "energyLevel": null
+    },
+    {
+      "id": "w-052",
+      "date": "2025-12-30",
+      "type": "superset",
+      "dayNumber": 52,
+      "preWeight": 218.6,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 50}, {"reps": 6, "weight": 65}, {"reps": 4, "weight": 65}, {"reps": 6, "weight": 55}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 8, "weight": 65}, {"reps": 8, "weight": 65}, {"reps": 8, "weight": 65}]},
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}, {"reps": 8, "weight": 80}]},
+        {"name": "Leg Press", "sets": [{"reps": 10, "weight": 230}, {"reps": 10, "weight": 270}, {"reps": 10, "weight": 270}, {"reps": 8, "weight": 310}]},
+        {"name": "Leg Curl", "sets": [{"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}, {"reps": 10, "weight": 110}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "9:30"},
+      "notes": "Probably the hardest workout since starting in July. Empty gym, got in early, well rested. Want to be disciplined into 2026.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-053",
+      "date": "2026-01-05",
+      "type": "pull",
+      "dayNumber": 53,
+      "preWeight": 216.6,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 12, "weight": 25}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 12, "weight": 65}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 130}, {"reps": 10, "weight": 130}, {"reps": 8, "weight": 130}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 75}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "10:00"},
+      "notes": "Pull B. Finished curls, still missing that real pump.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-054",
+      "date": "2026-01-06",
+      "type": "legs",
+      "dayNumber": 54,
+      "preWeight": 216.5,
+      "exercises": [
+        {"name": "Leg Press", "sets": [{"reps": 10, "weight": 230}, {"reps": 8, "weight": 275}, {"reps": 8, "weight": 275}, {"reps": 6, "weight": 275}, {"reps": 8, "weight": 275}]},
+        {"name": "Leg Curl", "sets": [{"reps": 12, "weight": 100}, {"reps": 12, "weight": 100}, {"reps": 8, "weight": 100}]},
+        {"name": "Hex Bar Deadlift", "sets": [{"reps": 5, "weight": 155}, {"reps": 6, "weight": 205}, {"reps": 4, "weight": 205}, {"reps": 6, "weight": 205}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": null, "duration": "intervals 1 min on/off x10"},
+      "notes": "Skipped calf raises.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-055",
+      "date": "2026-01-07",
+      "type": "push",
+      "dayNumber": 55,
+      "preWeight": 215.7,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 7, "weight": 60}, {"reps": 6, "weight": 60}, {"reps": 4, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 8, "weight": 50}, {"reps": 8, "weight": 70}, {"reps": 7, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 7, "weight": 90}, {"reps": 7, "weight": 90}, {"reps": 7, "weight": 90}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "8:45"},
+      "notes": "Didn't give myself enough rest between sets - rushing.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-056",
+      "date": "2026-01-12",
+      "type": "pull",
+      "dayNumber": 56,
+      "preWeight": 216.8,
+      "exercises": [
+        {"name": "Incline Dumbbell Curl", "sets": [{"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 10, "weight": 30}, {"reps": 8, "weight": 25}]},
+        {"name": "Tricep Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 10, "weight": 80}, {"reps": 8, "weight": 65}]},
+        {"name": "Chest-Supported Row", "sets": [{"reps": 10, "weight": 130}, {"reps": 10, "weight": 130}]},
+        {"name": "Lat Pulldown", "sets": [{"reps": 10, "weight": 80}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 90}, {"reps": 10, "weight": 75}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "run", "distance": 1.0, "duration": "10:00"},
+      "notes": "Pull B. Woke up with back pain 1/13 - taking a day or two off.",
+      "energyLevel": null
+    },
+    {
+      "id": "w-c014",
+      "date": "2026-01-14",
+      "type": "cardio",
+      "dayNumber": null,
+      "preWeight": 215.6,
+      "exercises": [],
+      "cardio": {"type": "run", "distance": 3.11, "duration": "28:24"},
+      "notes": null,
+      "energyLevel": null
+    },
+    {
+      "id": "w-057",
+      "date": "2026-01-20",
+      "type": "push",
+      "dayNumber": 57,
+      "preWeight": null,
+      "exercises": [
+        {"name": "Dumbbell Bench Press", "sets": [{"reps": 10, "weight": 45}, {"reps": 10, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 8, "weight": 60}, {"reps": 7, "weight": 60}]},
+        {"name": "Overhead Press Machine", "sets": [{"reps": 10, "weight": 50}, {"reps": 10, "weight": 70}, {"reps": 8, "weight": 70}, {"reps": 8, "weight": 70}]},
+        {"name": "Chest Press Machine", "sets": [{"reps": 8, "weight": 90}, {"reps": 8, "weight": 90}]},
+        {"name": "Sit Ups", "sets": [{"reps": 15, "weight": null}, {"reps": 15, "weight": null}, {"reps": 15, "weight": null}]}
+      ],
+      "cardio": {"type": "incline", "distance": null, "duration": "7 min 4.0 speed 7.5 incline"},
+      "notes": "2 min rest between bench sets. Short on time, skipped lateral raises.",
+      "energyLevel": null
+    }
+  ],
+  "nutrition": [
+    {"id": "n-001", "date": "2025-09-22", "totalCalories": 1500, "totalProtein": 100, "steps": 8200, "foodWindowStart": "12:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee", "calories": 30, "protein": 2, "notes": "2 coffees w/ milk no sugar"}, {"name": "JustSalad wrap", "calories": 700, "protein": 45}, {"name": "PopChips", "calories": 100, "protein": 1}, {"name": "Chicken + rice", "calories": 400, "protein": 40, "notes": "0.25 lbs chicken + 1/4 cup rice"}, {"name": "Cranberry juice + creatine", "calories": 140, "protein": 0}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-002", "date": "2025-09-23", "totalCalories": 2200, "totalProtein": 130, "steps": 7500, "foodWindowStart": "12:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee", "calories": 30, "protein": 2}, {"name": "JustSalad wrap + chicken", "calories": 850, "protein": 55}, {"name": "PopChips", "calories": 100, "protein": 1}, {"name": "Chicken + rice + green beans", "calories": 700, "protein": 60, "notes": "0.75 lbs chicken"}, {"name": "Honey roasted peanuts", "calories": 250, "protein": 10}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-003", "date": "2025-09-24", "totalCalories": 1900, "totalProtein": 110, "steps": 7600, "foodWindowStart": "12:30", "foodWindowEnd": "20:30", "meals": [{"name": "Coffee", "calories": 30, "protein": 2}, {"name": "JustSalad salad", "calories": 500, "protein": 35}, {"name": "Los Tacos taco + chips", "calories": 350, "protein": 15}, {"name": "Chicken + rice + green beans + BBQ sauce", "calories": 450, "protein": 45}, {"name": "Greek yogurt + peanuts", "calories": 200, "protein": 15}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-004", "date": "2025-09-25", "totalCalories": 2100, "totalProtein": 120, "steps": 10000, "foodWindowStart": "12:20", "foodWindowEnd": "19:30", "meals": [{"name": "Coffee", "calories": 30, "protein": 2}, {"name": "Cava bowl", "calories": 705, "protein": 45, "notes": "basmati rice, harissa, grilled chicken"}, {"name": "Cava pita chips", "calories": 270, "protein": 5}, {"name": "Poppi soda", "calories": 30, "protein": 0}, {"name": "Fage yogurt", "calories": 120, "protein": 12}, {"name": "Chicken + rice + green beans + BBQ", "calories": 350, "protein": 35}], "supplements": [], "alcoholCount": 1, "alcoholNotes": "1 Guinness"},
+    {"id": "n-005", "date": "2025-09-26", "totalCalories": 2600, "totalProtein": 130, "steps": 8500, "foodWindowStart": "12:00", "foodWindowEnd": "20:30", "meals": [{"name": "Dunkin BEC + hashbrowns + coffee", "calories": 700, "protein": 30}, {"name": "Sesame sticks", "calories": 170, "protein": 3}, {"name": "Beef jerky", "calories": 80, "protein": 10}, {"name": "Banana", "calories": 100, "protein": 1}, {"name": "Ground beef tacos", "calories": 750, "protein": 50}, {"name": "AMC popcorn", "calories": 400, "protein": 5}], "supplements": [], "alcoholCount": 1, "alcoholNotes": "Modelo tall boy 24oz"},
+    {"id": "n-006", "date": "2025-09-27", "totalCalories": 2900, "totalProtein": 110, "steps": 8300, "foodWindowStart": "10:30", "foodWindowEnd": "21:00", "meals": [{"name": "French toast breakfast", "calories": 800, "protein": 35, "notes": "2 French toast, 2 eggs, 2 sausages, 2 bacon"}, {"name": "Dinner shared apps + pizza", "calories": 700, "protein": 25}, {"name": "Yogurt + snacks", "calories": 300, "protein": 15}], "supplements": [], "alcoholCount": 3, "alcoholNotes": "Blue moon, Goose IPA, Modelo"},
+    {"id": "n-007", "date": "2025-09-28", "totalCalories": 1700, "totalProtein": 110, "steps": 3000, "foodWindowStart": "12:30", "foodWindowEnd": "20:30", "meals": [{"name": "Banana", "calories": 100, "protein": 1}, {"name": "Ground beef tacos", "calories": 650, "protein": 50}, {"name": "Greek yogurt + raspberries", "calories": 150, "protein": 12}, {"name": "Chicken + sweet potatoes + Brussels", "calories": 400, "protein": 35}, {"name": "Apple + peanut butter", "calories": 200, "protein": 5}, {"name": "Cheese stick", "calories": 80, "protein": 7}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-008", "date": "2025-09-29", "totalCalories": 2100, "totalProtein": 165, "steps": 8500, "foodWindowStart": "09:20", "foodWindowEnd": "19:20", "meals": [{"name": "Banana", "calories": 100, "protein": 1}, {"name": "Coffee", "calories": 30, "protein": 2}, {"name": "Fage yogurt", "calories": 120, "protein": 12}, {"name": "Chicken + rice + sweet potato + Brussels", "calories": 530, "protein": 51}, {"name": "Kind Bars x2", "calories": 400, "protein": 14}, {"name": "Chicken dinner + sides", "calories": 655, "protein": 63}, {"name": "Jerky + cheese stick", "calories": 160, "protein": 17}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-009", "date": "2025-09-30", "totalCalories": 2500, "totalProtein": 160, "steps": 7000, "foodWindowStart": "09:00", "foodWindowEnd": "19:45", "meals": [{"name": "Banana", "calories": 100, "protein": 1}, {"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Kind Bar", "calories": 200, "protein": 7}, {"name": "Work conference lunch", "calories": 600, "protein": 40}, {"name": "Brownie + cookie + chips", "calories": 450, "protein": 5}, {"name": "Chicken + sweet potatoes + cauliflower rice", "calories": 510, "protein": 50}], "supplements": [], "alcoholCount": 2, "alcoholNotes": "2 old fashions"},
+    {"id": "n-010", "date": "2025-10-01", "totalCalories": 2450, "totalProtein": 165, "steps": 7000, "foodWindowStart": "09:00", "foodWindowEnd": "19:45", "meals": [{"name": "Fage yogurt + coffee + banana", "calories": 250, "protein": 15}, {"name": "Chicken + sweet potatoes + cauliflower rice", "calories": 510, "protein": 50}, {"name": "Kind Bar + apple juice", "calories": 340, "protein": 7}, {"name": "Italian sausages + pasta", "calories": 600, "protein": 29}, {"name": "Cheese sticks + jerky", "calories": 340, "protein": 32}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-011", "date": "2025-10-02", "totalCalories": 2700, "totalProtein": 145, "steps": 8300, "foodWindowStart": "10:00", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Bagel + fruit", "calories": 300, "protein": 10}, {"name": "JustSalad", "calories": 610, "protein": 42}, {"name": "Apple juice + cheese sticks", "calories": 300, "protein": 14}, {"name": "Italian sausages + pasta", "calories": 600, "protein": 29}, {"name": "Fairlife protein + donut + popcorn", "calories": 670, "protein": 30}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-012", "date": "2025-10-03", "totalCalories": 1800, "totalProtein": 90, "steps": 5000, "foodWindowStart": "12:00", "foodWindowEnd": "21:00", "meals": [{"name": "Dunkin BEC + hashbrowns + coffee", "calories": 700, "protein": 30}, {"name": "Greek yogurt + raspberries", "calories": 150, "protein": 12}, {"name": "Cheese stick + jerky", "calories": 160, "protein": 17}], "supplements": [], "alcoholCount": 3, "alcoholNotes": "3 Michelob Ultra"},
+    {"id": "n-013", "date": "2025-10-06", "totalCalories": 2500, "totalProtein": 140, "steps": 9000, "foodWindowStart": "11:45", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee", "calories": 30, "protein": 2}, {"name": "JustSalad + smoothie", "calories": 1060, "protein": 65}, {"name": "Cheese stick + coffee", "calories": 110, "protein": 9}, {"name": "Ground beef + chipotle leftovers", "calories": 700, "protein": 50}, {"name": "Body armor + Twix bar + candy", "calories": 400, "protein": 5}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-014", "date": "2025-10-07", "totalCalories": 2100, "totalProtein": 130, "steps": 9000, "foodWindowStart": "10:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "JustSalad + Poppi", "calories": 635, "protein": 42}, {"name": "Cheese stick + Kind Bar", "calories": 280, "protein": 14}, {"name": "Ground beef + rice + cheese + bell pepper", "calories": 755, "protein": 55}], "supplements": [], "alcoholCount": 1, "alcoholNotes": "3 oz vodka seltzer"},
+    {"id": "n-015", "date": "2025-10-08", "totalCalories": 2900, "totalProtein": 155, "steps": 10000, "foodWindowStart": "10:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Panera Pick 2", "calories": 800, "protein": 42}, {"name": "Sesame sticks", "calories": 170, "protein": 3}, {"name": "Chicken + rice + bell pepper", "calories": 500, "protein": 50}], "supplements": [], "alcoholCount": 6, "alcoholNotes": "6 Guinness pints"},
+    {"id": "n-016", "date": "2025-10-09", "totalCalories": 2150, "totalProtein": 157, "steps": 5500, "foodWindowStart": "10:00", "foodWindowEnd": "21:45", "meals": [{"name": "Coffee + Fage yogurt", "calories": 120, "protein": 12}, {"name": "Cheese sticks", "calories": 160, "protein": 14}, {"name": "Chick-fil-A Cool Wrap + strips + fries", "calories": 1020, "protein": 65}, {"name": "Chicken + mac & cheese", "calories": 500, "protein": 34}, {"name": "Protein shake", "calories": 240, "protein": 32}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-017", "date": "2025-10-10", "totalCalories": 2750, "totalProtein": 150, "steps": 6700, "foodWindowStart": "09:15", "foodWindowEnd": "21:45", "meals": [{"name": "Coffee + Fage yogurt", "calories": 140, "protein": 12}, {"name": "Chicken + mac & cheese + bell pepper", "calories": 530, "protein": 50}, {"name": "Popchips + Kind bar", "calories": 300, "protein": 8}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Burger + fries", "calories": 900, "protein": 40}], "supplements": ["creatine"], "alcoholCount": 2, "alcoholNotes": "2 shots vodka seltzer"},
+    {"id": "n-018", "date": "2025-10-11", "totalCalories": 3200, "totalProtein": 110, "steps": 8600, "foodWindowStart": "11:30", "foodWindowEnd": "21:45", "meals": [{"name": "Sesame sticks", "calories": 250, "protein": 5}, {"name": "Appetizers + chips", "calories": 400, "protein": 15}, {"name": "Hibachi filet + rice + veggies", "calories": 1000, "protein": 60}], "supplements": [], "alcoholCount": 6, "alcoholNotes": "Guinness and High Noon"},
+    {"id": "n-019", "date": "2025-10-12", "totalCalories": 2150, "totalProtein": 100, "steps": 3000, "foodWindowStart": "11:00", "foodWindowEnd": "21:00", "meals": [{"name": "Diner breakfast burrito", "calories": 850, "protein": 38}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Chicken + mac & cheese + bell peppers", "calories": 560, "protein": 30}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-020", "date": "2025-10-13", "totalCalories": 2250, "totalProtein": 150, "steps": 5500, "foodWindowStart": "13:45", "foodWindowEnd": "21:00", "meals": [{"name": "Chicken + mac & cheese", "calories": 560, "protein": 30}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Ground beef + cheese + rice + green beans + sweet potato", "calories": 945, "protein": 50}, {"name": "Jerky + cheese sticks", "calories": 240, "protein": 24}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-021", "date": "2025-10-14", "totalCalories": 2265, "totalProtein": 175, "steps": 6500, "foodWindowStart": "09:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + banana + Fage yogurt", "calories": 250, "protein": 15}, {"name": "Ground beef meal prep", "calories": 945, "protein": 50}, {"name": "Coffee + Popchips", "calories": 130, "protein": 3}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Chicken + butter chicken + rice", "calories": 680, "protein": 76}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-022", "date": "2025-10-15", "totalCalories": 2200, "totalProtein": 180, "steps": 9500, "foodWindowStart": "09:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Chicken + rice + green beans + sweet potato", "calories": 530, "protein": 50}, {"name": "Popchips + Kind Bar", "calories": 300, "protein": 8}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Chicken and broccoli + rice", "calories": 820, "protein": 70}, {"name": "Dark chocolates", "calories": 140, "protein": 4}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-023", "date": "2025-10-16", "totalCalories": 2550, "totalProtein": 155, "steps": 9000, "foodWindowStart": "09:00", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "JustSalad", "calories": 610, "protein": 42}, {"name": "Popchips", "calories": 100, "protein": 1}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Chicken + rice + green beans + sweet potato", "calories": 580, "protein": 52}, {"name": "Beef stew + cookies", "calories": 500, "protein": 20}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-024", "date": "2025-10-20", "totalCalories": 1950, "totalProtein": 140, "steps": 6800, "foodWindowStart": "10:30", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Cheese stick", "calories": 80, "protein": 7}, {"name": "JustSalad wrap", "calories": 730, "protein": 58}, {"name": "Popchips + cheese stick", "calories": 180, "protein": 8}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Pasta + sausage", "calories": 600, "protein": 23}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-025", "date": "2025-10-21", "totalCalories": 2000, "totalProtein": 150, "steps": 10000, "foodWindowStart": "09:45", "foodWindowEnd": "21:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Chick-fil-A cool wrap + nuggets + fry", "calories": 530, "protein": 61}, {"name": "Coffee + cheese sticks", "calories": 190, "protein": 16}, {"name": "Pasta + sausage", "calories": 800, "protein": 30}, {"name": "Chocolate strawberries", "calories": 150, "protein": 3}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-026", "date": "2025-10-22", "totalCalories": 2300, "totalProtein": 115, "steps": 11000, "foodWindowStart": "09:45", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "BBQ chicken sandwich + chips + cookies", "calories": 850, "protein": 35}, {"name": "Coffee + brownie + cookie", "calories": 430, "protein": 6}, {"name": "Ground beef + cheese + rice", "calories": 780, "protein": 50}, {"name": "Cheese stick", "calories": 80, "protein": 7}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-027", "date": "2025-10-27", "totalCalories": 2200, "totalProtein": 140, "steps": 9500, "foodWindowStart": "10:00", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "JustSalad", "calories": 610, "protein": 42}, {"name": "Pretzel chips + cheese sticks", "calories": 410, "protein": 21}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "BBQ chicken pizza slice", "calories": 350, "protein": 20}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-028", "date": "2025-10-28", "totalCalories": 2100, "totalProtein": 150, "steps": 9000, "foodWindowStart": "10:00", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Cava bowl", "calories": 700, "protein": 45}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Chicken + rice", "calories": 550, "protein": 55}], "supplements": [], "alcoholCount": 0},
+    {"id": "n-029", "date": "2025-10-29", "totalCalories": 2100, "totalProtein": 170, "steps": 10000, "foodWindowStart": "10:00", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt + cheese sticks", "calories": 310, "protein": 28}, {"name": "Chick-fil-A fry + grilled nuggets", "calories": 645, "protein": 43}, {"name": "Kashi cereal + milk", "calories": 300, "protein": 13}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Chicken + rice + veggies", "calories": 600, "protein": 55}], "supplements": ["creatine"], "alcoholCount": 0},
+    {"id": "n-030", "date": "2025-10-30", "totalCalories": 1800, "totalProtein": 100, "steps": 7000, "foodWindowStart": "09:30", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Work lunch pizza", "calories": 800, "protein": 35}, {"name": "Popchips", "calories": 100, "protein": 1}], "supplements": [], "alcoholCount": 0, "notes": "Incomplete tracking"},
+    {"id": "n-031", "date": "2025-11-03", "totalCalories": 2000, "totalProtein": 120, "steps": 7500, "foodWindowStart": "09:00", "foodWindowEnd": "20:00", "meals": [{"name": "Coffee + Fage yogurt", "calories": 150, "protein": 14}, {"name": "Starbursts", "calories": 100, "protein": 0}, {"name": "JustSalad", "calories": 500, "protein": 35}, {"name": "Cheese sticks", "calories": 160, "protein": 14}, {"name": "Protein shake", "calories": 240, "protein": 32}, {"name": "Wingstop wings", "calories": 700, "protein": 50}], "supplements": ["creatine"], "alcoholCount": 0}
+  ],
+  "metrics": [
+    {"id": "m-001", "date": "2025-07-01", "weight": 227.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-002", "date": "2025-07-07", "weight": 229.6, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-003", "date": "2025-07-09", "weight": 228.4, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-004", "date": "2025-07-11", "weight": 229.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-005", "date": "2025-07-14", "weight": 229.6, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-006", "date": "2025-07-16", "weight": 229.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-007", "date": "2025-07-21", "weight": 229.4, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-008", "date": "2025-07-23", "weight": 232.2, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-009", "date": "2025-07-28", "weight": 227.8, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-010", "date": "2025-07-30", "weight": 231.4, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-011", "date": "2025-08-05", "weight": 229.2, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-012", "date": "2025-08-06", "weight": 230.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-013", "date": "2025-08-07", "weight": 231.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-014", "date": "2025-08-11", "weight": 229.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-015", "date": "2025-08-13", "weight": 228.6, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-016", "date": "2025-09-02", "weight": 228.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-017", "date": "2025-09-08", "weight": 227.2, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-018", "date": "2025-09-09", "weight": 228.8, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-019", "date": "2025-09-22", "weight": 227.4, "sleepHours": null, "sleepQuality": null, "steps": 8200, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-020", "date": "2025-09-24", "weight": 225.8, "sleepHours": null, "sleepQuality": null, "steps": 7600, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-021", "date": "2025-09-25", "weight": 228.0, "sleepHours": null, "sleepQuality": null, "steps": 10000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-022", "date": "2025-09-29", "weight": 225.2, "sleepHours": null, "sleepQuality": null, "steps": 8500, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-023", "date": "2025-10-01", "weight": 223.2, "sleepHours": null, "sleepQuality": null, "steps": 7000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-024", "date": "2025-10-02", "weight": 224.2, "sleepHours": null, "sleepQuality": null, "steps": 8300, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-025", "date": "2025-10-06", "weight": 225.8, "sleepHours": null, "sleepQuality": null, "steps": 9000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-026", "date": "2025-10-07", "weight": 223.2, "sleepHours": null, "sleepQuality": null, "steps": 9000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-027", "date": "2025-10-08", "weight": null, "sleepHours": null, "sleepQuality": null, "steps": 10000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-028", "date": "2025-10-10", "weight": 222.6, "sleepHours": null, "sleepQuality": null, "steps": 6700, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-029", "date": "2025-10-14", "weight": 221.6, "sleepHours": null, "sleepQuality": null, "steps": 6500, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-030", "date": "2025-10-15", "weight": 221.4, "sleepHours": null, "sleepQuality": null, "steps": 9500, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-031", "date": "2025-10-16", "weight": 221.8, "sleepHours": null, "sleepQuality": null, "steps": 9000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-032", "date": "2025-10-20", "weight": 223.0, "sleepHours": null, "sleepQuality": null, "steps": 6800, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-033", "date": "2025-10-21", "weight": 221.6, "sleepHours": null, "sleepQuality": null, "steps": 10000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-034", "date": "2025-10-23", "weight": 223.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-035", "date": "2025-10-27", "weight": 222.4, "sleepHours": null, "sleepQuality": null, "steps": 9500, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-036", "date": "2025-10-28", "weight": 220.4, "sleepHours": null, "sleepQuality": null, "steps": 9000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-037", "date": "2025-10-29", "weight": 220.8, "sleepHours": null, "sleepQuality": null, "steps": 10000, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": true},
+    {"id": "m-038", "date": "2025-11-02", "weight": 219.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-039", "date": "2025-11-05", "weight": 221.4, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-040", "date": "2025-11-18", "weight": 221.8, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-041", "date": "2025-12-01", "weight": 221.8, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-042", "date": "2025-12-08", "weight": 220.4, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-043", "date": "2025-12-16", "weight": 220.8, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-044", "date": "2025-12-17", "weight": 221.0, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-045", "date": "2025-12-30", "weight": 218.6, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-046", "date": "2026-01-05", "weight": 216.6, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-047", "date": "2026-01-06", "weight": 216.5, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-048", "date": "2026-01-07", "weight": 215.7, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-049", "date": "2026-01-12", "weight": 216.8, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false},
+    {"id": "m-050", "date": "2026-01-14", "weight": 215.6, "sleepHours": null, "sleepQuality": null, "steps": null, "energyLevel": null, "mood": null, "workoutCompleted": true, "nutritionCompleted": false}
+  ],
+  "goals": {
+    "weightGoal": 210,
+    "dailyCalories": 2300,
+    "dailyProtein": 190,
+    "weeklyWorkouts": 4,
+    "dailySteps": 8000,
+    "sleepHours": 7
+  },
+  "settings": {
+    "darkMode": true,
+    "workoutSplit": ["push", "pull", "legs"],
+    "defaultFastingWindow": {"start": "12:00", "end": "20:00"}
+  }
+}

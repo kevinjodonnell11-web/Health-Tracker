@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts - Health Tracker</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .workout-entry {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .workout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .workout-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .workout-day-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .workout-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .workout-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .workout-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .exercises-table {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .exercises-table th {
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .exercises-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .exercise-name-cell {
+            font-weight: 500;
+        }
+
+        .sets-display {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .set-chip {
+            background-color: var(--bg-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .cardio-info {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cardio-icon {
+            color: var(--color-success);
+        }
+
+        .workout-notes {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .workout-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .exercise-block {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .exercise-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .exercise-header .form-select {
+            flex: 1;
+        }
+
+        .sets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .set-row {
+            display: grid;
+            grid-template-columns: 30px repeat(3, 1fr);
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .set-number {
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+        }
+
+        /* Week Navigator */
+        .week-navigator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .week-nav-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .week-nav-btn:hover {
+            background-color: var(--bg-accent);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .week-display {
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .week-display .week-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .week-display .week-range {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .week-workouts-mini {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        .week-workout-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+        }
+
+        .week-workout-dot.active {
+            background-color: var(--color-success);
+        }
+
+        .workout-entry {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .workout-entry:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+
+        .view-mode-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-mode-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: none;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-mode-btn.active {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <h1>HEALTH TRACKER</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="../index.html" class="nav-link">Dashboard</a>
+            <a href="workouts.html" class="nav-link active">Workouts</a>
+            <a href="nutrition.html" class="nav-link">Nutrition</a>
+            <a href="analytics.html" class="nav-link">Analytics</a>
+        </nav>
+        <div class="header-right">
+            <button id="newWorkoutBtn" class="btn btn-primary">+ New Workout</button>
+            <a href="settings.html" class="settings-btn" title="Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div class="page-header">
+            <h2 class="page-title">Workout Log</h2>
+        </div>
+
+        <div class="stats-grid" id="workoutStats">
+            <!-- Stats will be populated by JS -->
+        </div>
+
+        <!-- Week Navigator -->
+        <div class="week-navigator" id="weekNavigator">
+            <button class="week-nav-btn" id="prevWeekBtn" title="Previous Week">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="week-display">
+                <div class="week-label" id="weekLabel">This Week</div>
+                <div class="week-range" id="weekRange">Jan 13 - Jan 19</div>
+                <div class="week-workouts-mini" id="weekDots"></div>
+            </div>
+            <button class="week-nav-btn" id="nextWeekBtn" title="Next Week">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+            <button class="btn btn-secondary" id="todayBtn" style="margin-left: 1rem;">Today</button>
+        </div>
+
+        <div class="filter-bar">
+            <div class="view-mode-toggle">
+                <button class="view-mode-btn active" data-mode="week">Week View</button>
+                <button class="view-mode-btn" data-mode="all">All Workouts</button>
+            </div>
+            <select class="form-select" id="typeFilter" style="width: 150px;">
+                <option value="">All Types</option>
+                <option value="push">Push</option>
+                <option value="pull">Pull</option>
+                <option value="legs">Legs</option>
+                <option value="upper">Upper</option>
+                <option value="cardio">Cardio</option>
+                <option value="superset">Superset</option>
+            </select>
+            <input type="month" class="form-input" id="monthFilter" style="width: 180px; display: none;">
+        </div>
+
+        <div class="workout-list" id="workoutList">
+            <!-- Workouts will be populated by JS -->
+        </div>
+    </main>
+
+    <!-- Workout Modal -->
+    <div class="modal" id="workoutModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 id="workoutModalTitle">Log Workout</h2>
+                <button class="modal-close" id="workoutModalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="workoutModalBody">
+                <!-- Form will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/metrics.js"></script>
+    <script src="../js/workouts.js"></script>
+    <script src="../js/dayview.js"></script>
+    <script>
+        // State
+        let currentWeekOffset = 0; // 0 = current week, -1 = last week, etc.
+        let viewMode = 'week'; // 'week' or 'all'
+
+        // Page initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStats();
+            updateWeekDisplay();
+            renderWorkoutList();
+            setupEventListeners();
+
+            // Set default month filter to current month
+            const monthFilter = document.getElementById('monthFilter');
+            monthFilter.value = new Date().toISOString().slice(0, 7);
+        });
+
+        function getWeekBounds(offset = 0) {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1) + (offset * 7));
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+
+            return {
+                start: monday.toISOString().split('T')[0],
+                end: sunday.toISOString().split('T')[0],
+                monday,
+                sunday
+            };
+        }
+
+        function updateWeekDisplay() {
+            const bounds = getWeekBounds(currentWeekOffset);
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            // Week label
+            let label = 'This Week';
+            if (currentWeekOffset === -1) label = 'Last Week';
+            else if (currentWeekOffset < -1) label = `${Math.abs(currentWeekOffset)} Weeks Ago`;
+            else if (currentWeekOffset === 1) label = 'Next Week';
+            else if (currentWeekOffset > 1) label = `In ${currentWeekOffset} Weeks`;
+
+            document.getElementById('weekLabel').textContent = label;
+
+            // Date range
+            const startStr = bounds.monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const endStr = bounds.sunday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            document.getElementById('weekRange').textContent = `${startStr} - ${endStr}`;
+
+            // Week dots showing which days have workouts
+            const workouts = Storage.workouts.getByDateRange(bounds.start, bounds.end);
+            const workoutDates = new Set(workouts.map(w => w.date));
+
+            let dotsHtml = '';
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(bounds.monday);
+                date.setDate(bounds.monday.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                const hasWorkout = workoutDates.has(dateStr);
+                const isToday = dateStr === todayStr;
+                dotsHtml += `<div class="week-workout-dot ${hasWorkout ? 'active' : ''}"
+                                  title="${date.toLocaleDateString('en-US', { weekday: 'short' })}${isToday ? ' (Today)' : ''}"
+                                  style="${isToday ? 'border: 2px solid var(--color-primary);' : ''}"></div>`;
+            }
+            document.getElementById('weekDots').innerHTML = dotsHtml;
+
+            // Disable next week button if already at current or future week
+            document.getElementById('nextWeekBtn').disabled = currentWeekOffset >= 0;
+            document.getElementById('nextWeekBtn').style.opacity = currentWeekOffset >= 0 ? '0.5' : '1';
+        }
+
+        function setupEventListeners() {
+            // New workout button
+            document.getElementById('newWorkoutBtn').addEventListener('click', openWorkoutModal);
+
+            // Modal close
+            document.getElementById('workoutModalClose').addEventListener('click', closeModal);
+            document.getElementById('workoutModal').addEventListener('click', (e) => {
+                if (e.target.id === 'workoutModal') closeModal();
+            });
+
+            // Week navigation
+            document.getElementById('prevWeekBtn').addEventListener('click', () => {
+                currentWeekOffset--;
+                updateWeekDisplay();
+                renderWorkoutList();
+            });
+
+            document.getElementById('nextWeekBtn').addEventListener('click', () => {
+                if (currentWeekOffset < 0) {
+                    currentWeekOffset++;
+                    updateWeekDisplay();
+                    renderWorkoutList();
+                }
+            });
+
+            document.getElementById('todayBtn').addEventListener('click', () => {
+                currentWeekOffset = 0;
+                updateWeekDisplay();
+                renderWorkoutList();
+            });
+
+            // View mode toggle
+            document.querySelectorAll('.view-mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    viewMode = btn.dataset.mode;
+
+                    // Show/hide appropriate controls
+                    document.getElementById('weekNavigator').style.display = viewMode === 'week' ? 'flex' : 'none';
+                    document.getElementById('monthFilter').style.display = viewMode === 'all' ? 'block' : 'none';
+
+                    renderWorkoutList();
+                });
+            });
+
+            // Filters
+            document.getElementById('typeFilter').addEventListener('change', renderWorkoutList);
+            document.getElementById('monthFilter').addEventListener('change', renderWorkoutList);
+        }
+
+        function renderStats() {
+            const stats = Workouts.getStats();
+            const streak = Workouts.getStreakInfo();
+
+            document.getElementById('workoutStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalWorkouts}</div>
+                    <div class="stat-label">Total Workouts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.last30Days}</div>
+                    <div class="stat-label">Last 30 Days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${streak.streak}</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.averagePerWeek}</div>
+                    <div class="stat-label">Avg/Week (30d)</div>
+                </div>
+            `;
+        }
+
+        function renderWorkoutList() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            const monthFilter = document.getElementById('monthFilter').value;
+
+            let workouts;
+
+            if (viewMode === 'week') {
+                const bounds = getWeekBounds(currentWeekOffset);
+                workouts = Storage.workouts.getByDateRange(bounds.start, bounds.end)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else {
+                workouts = Storage.workouts.getAll()
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (monthFilter) {
+                    workouts = workouts.filter(w => w.date.startsWith(monthFilter));
+                }
+            }
+
+            // Apply type filter
+            if (typeFilter) {
+                workouts = workouts.filter(w => w.type === typeFilter);
+            }
+
+            const container = document.getElementById('workoutList');
+
+            if (workouts.length === 0) {
+                const bounds = getWeekBounds(currentWeekOffset);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No workouts ${viewMode === 'week' ? 'this week' : 'found'}</h3>
+                        <p>${viewMode === 'week'
+                            ? 'Use the arrows to browse other weeks or click "+ New Workout" to log one!'
+                            : 'Click "+ New Workout" to log your first workout!'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = workouts.map(workout => `
+                <div class="workout-entry" onclick="DayView.open('${workout.date}')">
+                    <div class="workout-header">
+                        <div class="workout-title">
+                            <span class="workout-day-number">#${workout.dayNumber || '?'}</span>
+                            <div class="workout-info">
+                                <h3>
+                                    <span class="badge badge-${workout.type}">${workout.type}</span>
+                                </h3>
+                                <div class="workout-date">${Storage.formatDate(workout.date)}</div>
+                            </div>
+                        </div>
+                        <div class="workout-meta">
+                            ${workout.preWeight ? `<span>Weight: ${workout.preWeight} lbs</span>` : ''}
+                            ${workout.energyLevel ? `<span>Energy: ${workout.energyLevel}/10</span>` : ''}
+                        </div>
+                    </div>
+
+                    ${workout.exercises.length > 0 ? `
+                        <table class="exercises-table">
+                            <thead>
+                                <tr>
+                                    <th>Exercise</th>
+                                    <th>Sets</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${workout.exercises.map(ex => `
+                                    <tr>
+                                        <td class="exercise-name-cell">${ex.name}</td>
+                                        <td>
+                                            <div class="sets-display">
+                                                ${ex.sets.map((set, i) => `
+                                                    <span class="set-chip">
+                                                        ${set.reps}${set.weight ? ` x ${set.weight}` : ''}
+                                                    </span>
+                                                `).join('')}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : ''}
+
+                    ${workout.cardio ? `
+                        <div class="cardio-info">
+                            <span class="cardio-icon">🏃</span>
+                            <span>${workout.cardio.type}</span>
+                            ${workout.cardio.distance ? `<span>${workout.cardio.distance} mi</span>` : ''}
+                            ${workout.cardio.duration ? `<span>${workout.cardio.duration}</span>` : ''}
+                        </div>
+                    ` : ''}
+
+                    ${workout.notes ? `
+                        <div class="workout-notes">"${workout.notes}"</div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openWorkoutModal() {
+            const modal = document.getElementById('workoutModal');
+            const modalBody = document.getElementById('workoutModalBody');
+
+            modalBody.innerHTML = Workouts.renderWorkoutForm();
+            modal.classList.add('active');
+
+            // Add first exercise
+            addExercise();
+
+            // Setup form events
+            setupFormEvents();
+        }
+
+        function closeModal() {
+            document.getElementById('workoutModal').classList.remove('active');
+        }
+
+        let exerciseCount = 0;
+
+        function setupFormEvents() {
+            // Add exercise button
+            document.getElementById('addExerciseBtn').addEventListener('click', addExercise);
+
+            // Workout type change - update exercise suggestions
+            document.getElementById('workoutType').addEventListener('change', (e) => {
+                // Update exercise dropdowns when type changes
+                const workoutType = e.target.value;
+                document.querySelectorAll('.exercise-name').forEach(select => {
+                    const currentValue = select.value;
+                    const exercises = Workouts.COMMON_EXERCISES[workoutType] || [];
+                    select.innerHTML = `
+                        <option value="">Select or type exercise...</option>
+                        ${exercises.map(ex => `<option value="${ex}">${ex}</option>`).join('')}
+                    `;
+                    select.value = currentValue;
+                });
+            });
+
+            // Form submission
+            document.getElementById('workoutForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const workout = Workouts.handleWorkoutSubmit(formData);
+
+                if (workout) {
+                    closeModal();
+                    renderStats();
+                    renderWorkoutList();
+                    exerciseCount = 0;
+                }
+            });
+        }
+
+        function addExercise() {
+            const workoutType = document.getElementById('workoutType').value;
+            const container = document.getElementById('exercisesList');
+
+            const exerciseHtml = Workouts.renderExerciseBlock(exerciseCount, workoutType);
+            container.insertAdjacentHTML('beforeend', exerciseHtml);
+
+            // Add event listeners for the new exercise block
+            const block = container.querySelector(`[data-index="${exerciseCount}"]`);
+
+            block.querySelector('.remove-exercise').addEventListener('click', (e) => {
+                block.remove();
+            });
+
+            block.querySelector('.add-set-btn').addEventListener('click', (e) => {
+                const exerciseIndex = e.target.dataset.exercise;
+                const setsContainer = document.getElementById(`sets_${exerciseIndex}`);
+                const setCount = setsContainer.querySelectorAll('.set-row').length;
+                setsContainer.insertAdjacentHTML('beforeend', Workouts.renderSetRow(exerciseIndex, setCount));
+            });
+
+            exerciseCount++;
+        }
+    </script>
+</body>
+</html>
