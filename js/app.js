@@ -472,6 +472,20 @@ const App = {
                     setsContainer.insertAdjacentHTML('beforeend', Workouts.renderSetRow(exerciseIndex, setCount, reps, weight));
                 }
             }
+            // Remove set button
+            const removeSetBtn = e.target.closest('.remove-set-btn');
+            if (removeSetBtn) {
+                const setRow = removeSetBtn.closest('.set-row');
+                const setsContainer = setRow.parentElement;
+                // Only remove if more than 1 set remains
+                if (setsContainer.querySelectorAll('.set-row').length > 1) {
+                    setRow.remove();
+                    // Renumber remaining sets
+                    setsContainer.querySelectorAll('.set-row').forEach((row, i) => {
+                        row.querySelector('.set-number').textContent = i + 1;
+                    });
+                }
+            }
         });
 
         // Handle exercise select dropdown and custom input

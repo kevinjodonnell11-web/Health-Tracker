@@ -359,6 +359,7 @@ const Workouts = {
                 <input type="number" class="form-input set-weight" name="exercise_${exerciseIndex}_set_${setIndex}_weight"
                        placeholder="Wt" step="2.5" value="${prefillWeight}" inputmode="decimal">
                 <button type="button" class="btn btn-sm copy-set-btn" title="Copy to next set" data-exercise="${exerciseIndex}" data-set="${setIndex}">⬇</button>
+                <button type="button" class="btn btn-sm remove-set-btn" title="Remove set" data-exercise="${exerciseIndex}" data-set="${setIndex}">✕</button>
             </div>
         `;
     },
