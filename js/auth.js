@@ -15,11 +15,8 @@ const Auth = {
             this.currentUser = user;
 
             if (user) {
-                console.log('User signed in:', user.email);
-
                 // If switching users, clear old data first
                 if (previousUser && previousUser.uid !== user.uid) {
-                    console.log('User switched, clearing old data');
                     CloudStorage.clearAllLocalData();
                 }
 
@@ -34,7 +31,6 @@ const Auth = {
                 this.updateUI(true);
 
             } else {
-                console.log('User signed out');
                 this.isAdmin = false;
                 // Clear all local data on sign out
                 CloudStorage.clearAllLocalData();
@@ -75,9 +71,7 @@ const Auth = {
 
                 this.isAdmin = isFirstUser;
 
-                if (isFirstUser) {
-                    console.log('First user - granted admin privileges');
-                }
+                // First user automatically granted admin privileges
             }
         } catch (error) {
             console.error('Error checking admin status:', error);
@@ -88,7 +82,6 @@ const Auth = {
     async signInWithGoogle() {
         try {
             const result = await firebaseAuth.signInWithPopup(googleProvider);
-            console.log('Signed in successfully:', result.user.email);
             return result.user;
         } catch (error) {
             console.error('Sign in error:', error);
@@ -107,7 +100,6 @@ const Auth = {
     async signOut() {
         try {
             await firebaseAuth.signOut();
-            console.log('Signed out successfully');
             // Clear any cached cloud data
             CloudStorage.clearCache();
         } catch (error) {

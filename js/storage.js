@@ -1,5 +1,16 @@
 // LocalStorage Abstraction Layer
 
+// HTML escape function to prevent XSS
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+}
+
+// Make escape function globally available
+window.escapeHtml = escapeHtml;
+
 const Storage = {
     KEYS: {
         WORKOUTS: 'health_tracker_workouts',

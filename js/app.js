@@ -7,7 +7,6 @@
     localStorage.removeItem('health_tracker_metrics');
     localStorage.removeItem('health_tracker_goals');
     localStorage.removeItem('health_tracker_settings');
-    console.log('localStorage cleared on page load');
 })();
 
 const App = {

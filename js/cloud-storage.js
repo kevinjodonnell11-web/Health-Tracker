@@ -40,10 +40,9 @@ const CloudStorage = {
                     localStorage.setItem('health_tracker_settings', JSON.stringify(cloudData.settings));
                 }
 
-                console.log('Data loaded from cloud for user:', userId);
+                // Data loaded from cloud
             } else {
                 // No cloud data for this user - they start fresh (empty)
-                console.log('No cloud data found for user - starting fresh');
             }
 
             this.lastSync = new Date();
@@ -83,7 +82,7 @@ const CloudStorage = {
 
             this.lastSync = new Date();
             this.updateSyncStatus('Synced');
-            console.log('Data synced to cloud');
+            // Data synced to cloud
         } catch (error) {
             console.error('Sync to cloud failed:', error);
             this.updateSyncStatus('Sync failed');
@@ -164,7 +163,7 @@ const CloudStorage = {
         localStorage.removeItem('health_tracker_goals');
         localStorage.removeItem('health_tracker_settings');
         this.lastSync = null;
-        console.log('All local data cleared');
+        // All local data cleared
     },
 
     // Update sync status indicator
@@ -183,14 +182,12 @@ const CloudStorage = {
 
         // Only for admin users
         if (!Auth.isAdmin) {
-            console.log('Not admin - no historical data to load');
             return;
         }
 
         // Check if already has data in cloud
         const userDataDoc = await firebaseDb.collection('userData').doc(userId).get();
         if (userDataDoc.exists && userDataDoc.data().workouts && userDataDoc.data().workouts.length > 0) {
-            console.log('Admin already has cloud data');
             return;
         }
 
@@ -200,7 +197,7 @@ const CloudStorage = {
             const response = await fetch(basePath + 'data/historical-import.json');
             if (response.ok) {
                 const data = await response.json();
-                console.log('Loading historical data for admin...');
+                // Loading historical data for admin
 
                 // Save to localStorage
                 if (data.workouts) localStorage.setItem('health_tracker_workouts', JSON.stringify(data.workouts));
@@ -211,13 +208,13 @@ const CloudStorage = {
 
                 // Upload to cloud
                 await this.syncToCloud();
-                console.log('Historical data loaded and synced for admin');
+                // Historical data loaded and synced
 
                 // Notify app to re-render
                 window.dispatchEvent(new CustomEvent('cloudDataLoaded'));
             }
         } catch (e) {
-            console.log('Could not load historical data:', e.message);
+            // Could not load historical data
         }
     }
 };
@@ -225,12 +222,7 @@ const CloudStorage = {
 // Hook into Storage module to enable cloud sync
 document.addEventListener('DOMContentLoaded', () => {
     // Listen for auth changes to trigger sync
-    window.addEventListener('authStateChanged', async (e) => {
-        if (e.detail.user) {
-            // User signed in - migrate and sync
-            await CloudStorage.migrateLocalData();
-        }
-    });
+    // Note: syncFromCloud is already called in auth.js onAuthStateChanged
 });
 
 // Make available globally

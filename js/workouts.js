@@ -440,7 +440,7 @@ const Workouts = {
             if (name && !allDefaults.includes(name) && !customExercises.includes(name)) {
                 customExercises.push(name);
                 hasNew = true;
-                console.log('Saved custom exercise:', name);
+                // Saved custom exercise
             }
         });
 

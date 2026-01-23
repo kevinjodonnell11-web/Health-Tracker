@@ -88,6 +88,9 @@ const Analytics = {
         const highSleepEnergy = highSleep.reduce((sum, w) => sum + w.energy, 0) / highSleep.length;
         const lowSleepEnergy = lowSleep.reduce((sum, w) => sum + w.energy, 0) / lowSleep.length;
 
+        // Avoid division by zero
+        if (lowSleepEnergy === 0) return null;
+
         const diff = ((highSleepEnergy - lowSleepEnergy) / lowSleepEnergy * 100).toFixed(0);
 
         if (Math.abs(diff) > 5) {
@@ -246,6 +249,9 @@ const Analytics = {
 
         const alcoholEnergy = withAlcohol.reduce((sum, w) => sum + w.energy, 0) / withAlcohol.length;
         const soberEnergy = withoutAlcohol.reduce((sum, w) => sum + w.energy, 0) / withoutAlcohol.length;
+
+        // Avoid division by zero
+        if (alcoholEnergy === 0) return null;
 
         const diff = ((soberEnergy - alcoholEnergy) / alcoholEnergy * 100).toFixed(0);
 
