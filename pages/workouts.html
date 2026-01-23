@@ -202,9 +202,27 @@
 
         .set-row {
             display: grid;
-            grid-template-columns: 30px repeat(3, 1fr);
+            grid-template-columns: 30px 1fr 1fr auto auto;
             gap: 0.5rem;
             align-items: center;
+        }
+
+        .set-row .copy-set-btn,
+        .set-row .remove-set-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            min-width: 32px;
+        }
+
+        .set-row .remove-set-btn {
+            background: transparent;
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .set-row .remove-set-btn:hover {
+            background: var(--color-danger);
+            color: white;
         }
 
         .set-number {
