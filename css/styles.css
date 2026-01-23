@@ -1163,6 +1163,16 @@ body {
     padding: 0.5rem 0.75rem;
 }
 
+.exercise-header .exercise-select {
+    flex: 1;
+    min-width: 0;
+}
+
+.exercise-header .exercise-custom {
+    flex: 1;
+    min-width: 0;
+}
+
 .sets-list {
     margin-bottom: 0.5rem;
 }

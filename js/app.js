@@ -434,8 +434,10 @@ const App = {
 
         document.getElementById('addExerciseBtn').addEventListener('click', addExercise);
 
-        // Event delegation for dynamic elements (add set, copy set)
-        document.getElementById('exercisesList').addEventListener('click', (e) => {
+        // Event delegation for dynamic elements (add set, copy set, exercise select)
+        const exercisesList = document.getElementById('exercisesList');
+
+        exercisesList.addEventListener('click', (e) => {
             // Add set button
             const addSetBtn = e.target.closest('.add-set-btn');
             if (addSetBtn) {
@@ -472,19 +474,66 @@ const App = {
             }
         });
 
+        // Handle exercise select dropdown and custom input
+        exercisesList.addEventListener('change', (e) => {
+            // Exercise dropdown changed
+            if (e.target.classList.contains('exercise-select')) {
+                const index = e.target.dataset.index;
+                const block = e.target.closest('.exercise-block');
+                const customInput = block.querySelector('.exercise-custom');
+                const hiddenInput = block.querySelector('.exercise-name');
+
+                if (e.target.value === '__custom__') {
+                    // Show custom input
+                    customInput.style.display = 'block';
+                    customInput.focus();
+                    hiddenInput.value = '';
+                } else {
+                    // Hide custom input, use selected value
+                    customInput.style.display = 'none';
+                    customInput.value = '';
+                    hiddenInput.value = e.target.value;
+                }
+            }
+            // Custom exercise input changed
+            if (e.target.classList.contains('exercise-custom')) {
+                const block = e.target.closest('.exercise-block');
+                const hiddenInput = block.querySelector('.exercise-name');
+                hiddenInput.value = e.target.value;
+            }
+        });
+
+        // Also handle input event for custom exercise (for real-time updates)
+        exercisesList.addEventListener('input', (e) => {
+            if (e.target.classList.contains('exercise-custom')) {
+                const block = e.target.closest('.exercise-block');
+                const hiddenInput = block.querySelector('.exercise-name');
+                hiddenInput.value = e.target.value;
+            }
+        });
+
         document.getElementById('workoutType').addEventListener('change', (e) => {
             const workoutType = e.target.value;
-            // Update datalists for all exercise inputs
+            // Update exercise dropdowns for all exercise blocks
             document.querySelectorAll('.exercise-block').forEach(block => {
-                const index = block.dataset.index;
-                const input = block.querySelector('.exercise-name');
-                const datalist = block.querySelector(`#exercises_${index}`);
-                if (datalist) {
+                const select = block.querySelector('.exercise-select');
+                const hiddenInput = block.querySelector('.exercise-name');
+                const currentValue = hiddenInput.value;
+
+                if (select) {
                     const defaultExercises = Workouts.COMMON_EXERCISES[workoutType] || [];
                     const settings = Storage.settings.get();
                     const customExercises = settings.customExercises || [];
                     const allExercises = [...new Set([...defaultExercises, ...customExercises])].sort();
-                    datalist.innerHTML = allExercises.map(ex => `<option value="${ex}">`).join('');
+
+                    // Check if current value is in the new list
+                    const isInList = allExercises.includes(currentValue);
+
+                    select.innerHTML = `
+                        <option value="">Select exercise...</option>
+                        ${allExercises.map(ex => `<option value="${ex}" ${ex === currentValue ? 'selected' : ''}>${ex}</option>`).join('')}
+                        <option value="__custom__" ${currentValue && !isInList ? 'selected' : ''}>+ Add custom...</option>
+                    `;
                 }
             });
         });

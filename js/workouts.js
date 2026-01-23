@@ -260,6 +260,9 @@ const Workouts = {
         // Combine and dedupe
         const allExercises = [...new Set([...defaultExercises, ...customExercises])].sort();
 
+        // Check if exerciseName is a custom one (not in the list)
+        const isCustom = exerciseName && !allExercises.includes(exerciseName);
+
         // Get last workout data for this exercise if available
         let prefillReps = '';
         let prefillWeight = '';
@@ -272,12 +275,15 @@ const Workouts = {
         return `
             <div class="exercise-block" data-index="${index}">
                 <div class="exercise-header">
-                    <input type="text" class="form-input exercise-name" name="exercise_${index}_name"
-                           list="exercises_${index}" placeholder="Type or select exercise..."
-                           value="${exerciseName}" autocomplete="off">
-                    <datalist id="exercises_${index}">
-                        ${allExercises.map(ex => `<option value="${ex}">`).join('')}
-                    </datalist>
+                    <select class="form-select exercise-select" data-index="${index}">
+                        <option value="">Select exercise...</option>
+                        ${allExercises.map(ex => `<option value="${ex}" ${ex === exerciseName ? 'selected' : ''}>${ex}</option>`).join('')}
+                        <option value="__custom__" ${isCustom ? 'selected' : ''}>+ Add custom...</option>
+                    </select>
+                    <input type="text" class="form-input exercise-custom" data-index="${index}"
+                           placeholder="Enter exercise name..." value="${isCustom ? exerciseName : ''}"
+                           style="display: ${isCustom ? 'block' : 'none'};">
+                    <input type="hidden" class="exercise-name" name="exercise_${index}_name" value="${exerciseName}">
                     <button type="button" class="btn btn-danger btn-sm remove-exercise" data-index="${index}">
                         ✕
                     </button>
