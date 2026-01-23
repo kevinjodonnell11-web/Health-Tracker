@@ -6,6 +6,11 @@
     <title>Workouts - Health Tracker</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         .workout-list {
             display: flex;
@@ -443,7 +448,10 @@
         <span>Pull down to refresh</span>
     </div>
 
+    <script src="../js/firebase-config.js"></script>
     <script src="../js/storage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/cloud-storage.js"></script>
     <script src="../js/metrics.js"></script>
     <script src="../js/workouts.js"></script>
     <script src="../js/dayview.js"></script>

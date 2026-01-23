@@ -44,10 +44,14 @@ const Storage = {
         }
     },
 
-    // Save data to localStorage
+    // Save data to localStorage (and sync to cloud if signed in)
     set(key, data) {
         try {
             localStorage.setItem(key, JSON.stringify(data));
+            // Trigger cloud sync if available
+            if (window.CloudStorage && window.Auth?.getUserId()) {
+                CloudStorage.debouncedSync();
+            }
             return true;
         } catch (e) {
             console.error('Error writing to localStorage:', e);
