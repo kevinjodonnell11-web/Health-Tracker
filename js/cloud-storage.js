@@ -13,6 +13,9 @@ const CloudStorage = {
         this.updateSyncStatus('Syncing...');
 
         try {
+            // ALWAYS clear local data first to prevent data leakage between users
+            this.clearAllLocalData();
+
             // Get user's data document
             const userDataRef = firebaseDb.collection('userData').doc(userId);
             const doc = await userDataRef.get();
@@ -20,15 +23,15 @@ const CloudStorage = {
             if (doc.exists) {
                 const cloudData = doc.data();
 
-                // Merge cloud data with local (cloud takes precedence for newer items)
+                // Load cloud data (NOT merge - replace completely)
                 if (cloudData.workouts) {
-                    this.mergeData('health_tracker_workouts', cloudData.workouts);
+                    localStorage.setItem('health_tracker_workouts', JSON.stringify(cloudData.workouts));
                 }
                 if (cloudData.nutrition) {
-                    this.mergeData('health_tracker_nutrition', cloudData.nutrition);
+                    localStorage.setItem('health_tracker_nutrition', JSON.stringify(cloudData.nutrition));
                 }
                 if (cloudData.metrics) {
-                    this.mergeData('health_tracker_metrics', cloudData.metrics);
+                    localStorage.setItem('health_tracker_metrics', JSON.stringify(cloudData.metrics));
                 }
                 if (cloudData.goals) {
                     localStorage.setItem('health_tracker_goals', JSON.stringify(cloudData.goals));
@@ -37,11 +40,10 @@ const CloudStorage = {
                     localStorage.setItem('health_tracker_settings', JSON.stringify(cloudData.settings));
                 }
 
-                console.log('Data synced from cloud');
+                console.log('Data loaded from cloud for user:', userId);
             } else {
-                // No cloud data yet - upload local data
-                console.log('No cloud data found, uploading local data...');
-                await this.syncToCloud();
+                // No cloud data for this user - they start fresh (empty)
+                console.log('No cloud data found for user - starting fresh');
             }
 
             this.lastSync = new Date();
@@ -170,9 +172,16 @@ const CloudStorage = {
     },
 
     // Migrate existing localStorage data to cloud on first sign-in
+    // ONLY for admin (first user) to preserve their historical data
     async migrateLocalData() {
         const userId = Auth.getUserId();
         if (!userId) return;
+
+        // Only migrate for admin users
+        if (!Auth.isAdmin) {
+            console.log('Not admin - skipping data migration');
+            return;
+        }
 
         // Check if migration already done
         const userDoc = await firebaseDb.collection('users').doc(userId).get();
@@ -186,7 +195,7 @@ const CloudStorage = {
         const metrics = JSON.parse(localStorage.getItem('health_tracker_metrics') || '[]');
 
         if (workouts.length > 0 || nutrition.length > 0 || metrics.length > 0) {
-            console.log('Migrating local data to cloud...');
+            console.log('Migrating local data to cloud for admin...');
             await this.syncToCloud();
 
             // Mark migration as complete
@@ -195,7 +204,7 @@ const CloudStorage = {
                 migratedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            console.log('Local data migration complete');
+            console.log('Admin data migration complete');
         }
     }
 };
