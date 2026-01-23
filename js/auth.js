@@ -8,19 +8,36 @@ const Auth = {
     // Initialize auth listener
     init() {
         firebaseAuth.onAuthStateChanged(async (user) => {
+            const previousUser = this.currentUser;
             this.currentUser = user;
 
             if (user) {
                 console.log('User signed in:', user.email);
+
+                // If switching users, clear old data first
+                if (previousUser && previousUser.uid !== user.uid) {
+                    console.log('User switched, clearing old data');
+                    CloudStorage.clearAllLocalData();
+                }
+
                 // Check if user is admin
                 await this.checkAdminStatus(user);
                 // Sync data from cloud
                 await CloudStorage.syncFromCloud();
                 this.updateUI(true);
+
+                // Reload page to show dashboard with user's data
+                if (!previousUser) {
+                    window.location.reload();
+                }
             } else {
                 console.log('User signed out');
                 this.isAdmin = false;
+                // Clear all local data on sign out
+                CloudStorage.clearAllLocalData();
                 this.updateUI(false);
+                // Reload to show login screen
+                window.location.reload();
             }
 
             // Notify callbacks

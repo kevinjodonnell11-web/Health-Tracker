@@ -145,10 +145,19 @@ const CloudStorage = {
 
     // Clear local cache (on sign out)
     clearCache() {
-        // Don't clear localStorage - keep local data
-        // Just reset sync status
         this.lastSync = null;
         this.updateSyncStatus('Local only');
+    },
+
+    // Clear ALL local data (on sign out or user switch)
+    clearAllLocalData() {
+        localStorage.removeItem('health_tracker_workouts');
+        localStorage.removeItem('health_tracker_nutrition');
+        localStorage.removeItem('health_tracker_metrics');
+        localStorage.removeItem('health_tracker_goals');
+        localStorage.removeItem('health_tracker_settings');
+        this.lastSync = null;
+        console.log('All local data cleared');
     },
 
     // Update sync status indicator
