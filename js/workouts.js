@@ -178,24 +178,32 @@ const Workouts = {
         return saved;
     },
 
-    // Render workout log form
-    renderWorkoutForm() {
+    // Render workout log form (with optional workout for editing)
+    renderWorkoutForm(existingWorkout = null) {
         const today = Storage.getToday();
         const suggestion = this.getSuggestedWorkout();
+        const isEdit = !!existingWorkout;
+
+        const date = existingWorkout?.date || today;
+        const type = existingWorkout?.type || suggestion.type;
+        const preWeight = existingWorkout?.preWeight || '';
+        const energyLevel = existingWorkout?.energyLevel || '';
+        const notes = existingWorkout?.notes || '';
+        const cardio = existingWorkout?.cardio || {};
 
         return `
-            <form id="workoutForm" class="workout-form">
+            <form id="workoutForm" class="workout-form" data-edit-id="${existingWorkout?.id || ''}">
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Date</label>
-                        <input type="date" class="form-input" name="date" value="${today}" required>
+                        <input type="date" class="form-input" name="date" value="${date}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Workout Type</label>
                         <select class="form-select" name="type" id="workoutType" required>
-                            ${this.WORKOUT_TYPES.map(type =>
-                                `<option value="${type}" ${type === suggestion.type ? 'selected' : ''}>
-                                    ${type.charAt(0).toUpperCase() + type.slice(1)}
+                            ${this.WORKOUT_TYPES.map(t =>
+                                `<option value="${t}" ${t === type ? 'selected' : ''}>
+                                    ${t.charAt(0).toUpperCase() + t.slice(1)}
                                 </option>`
                             ).join('')}
                         </select>
@@ -205,11 +213,11 @@ const Workouts = {
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Pre-Workout Weight (lbs)</label>
-                        <input type="number" class="form-input" name="preWeight" step="0.1" placeholder="225.0">
+                        <input type="number" class="form-input" name="preWeight" step="0.1" placeholder="225.0" value="${preWeight}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Energy Level (1-10)</label>
-                        <input type="number" class="form-input" name="energyLevel" min="1" max="10" placeholder="7">
+                        <input type="number" class="form-input" name="energyLevel" min="1" max="10" placeholder="7" value="${energyLevel}">
                     </div>
                 </div>
 
@@ -228,31 +236,58 @@ const Workouts = {
                     <div class="form-row">
                         <select class="form-select" name="cardioType">
                             <option value="">None</option>
-                            <option value="run">Run</option>
-                            <option value="walk">Walk</option>
-                            <option value="incline">Incline Walk</option>
-                            <option value="bike">Bike</option>
+                            <option value="run" ${cardio.type === 'run' ? 'selected' : ''}>Run</option>
+                            <option value="walk" ${cardio.type === 'walk' ? 'selected' : ''}>Walk</option>
+                            <option value="incline" ${cardio.type === 'incline' ? 'selected' : ''}>Incline Walk</option>
+                            <option value="bike" ${cardio.type === 'bike' ? 'selected' : ''}>Bike</option>
                         </select>
-                        <input type="number" class="form-input" name="cardioDistance" step="0.1" placeholder="Distance (mi)">
-                        <input type="text" class="form-input" name="cardioDuration" placeholder="Duration (mm:ss)">
+                        <input type="number" class="form-input" name="cardioDistance" step="0.1" placeholder="Distance (mi)" value="${cardio.distance || ''}">
+                        <input type="text" class="form-input" name="cardioDuration" placeholder="Duration (mm:ss)" value="${cardio.duration || ''}">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Notes</label>
-                    <textarea class="form-textarea" name="notes" rows="2" placeholder="How did it feel?"></textarea>
+                    <textarea class="form-textarea" name="notes" rows="2" placeholder="How did it feel?">${notes}</textarea>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Workout</button>
+                    ${isEdit ? `<button type="button" class="btn btn-danger" id="deleteWorkoutBtn">Delete</button>` : ''}
+                    <button type="button" class="btn btn-secondary" onclick="App.closeModal ? App.closeModal() : closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Save'} Workout</button>
                 </div>
             </form>
         `;
     },
 
-    // Render exercise input block (with 3 sets by default)
-    renderExerciseBlock(index, workoutType, exerciseName = '') {
+    // Get exercises data for pre-filling edit form
+    getExercisesForEdit(workout) {
+        return workout?.exercises || [];
+    },
+
+    // Update an existing workout
+    updateWorkout(id, data) {
+        const workout = {
+            date: data.date,
+            type: data.type,
+            preWeight: data.preWeight || null,
+            exercises: data.exercises || [],
+            cardio: data.cardio || null,
+            notes: data.notes || null,
+            energyLevel: data.energyLevel || null
+        };
+
+        const updated = Storage.workouts.update(id, workout);
+        return updated;
+    },
+
+    // Delete a workout
+    deleteWorkout(id) {
+        return Storage.workouts.delete(id);
+    },
+
+    // Render exercise input block (with 3 sets by default, or existing sets for editing)
+    renderExerciseBlock(index, workoutType, exerciseName = '', existingSets = null) {
         const defaultExercises = this.COMMON_EXERCISES[workoutType] || [];
         // Get custom exercises from settings
         const settings = Storage.settings.get();
@@ -263,13 +298,29 @@ const Workouts = {
         // Check if exerciseName is a custom one (not in the list)
         const isCustom = exerciseName && !allExercises.includes(exerciseName);
 
-        // Get last workout data for this exercise if available
+        // Get last workout data for this exercise if available (only if not editing with existing sets)
         let prefillReps = '';
         let prefillWeight = '';
-        if (exerciseName) {
+        if (exerciseName && !existingSets) {
             const recommendation = this.getExerciseRecommendation(exerciseName, 3);
             if (recommendation.lastReps) prefillReps = recommendation.lastReps;
             if (recommendation.lastWeight) prefillWeight = recommendation.lastWeight;
+        }
+
+        // Determine sets to render
+        let setsHtml;
+        if (existingSets && existingSets.length > 0) {
+            // Render existing sets for editing
+            setsHtml = existingSets.map((set, i) =>
+                this.renderSetRow(index, i, set.reps || '', set.weight || '')
+            ).join('');
+        } else {
+            // Default 3 empty sets
+            setsHtml = `
+                ${this.renderSetRow(index, 0, prefillReps, prefillWeight)}
+                ${this.renderSetRow(index, 1, prefillReps, prefillWeight)}
+                ${this.renderSetRow(index, 2, prefillReps, prefillWeight)}
+            `;
         }
 
         return `
@@ -289,9 +340,7 @@ const Workouts = {
                     </button>
                 </div>
                 <div class="sets-list" id="sets_${index}">
-                    ${this.renderSetRow(index, 0, prefillReps, prefillWeight)}
-                    ${this.renderSetRow(index, 1, prefillReps, prefillWeight)}
-                    ${this.renderSetRow(index, 2, prefillReps, prefillWeight)}
+                    ${setsHtml}
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm add-set-btn" data-exercise="${index}">
                     + Set
