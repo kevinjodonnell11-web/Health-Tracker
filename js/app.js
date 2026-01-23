@@ -437,8 +437,9 @@ const App = {
         // Event delegation for dynamic elements (add set, copy set)
         document.getElementById('exercisesList').addEventListener('click', (e) => {
             // Add set button
-            if (e.target.classList.contains('add-set-btn')) {
-                const exerciseIndex = e.target.dataset.exercise;
+            const addSetBtn = e.target.closest('.add-set-btn');
+            if (addSetBtn) {
+                const exerciseIndex = addSetBtn.dataset.exercise;
                 const setsContainer = document.getElementById(`sets_${exerciseIndex}`);
                 const setCount = setsContainer.querySelectorAll('.set-row').length;
                 // Get values from last set to prefill
@@ -448,9 +449,10 @@ const App = {
                 setsContainer.insertAdjacentHTML('beforeend', Workouts.renderSetRow(exerciseIndex, setCount, lastReps, lastWeight));
             }
             // Copy set button - copies current row values to next row (or creates new)
-            if (e.target.classList.contains('copy-set-btn')) {
-                const exerciseIndex = e.target.dataset.exercise;
-                const setIndex = parseInt(e.target.dataset.set);
+            const copyBtn = e.target.closest('.copy-set-btn');
+            if (copyBtn) {
+                const exerciseIndex = copyBtn.dataset.exercise;
+                const setIndex = parseInt(copyBtn.dataset.set);
                 const setsContainer = document.getElementById(`sets_${exerciseIndex}`);
                 const currentRow = setsContainer.querySelector(`[data-set="${setIndex}"]`);
                 const reps = currentRow.querySelector('.set-reps').value;
@@ -472,14 +474,18 @@ const App = {
 
         document.getElementById('workoutType').addEventListener('change', (e) => {
             const workoutType = e.target.value;
-            document.querySelectorAll('.exercise-name').forEach(select => {
-                const currentValue = select.value;
-                const exercises = Workouts.COMMON_EXERCISES[workoutType] || [];
-                select.innerHTML = `
-                    <option value="">Select exercise...</option>
-                    ${exercises.map(ex => `<option value="${ex}">${ex}</option>`).join('')}
-                `;
-                select.value = currentValue;
+            // Update datalists for all exercise inputs
+            document.querySelectorAll('.exercise-block').forEach(block => {
+                const index = block.dataset.index;
+                const input = block.querySelector('.exercise-name');
+                const datalist = block.querySelector(`#exercises_${index}`);
+                if (datalist) {
+                    const defaultExercises = Workouts.COMMON_EXERCISES[workoutType] || [];
+                    const settings = Storage.settings.get();
+                    const customExercises = settings.customExercises || [];
+                    const allExercises = [...new Set([...defaultExercises, ...customExercises])].sort();
+                    datalist.innerHTML = allExercises.map(ex => `<option value="${ex}">`).join('');
+                }
             });
         });
 

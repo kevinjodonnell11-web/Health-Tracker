@@ -253,7 +253,12 @@ const Workouts = {
 
     // Render exercise input block (with 3 sets by default)
     renderExerciseBlock(index, workoutType, exerciseName = '') {
-        const exercises = this.COMMON_EXERCISES[workoutType] || [];
+        const defaultExercises = this.COMMON_EXERCISES[workoutType] || [];
+        // Get custom exercises from settings
+        const settings = Storage.settings.get();
+        const customExercises = settings.customExercises || [];
+        // Combine and dedupe
+        const allExercises = [...new Set([...defaultExercises, ...customExercises])].sort();
 
         // Get last workout data for this exercise if available
         let prefillReps = '';
@@ -267,10 +272,12 @@ const Workouts = {
         return `
             <div class="exercise-block" data-index="${index}">
                 <div class="exercise-header">
-                    <select class="form-select exercise-name" name="exercise_${index}_name">
-                        <option value="">Select exercise...</option>
-                        ${exercises.map(ex => `<option value="${ex}" ${ex === exerciseName ? 'selected' : ''}>${ex}</option>`).join('')}
-                    </select>
+                    <input type="text" class="form-input exercise-name" name="exercise_${index}_name"
+                           list="exercises_${index}" placeholder="Type or select exercise..."
+                           value="${exerciseName}" autocomplete="off">
+                    <datalist id="exercises_${index}">
+                        ${allExercises.map(ex => `<option value="${ex}">`).join('')}
+                    </datalist>
                     <button type="button" class="btn btn-danger btn-sm remove-exercise" data-index="${index}">
                         ✕
                     </button>
@@ -355,7 +362,35 @@ const Workouts = {
             };
         }
 
+        // Save any custom exercises to settings for future autocomplete
+        this.saveCustomExercises(workout.exercises, workout.type);
+
         return this.createWorkout(workout);
+    },
+
+    // Save custom exercises to settings
+    saveCustomExercises(exercises, workoutType) {
+        const defaultExercises = this.COMMON_EXERCISES[workoutType] || [];
+        const allDefaults = Object.values(this.COMMON_EXERCISES).flat();
+
+        const settings = Storage.settings.get();
+        const customExercises = settings.customExercises || [];
+
+        let hasNew = false;
+        exercises.forEach(ex => {
+            const name = ex.name.trim();
+            // If not in any default list and not already saved as custom
+            if (name && !allDefaults.includes(name) && !customExercises.includes(name)) {
+                customExercises.push(name);
+                hasNew = true;
+                console.log('Saved custom exercise:', name);
+            }
+        });
+
+        if (hasNew) {
+            settings.customExercises = customExercises.sort();
+            Storage.settings.save(settings);
+        }
     },
 
     // Get workout statistics
