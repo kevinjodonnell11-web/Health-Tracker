@@ -7,6 +7,9 @@ const Auth = {
 
     // Initialize auth listener
     init() {
+        // Track if this is initial load
+        this.initialLoad = true;
+
         firebaseAuth.onAuthStateChanged(async (user) => {
             const previousUser = this.currentUser;
             this.currentUser = user;
@@ -26,22 +29,22 @@ const Auth = {
                 await CloudStorage.syncFromCloud();
                 this.updateUI(true);
 
-                // Reload page to show dashboard with user's data
-                if (!previousUser) {
-                    window.location.reload();
-                }
             } else {
                 console.log('User signed out');
                 this.isAdmin = false;
                 // Clear all local data on sign out
                 CloudStorage.clearAllLocalData();
                 this.updateUI(false);
-                // Reload to show login screen
-                window.location.reload();
             }
 
             // Notify callbacks
             this.onAuthChangeCallbacks.forEach(cb => cb(user));
+
+            // Only reload after user action (not on initial page load)
+            if (!this.initialLoad) {
+                window.location.reload();
+            }
+            this.initialLoad = false;
         });
     },
 
