@@ -176,40 +176,48 @@ const CloudStorage = {
         }
     },
 
-    // Migrate existing localStorage data to cloud on first sign-in
-    // ONLY for admin (first user) to preserve their historical data
-    async migrateLocalData() {
+    // Load historical data for admin user from backup file
+    async loadHistoricalDataForAdmin() {
         const userId = Auth.getUserId();
         if (!userId) return;
 
-        // Only migrate for admin users
+        // Only for admin users
         if (!Auth.isAdmin) {
-            console.log('Not admin - skipping data migration');
+            console.log('Not admin - no historical data to load');
             return;
         }
 
-        // Check if migration already done
-        const userDoc = await firebaseDb.collection('users').doc(userId).get();
-        if (userDoc.exists && userDoc.data().dataMigrated) {
+        // Check if already has data in cloud
+        const userDataDoc = await firebaseDb.collection('userData').doc(userId).get();
+        if (userDataDoc.exists && userDataDoc.data().workouts && userDataDoc.data().workouts.length > 0) {
+            console.log('Admin already has cloud data');
             return;
         }
 
-        // Check if there's local data to migrate
-        const workouts = JSON.parse(localStorage.getItem('health_tracker_workouts') || '[]');
-        const nutrition = JSON.parse(localStorage.getItem('health_tracker_nutrition') || '[]');
-        const metrics = JSON.parse(localStorage.getItem('health_tracker_metrics') || '[]');
+        // Load historical data from backup file
+        try {
+            const basePath = window.location.pathname.includes('/pages/') ? '../' : '';
+            const response = await fetch(basePath + 'data/historical-import.json');
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Loading historical data for admin...');
 
-        if (workouts.length > 0 || nutrition.length > 0 || metrics.length > 0) {
-            console.log('Migrating local data to cloud for admin...');
-            await this.syncToCloud();
+                // Save to localStorage
+                if (data.workouts) localStorage.setItem('health_tracker_workouts', JSON.stringify(data.workouts));
+                if (data.nutrition) localStorage.setItem('health_tracker_nutrition', JSON.stringify(data.nutrition));
+                if (data.metrics) localStorage.setItem('health_tracker_metrics', JSON.stringify(data.metrics));
+                if (data.goals) localStorage.setItem('health_tracker_goals', JSON.stringify(data.goals));
+                if (data.settings) localStorage.setItem('health_tracker_settings', JSON.stringify(data.settings));
 
-            // Mark migration as complete
-            await firebaseDb.collection('users').doc(userId).update({
-                dataMigrated: true,
-                migratedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+                // Upload to cloud
+                await this.syncToCloud();
+                console.log('Historical data loaded and synced for admin');
 
-            console.log('Admin data migration complete');
+                // Notify app to re-render
+                window.dispatchEvent(new CustomEvent('cloudDataLoaded'));
+            }
+        } catch (e) {
+            console.log('Could not load historical data:', e.message);
         }
     }
 };

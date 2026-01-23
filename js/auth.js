@@ -27,6 +27,10 @@ const Auth = {
                 await this.checkAdminStatus(user);
                 // Sync data from cloud
                 await CloudStorage.syncFromCloud();
+                // If admin with no data, load historical data
+                if (this.isAdmin) {
+                    await CloudStorage.loadHistoricalDataForAdmin();
+                }
                 this.updateUI(true);
 
             } else {
