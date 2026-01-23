@@ -375,10 +375,11 @@ const Workouts = {
             cardio: null
         };
 
-        // Parse exercises from form data
+        // Parse exercises from form data (use data-index attribute, not loop index)
         const exerciseBlocks = document.querySelectorAll('.exercise-block');
-        exerciseBlocks.forEach((block, exerciseIndex) => {
-            const exerciseName = formData.get(`exercise_${exerciseIndex}_name`);
+        exerciseBlocks.forEach((block) => {
+            const blockIndex = block.dataset.index;
+            const exerciseName = formData.get(`exercise_${blockIndex}_name`);
             if (!exerciseName) return;
 
             const exercise = {
@@ -388,15 +389,15 @@ const Workouts = {
 
             // Parse sets
             let setIndex = 0;
-            while (formData.has(`exercise_${exerciseIndex}_set_${setIndex}_reps`)) {
-                const reps = formData.get(`exercise_${exerciseIndex}_set_${setIndex}_reps`);
-                const weight = formData.get(`exercise_${exerciseIndex}_set_${setIndex}_weight`);
+            while (formData.has(`exercise_${blockIndex}_set_${setIndex}_reps`)) {
+                const reps = formData.get(`exercise_${blockIndex}_set_${setIndex}_reps`);
+                const weight = formData.get(`exercise_${blockIndex}_set_${setIndex}_weight`);
 
                 if (reps) {
                     exercise.sets.push({
                         reps: parseInt(reps),
                         weight: weight ? parseFloat(weight) : null,
-                        notes: formData.get(`exercise_${exerciseIndex}_set_${setIndex}_notes`) || null
+                        notes: formData.get(`exercise_${blockIndex}_set_${setIndex}_notes`) || null
                     });
                 }
                 setIndex++;
