@@ -251,42 +251,52 @@ const Workouts = {
         `;
     },
 
-    // Render exercise input block
-    renderExerciseBlock(index, workoutType) {
+    // Render exercise input block (with 3 sets by default)
+    renderExerciseBlock(index, workoutType, exerciseName = '') {
         const exercises = this.COMMON_EXERCISES[workoutType] || [];
+
+        // Get last workout data for this exercise if available
+        let prefillReps = '';
+        let prefillWeight = '';
+        if (exerciseName) {
+            const recommendation = this.getExerciseRecommendation(exerciseName, 3);
+            if (recommendation.lastReps) prefillReps = recommendation.lastReps;
+            if (recommendation.lastWeight) prefillWeight = recommendation.lastWeight;
+        }
 
         return `
             <div class="exercise-block" data-index="${index}">
                 <div class="exercise-header">
                     <select class="form-select exercise-name" name="exercise_${index}_name">
-                        <option value="">Select or type exercise...</option>
-                        ${exercises.map(ex => `<option value="${ex}">${ex}</option>`).join('')}
+                        <option value="">Select exercise...</option>
+                        ${exercises.map(ex => `<option value="${ex}" ${ex === exerciseName ? 'selected' : ''}>${ex}</option>`).join('')}
                     </select>
                     <button type="button" class="btn btn-danger btn-sm remove-exercise" data-index="${index}">
-                        &times;
+                        ✕
                     </button>
                 </div>
                 <div class="sets-list" id="sets_${index}">
-                    ${this.renderSetRow(index, 0)}
+                    ${this.renderSetRow(index, 0, prefillReps, prefillWeight)}
+                    ${this.renderSetRow(index, 1, prefillReps, prefillWeight)}
+                    ${this.renderSetRow(index, 2, prefillReps, prefillWeight)}
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm add-set-btn" data-exercise="${index}">
-                    + Add Set
+                    + Set
                 </button>
             </div>
         `;
     },
 
-    // Render set row
-    renderSetRow(exerciseIndex, setIndex) {
+    // Render set row (simplified - no notes per set)
+    renderSetRow(exerciseIndex, setIndex, prefillReps = '', prefillWeight = '') {
         return `
             <div class="set-row" data-set="${setIndex}">
                 <span class="set-number">${setIndex + 1}</span>
                 <input type="number" class="form-input set-reps" name="exercise_${exerciseIndex}_set_${setIndex}_reps"
-                       placeholder="Reps" min="1">
+                       placeholder="Reps" min="1" value="${prefillReps}" inputmode="numeric">
                 <input type="number" class="form-input set-weight" name="exercise_${exerciseIndex}_set_${setIndex}_weight"
-                       placeholder="Weight" step="2.5">
-                <input type="text" class="form-input set-notes" name="exercise_${exerciseIndex}_set_${setIndex}_notes"
-                       placeholder="Notes">
+                       placeholder="Wt" step="2.5" value="${prefillWeight}" inputmode="decimal">
+                <button type="button" class="btn btn-sm copy-set-btn" title="Copy to next set" data-exercise="${exerciseIndex}" data-set="${setIndex}">⬇</button>
             </div>
         `;
     },

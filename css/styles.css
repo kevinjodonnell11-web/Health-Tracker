@@ -778,18 +778,37 @@ body {
     }
 
     /* Modal improvements for mobile */
+    .modal {
+        align-items: flex-start;
+        padding: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .modal-content {
         margin: 0;
         border-radius: 0;
-        max-height: 100vh;
+        max-height: none;
+        min-height: 100vh;
         max-width: 100vw;
         width: 100%;
         height: auto;
-        min-height: 50vh;
+        overflow-y: visible;
     }
 
     .modal-body {
         padding: 1rem;
+        padding-bottom: 100px; /* Extra space for keyboard and scrolling */
+        overflow-y: visible;
+    }
+
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--bg-card);
+        padding: 1rem;
+        border-top: 1px solid var(--border-color);
+        z-index: 10;
     }
 
     /* Progress rings responsive */
@@ -1067,6 +1086,90 @@ body {
 .btn-lg {
     padding: 1rem 2rem;
     font-size: 1rem;
+}
+
+/* Improved set row for mobile */
+.set-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-accent);
+    border-radius: var(--radius-sm);
+}
+
+.set-number {
+    min-width: 24px;
+    height: 24px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.set-row .form-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.75rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.set-row .set-reps {
+    max-width: 70px;
+}
+
+.set-row .set-weight {
+    max-width: 80px;
+}
+
+.copy-set-btn {
+    padding: 0.5rem !important;
+    min-width: 36px;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.copy-set-btn:hover {
+    background: var(--color-primary) !important;
+    color: white !important;
+}
+
+/* Exercise block improvements */
+.exercise-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.exercise-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.exercise-header .form-select {
+    flex: 1;
+}
+
+.exercise-header .remove-exercise {
+    padding: 0.5rem 0.75rem;
+}
+
+.sets-list {
+    margin-bottom: 0.5rem;
+}
+
+.add-set-btn {
+    width: 100%;
+    padding: 0.5rem !important;
 }
 
 /* Responsive guided workout */

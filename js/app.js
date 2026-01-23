@@ -375,12 +375,6 @@ const App = {
 
             const block = container.querySelector(`[data-index="${exerciseCount}"]`);
             block.querySelector('.remove-exercise').addEventListener('click', () => block.remove());
-            block.querySelector('.add-set-btn').addEventListener('click', (e) => {
-                const exerciseIndex = e.target.dataset.exercise;
-                const setsContainer = document.getElementById(`sets_${exerciseIndex}`);
-                const setCount = setsContainer.querySelectorAll('.set-row').length;
-                setsContainer.insertAdjacentHTML('beforeend', Workouts.renderSetRow(exerciseIndex, setCount));
-            });
 
             exerciseCount++;
         };
@@ -390,13 +384,49 @@ const App = {
 
         document.getElementById('addExerciseBtn').addEventListener('click', addExercise);
 
+        // Event delegation for dynamic elements (add set, copy set)
+        document.getElementById('exercisesList').addEventListener('click', (e) => {
+            // Add set button
+            if (e.target.classList.contains('add-set-btn')) {
+                const exerciseIndex = e.target.dataset.exercise;
+                const setsContainer = document.getElementById(`sets_${exerciseIndex}`);
+                const setCount = setsContainer.querySelectorAll('.set-row').length;
+                // Get values from last set to prefill
+                const lastSet = setsContainer.querySelector('.set-row:last-child');
+                const lastReps = lastSet?.querySelector('.set-reps')?.value || '';
+                const lastWeight = lastSet?.querySelector('.set-weight')?.value || '';
+                setsContainer.insertAdjacentHTML('beforeend', Workouts.renderSetRow(exerciseIndex, setCount, lastReps, lastWeight));
+            }
+            // Copy set button - copies current row values to next row (or creates new)
+            if (e.target.classList.contains('copy-set-btn')) {
+                const exerciseIndex = e.target.dataset.exercise;
+                const setIndex = parseInt(e.target.dataset.set);
+                const setsContainer = document.getElementById(`sets_${exerciseIndex}`);
+                const currentRow = setsContainer.querySelector(`[data-set="${setIndex}"]`);
+                const reps = currentRow.querySelector('.set-reps').value;
+                const weight = currentRow.querySelector('.set-weight').value;
+
+                // Check if next row exists
+                const nextRow = setsContainer.querySelector(`[data-set="${setIndex + 1}"]`);
+                if (nextRow) {
+                    // Fill next row with current values
+                    nextRow.querySelector('.set-reps').value = reps;
+                    nextRow.querySelector('.set-weight').value = weight;
+                } else {
+                    // Create new row with current values
+                    const setCount = setsContainer.querySelectorAll('.set-row').length;
+                    setsContainer.insertAdjacentHTML('beforeend', Workouts.renderSetRow(exerciseIndex, setCount, reps, weight));
+                }
+            }
+        });
+
         document.getElementById('workoutType').addEventListener('change', (e) => {
             const workoutType = e.target.value;
             document.querySelectorAll('.exercise-name').forEach(select => {
                 const currentValue = select.value;
                 const exercises = Workouts.COMMON_EXERCISES[workoutType] || [];
                 select.innerHTML = `
-                    <option value="">Select or type exercise...</option>
+                    <option value="">Select exercise...</option>
                     ${exercises.map(ex => `<option value="${ex}">${ex}</option>`).join('')}
                 `;
                 select.value = currentValue;
