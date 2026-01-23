@@ -48,9 +48,14 @@ const CloudStorage = {
 
             this.lastSync = new Date();
             this.updateSyncStatus('Synced');
+
+            // Notify app that data is ready
+            window.dispatchEvent(new CustomEvent('cloudDataLoaded'));
         } catch (error) {
             console.error('Sync from cloud failed:', error);
             this.updateSyncStatus('Sync failed');
+            // Still notify so app can render (with empty data)
+            window.dispatchEvent(new CustomEvent('cloudDataLoaded'));
         }
 
         this.isSyncing = false;

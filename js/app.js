@@ -1,7 +1,18 @@
 // Main App Initialization
 
+// IMMEDIATELY clear all data on page load - data will be loaded from cloud after auth
+(function() {
+    localStorage.removeItem('health_tracker_workouts');
+    localStorage.removeItem('health_tracker_nutrition');
+    localStorage.removeItem('health_tracker_metrics');
+    localStorage.removeItem('health_tracker_goals');
+    localStorage.removeItem('health_tracker_settings');
+    console.log('localStorage cleared on page load');
+})();
+
 const App = {
     currentWeightDays: 30, // Default time range for weight chart
+    dataLoaded: false,
 
     init() {
         this.setupEventListeners();
@@ -20,32 +31,29 @@ const App = {
     checkAuthAndRender() {
         // Listen for auth state changes
         window.addEventListener('authStateChanged', (e) => {
-            if (e.detail.user) {
-                // User is signed in - render dashboard
+            if (e.detail.user && this.dataLoaded) {
+                // User is signed in AND data is loaded - render dashboard
                 this.renderDashboard();
-            } else {
-                // User is signed out - clear local data and show login prompt
-                this.clearLocalData();
+            } else if (!e.detail.user) {
+                // User is signed out - show login prompt
                 this.showLoginPrompt();
+            }
+        });
+
+        // Listen for data loaded event
+        window.addEventListener('cloudDataLoaded', () => {
+            this.dataLoaded = true;
+            if (window.Auth?.currentUser) {
+                this.renderDashboard();
             }
         });
 
         // Initial render (will show login prompt if not signed in)
         setTimeout(() => {
             if (!window.Auth?.currentUser) {
-                this.clearLocalData();
                 this.showLoginPrompt();
             }
-        }, 1000);
-    },
-
-    // Clear local storage data for non-authenticated users
-    clearLocalData() {
-        localStorage.removeItem('health_tracker_workouts');
-        localStorage.removeItem('health_tracker_nutrition');
-        localStorage.removeItem('health_tracker_metrics');
-        localStorage.removeItem('health_tracker_goals');
-        localStorage.removeItem('health_tracker_settings');
+        }, 1500);
     },
 
     // Show login prompt instead of dashboard
