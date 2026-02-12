@@ -31,6 +31,21 @@ Chart.register(crosshairPlugin);
 const Charts = {
     instances: {},
 
+    normalizeExerciseName(name) {
+        return String(name || '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    },
+
+    estimateOneRepMax(weight, reps) {
+        const safeWeight = Number(weight);
+        const safeReps = Number(reps);
+        if (!Number.isFinite(safeWeight) || safeWeight <= 0) return 0;
+        if (!Number.isFinite(safeReps) || safeReps <= 0) return safeWeight;
+        return safeWeight * (1 + safeReps / 30);
+    },
+
     // Common chart options
     commonOptions: {
         responsive: true,
@@ -338,6 +353,8 @@ const Charts = {
 
         if (types.length === 0) return null;
 
+        const totalCount = types.reduce((sum, [_, count]) => sum + count, 0);
+
         const colors = {
             push: '#e94560',
             pull: '#74b9ff',
@@ -366,7 +383,22 @@ const Charts = {
                         labels: {
                             color: '#a0a0a0',
                             font: { size: 11 },
-                            padding: 10
+                            padding: 10,
+                            generateLabels: (chart) => {
+                                const defaultLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                const values = chart.data.datasets[0]?.data || [];
+                                const total = values.reduce((sum, value) => sum + value, 0);
+
+                                return defaultLabels.map(label => {
+                                    const index = Number.isInteger(label.index) ? label.index : 0;
+                                    const count = Number(values[index] || 0);
+                                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                                    return {
+                                        ...label,
+                                        text: `${label.text} (${count}${percentage > 0 ? `, ${percentage}%` : ''})`
+                                    };
+                                });
+                            }
                         }
                     },
                     tooltip: {
@@ -374,9 +406,16 @@ const Charts = {
                         titleColor: '#eee',
                         bodyColor: '#eee',
                         callbacks: {
-                            label: (context) => `${context.label}: ${context.parsed} workouts`
+                            label: (context) => {
+                                const count = Number(context.parsed || 0);
+                                const percentage = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0.0';
+                                return `${context.label}: ${count} workout${count === 1 ? '' : 's'} (${percentage}%)`;
+                            }
                         }
                     }
+                },
+                onHover: (event, activeElements, chart) => {
+                    chart.canvas.style.cursor = activeElements.length ? 'pointer' : 'default';
                 }
             }
         });
@@ -506,7 +545,7 @@ const Charts = {
     },
 
     // Create exercise progress chart
-    createExerciseProgressChart(canvasId, exerciseName, days = 90) {
+    createExerciseProgressChart(canvasId, exerciseName, days = 0) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return null;
 
@@ -514,30 +553,57 @@ const Charts = {
             this.instances[canvasId].destroy();
         }
 
-        const endDate = Storage.getToday();
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - days);
-        const startStr = startDate.toISOString().split('T')[0];
+        const allWorkouts = Storage.workouts.getAll();
+        const hasDateWindow = Number.isFinite(days) && days > 0;
+        let filteredWorkouts = allWorkouts;
+        if (hasDateWindow) {
+            const endDate = Storage.getToday();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - days);
+            const startStr = startDate.toISOString().split('T')[0];
+            filteredWorkouts = allWorkouts.filter(workout => workout.date >= startStr && workout.date <= endDate);
+        }
 
-        const workouts = Storage.workouts.getByDateRange(startStr, endDate);
+        const targetName = this.normalizeExerciseName(exerciseName);
 
-        // Extract max weight for each workout for this exercise
+        // Build one data point per workout session for the selected exercise.
         const progressData = [];
-        workouts.forEach(workout => {
-            const exercise = workout.exercises?.find(e =>
-                e.name.toLowerCase().includes(exerciseName.toLowerCase())
+        filteredWorkouts.forEach(workout => {
+            const exercise = workout.exercises?.find(item =>
+                this.normalizeExerciseName(item.name) === targetName
             );
-            if (exercise && exercise.sets.length > 0) {
-                const maxWeight = Math.max(...exercise.sets.map(s => s.weight || 0));
-                const maxReps = Math.max(...exercise.sets.map(s => s.reps || 0));
-                if (maxWeight > 0) {
-                    progressData.push({
-                        date: workout.date,
-                        weight: maxWeight,
-                        reps: maxReps
-                    });
-                }
-            }
+            if (!exercise || !Array.isArray(exercise.sets)) return;
+
+            const weightedSets = exercise.sets
+                .map(set => ({
+                    reps: Number(set.reps),
+                    weight: Number(set.weight)
+                }))
+                .filter(set =>
+                    Number.isFinite(set.reps) && set.reps > 0 &&
+                    Number.isFinite(set.weight) && set.weight > 0
+                );
+
+            if (weightedSets.length === 0) return;
+
+            const topSet = weightedSets.reduce((best, set) => {
+                if (!best) return set;
+                if (set.weight > best.weight) return set;
+                if (set.weight === best.weight && set.reps > best.reps) return set;
+                return best;
+            }, null);
+
+            const totalVolume = weightedSets.reduce((sum, set) => sum + (set.weight * set.reps), 0);
+            const oneRepMax = this.estimateOneRepMax(topSet.weight, topSet.reps);
+
+            progressData.push({
+                date: workout.date,
+                topWeight: topSet.weight,
+                topReps: topSet.reps,
+                oneRepMax: Math.round(oneRepMax * 10) / 10,
+                volume: Math.round(totalVolume),
+                weightedSetCount: weightedSets.length
+            });
         });
 
         if (progressData.length === 0) return null;
@@ -545,27 +611,68 @@ const Charts = {
         progressData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         const chart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: progressData.map(d => {
                     const date = new Date(d.date + 'T00:00:00');
                     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 }),
-                datasets: [{
-                    label: 'Max Weight',
-                    data: progressData.map(d => d.weight),
-                    borderColor: '#e94560',
-                    backgroundColor: 'rgba(233, 69, 96, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    fill: true,
-                    tension: 0.3
-                }]
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'Top Set (lbs)',
+                        data: progressData.map(d => d.topWeight),
+                        borderColor: '#e94560',
+                        backgroundColor: 'rgba(233, 69, 96, 0.12)',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        fill: true,
+                        tension: 0.28,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'line',
+                        label: 'Estimated 1RM',
+                        data: progressData.map(d => d.oneRepMax),
+                        borderColor: '#74b9ff',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [4, 4],
+                        pointRadius: 2,
+                        pointHoverRadius: 4,
+                        fill: false,
+                        tension: 0.28,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Session Volume',
+                        data: progressData.map(d => d.volume),
+                        backgroundColor: 'rgba(253, 203, 110, 0.3)',
+                        borderColor: 'rgba(253, 203, 110, 0.7)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        yAxisID: 'y1'
+                    }
+                ]
             },
             options: {
                 ...this.commonOptions,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#a0a0a0',
+                            boxWidth: 16,
+                            font: { size: 10 }
+                        }
+                    },
                     tooltip: {
                         backgroundColor: '#16213e',
                         titleColor: '#eee',
@@ -573,10 +680,52 @@ const Charts = {
                         callbacks: {
                             label: (context) => {
                                 const d = progressData[context.dataIndex];
-                                return `${d.weight} lbs x ${d.reps} reps`;
+                                if (context.dataset.label === 'Top Set (lbs)') {
+                                    return `Top set: ${d.topWeight} lbs x ${d.topReps} reps`;
+                                }
+                                if (context.dataset.label === 'Estimated 1RM') {
+                                    return `Estimated 1RM: ${d.oneRepMax.toFixed(1)} lbs`;
+                                }
+                                return `Session volume: ${d.volume.toLocaleString()} lbs`;
+                            },
+                            footer: (items) => {
+                                const dataPoint = progressData[items[0]?.dataIndex];
+                                if (!dataPoint) return '';
+                                return `${dataPoint.weightedSetCount} weighted set${dataPoint.weightedSetCount === 1 ? '' : 's'} logged`;
                             }
                         }
                     }
+                },
+                scales: {
+                    x: this.commonOptions.scales.x,
+                    y: {
+                        ...this.commonOptions.scales.y,
+                        title: {
+                            display: true,
+                            text: 'Load (lbs)',
+                            color: '#e94560'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            color: '#fdcb6e',
+                            font: { size: 10 }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Volume (lbs x reps)',
+                            color: '#fdcb6e'
+                        }
+                    }
+                },
+                onHover: (event, activeElements, chart) => {
+                    chart.canvas.style.cursor = activeElements.length ? 'crosshair' : 'default';
                 }
             }
         });

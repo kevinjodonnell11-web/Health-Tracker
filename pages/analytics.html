@@ -488,8 +488,8 @@
     <script src="../js/metrics.js?v=10"></script>
     <script src="../js/workouts.js?v=10"></script>
     <script src="../js/nutrition.js?v=10"></script>
-    <script src="../js/charts.js?v=10"></script>
-    <script src="../js/analytics.js?v=10"></script>
+    <script src="../js/charts.js?v=11"></script>
+    <script src="../js/analytics.js?v=11"></script>
     <script src="../js/pwa-utils.js?v=10"></script>
     <script>
         function safeText(value) {
@@ -505,7 +505,8 @@
             renderCharts();
             renderInsights();
             renderSuggestions();
-            populateExerciseSelect();
+            const defaultExercise = populateExerciseSelect();
+            renderExerciseProgress(defaultExercise);
             setupEventListeners();
             applyFocusFromQuery();
         });
@@ -526,9 +527,7 @@
 
         function setupEventListeners() {
             document.getElementById('exerciseSelect').addEventListener('change', (e) => {
-                if (e.target.value) {
-                    Charts.createExerciseProgressChart('exerciseProgressChart', e.target.value);
-                }
+                renderExerciseProgress(e.target.value);
             });
 
             document.getElementById('statsRow').addEventListener('click', (e) => {
@@ -747,21 +746,80 @@
 
         function populateExerciseSelect() {
             const workouts = Storage.workouts.getAll();
-            const exercises = new Set();
+            const exerciseMap = new Map();
 
             workouts.forEach(workout => {
                 workout.exercises?.forEach(ex => {
-                    exercises.add(ex.name);
+                    const name = String(ex.name || '').trim();
+                    if (!name) return;
+
+                    if (!exerciseMap.has(name)) {
+                        exerciseMap.set(name, {
+                            totalSessions: 0,
+                            weightedSessions: 0
+                        });
+                    }
+
+                    const stats = exerciseMap.get(name);
+                    stats.totalSessions += 1;
+                    const hasWeightedSets = (ex.sets || []).some(set =>
+                        Number(set.weight) > 0 && Number(set.reps) > 0
+                    );
+                    if (hasWeightedSets) {
+                        stats.weightedSessions += 1;
+                    }
                 });
             });
 
             const select = document.getElementById('exerciseSelect');
-            Array.from(exercises).sort().forEach(exercise => {
+            const sortedExercises = Array.from(exerciseMap.entries()).sort((a, b) => {
+                if (b[1].weightedSessions !== a[1].weightedSessions) {
+                    return b[1].weightedSessions - a[1].weightedSessions;
+                }
+                if (b[1].totalSessions !== a[1].totalSessions) {
+                    return b[1].totalSessions - a[1].totalSessions;
+                }
+                return a[0].localeCompare(b[0]);
+            });
+
+            sortedExercises.forEach(([exercise, stats]) => {
                 const option = document.createElement('option');
                 option.value = exercise;
-                option.textContent = exercise;
+                option.textContent = `${exercise} (${stats.weightedSessions || stats.totalSessions})`;
                 select.appendChild(option);
             });
+
+            if (sortedExercises.length === 0) return '';
+
+            const preferred = sortedExercises.find(([_, stats]) => stats.weightedSessions > 0) || sortedExercises[0];
+            select.value = preferred[0];
+            return preferred[0];
+        }
+
+        function ensureExerciseCanvas() {
+            const container = document.getElementById('exerciseProgressContainer');
+            if (!document.getElementById('exerciseProgressChart')) {
+                container.innerHTML = '<canvas id="exerciseProgressChart"></canvas>';
+            }
+        }
+
+        function renderExerciseProgress(exerciseName) {
+            const container = document.getElementById('exerciseProgressContainer');
+            if (Charts.instances?.exerciseProgressChart) {
+                Charts.instances.exerciseProgressChart.destroy();
+                delete Charts.instances.exerciseProgressChart;
+            }
+
+            if (!exerciseName) {
+                container.innerHTML = '<div class="empty-chart">Log weighted exercises to see progress over time</div>';
+                return;
+            }
+
+            ensureExerciseCanvas();
+            const chart = Charts.createExerciseProgressChart('exerciseProgressChart', exerciseName);
+            if (!chart) {
+                container.innerHTML = `<div class="empty-chart">No weighted history logged for ${safeText(exerciseName)} yet</div>`;
+            }
         }
     </script>
 </body>

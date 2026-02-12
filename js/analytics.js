@@ -23,6 +23,15 @@ const Analytics = {
         }
 
         // Run all analysis functions
+        const strengthProgression = this.analyzeStrengthProgression(workouts);
+        if (strengthProgression) insights.push(strengthProgression);
+
+        const trainingLoadTrend = this.analyzeTrainingLoadTrend(workouts);
+        if (trainingLoadTrend) insights.push(trainingLoadTrend);
+
+        const splitBalance = this.analyzeSplitBalance(workouts);
+        if (splitBalance) insights.push(splitBalance);
+
         const sleepPerformance = this.analyzeSleepPerformance(workouts, metrics);
         if (sleepPerformance) insights.push(sleepPerformance);
 
@@ -52,6 +61,264 @@ const Analytics = {
             text: 'Keep logging data to unlock more insights!',
             category: 'general'
         }];
+    },
+
+    normalizeExerciseName(name) {
+        return String(name || '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    },
+
+    estimateOneRepMax(weight, reps) {
+        const safeWeight = Number(weight);
+        const safeReps = Number(reps);
+        if (!Number.isFinite(safeWeight) || safeWeight <= 0) return 0;
+        if (!Number.isFinite(safeReps) || safeReps <= 0) return safeWeight;
+        return safeWeight * (1 + safeReps / 30);
+    },
+
+    average(values) {
+        if (!Array.isArray(values) || values.length === 0) return null;
+        return values.reduce((sum, value) => sum + value, 0) / values.length;
+    },
+
+    // Analyze weighted exercise progression to detect progressive overload or plateaus.
+    analyzeStrengthProgression(workouts) {
+        if (workouts.length < 6) return null;
+
+        const sortedWorkouts = [...workouts].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const exerciseHistory = new Map();
+
+        sortedWorkouts.forEach(workout => {
+            (workout.exercises || []).forEach(exercise => {
+                const weightedSets = (exercise.sets || [])
+                    .map(set => ({
+                        reps: Number(set.reps),
+                        weight: Number(set.weight)
+                    }))
+                    .filter(set =>
+                        Number.isFinite(set.reps) && set.reps > 0 &&
+                        Number.isFinite(set.weight) && set.weight > 0
+                    );
+                if (weightedSets.length === 0) return;
+
+                const topSet = weightedSets.reduce((best, set) => {
+                    if (!best) return set;
+                    if (set.weight > best.weight) return set;
+                    if (set.weight === best.weight && set.reps > best.reps) return set;
+                    return best;
+                }, null);
+
+                const key = this.normalizeExerciseName(exercise.name);
+                if (!exerciseHistory.has(key)) {
+                    exerciseHistory.set(key, {
+                        name: String(exercise.name || '').trim(),
+                        sessions: []
+                    });
+                }
+
+                exerciseHistory.get(key).sessions.push({
+                    date: workout.date,
+                    topWeight: topSet.weight,
+                    topReps: topSet.reps,
+                    oneRepMax: this.estimateOneRepMax(topSet.weight, topSet.reps)
+                });
+            });
+        });
+
+        let bestProgress = null;
+        let biggestDrop = null;
+        let trackedExercises = 0;
+
+        exerciseHistory.forEach(entry => {
+            const sessions = entry.sessions.sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (sessions.length < 3) return;
+            trackedExercises++;
+
+            const recentWindowSize = Math.max(1, Math.min(3, Math.floor(sessions.length / 2)));
+            const baselineSlice = sessions.slice(0, sessions.length - recentWindowSize);
+            const recentSlice = sessions.slice(-recentWindowSize);
+
+            if (baselineSlice.length === 0 || recentSlice.length === 0) return;
+
+            const baselineWeight = this.average(baselineSlice.map(session => session.topWeight));
+            const recentWeight = this.average(recentSlice.map(session => session.topWeight));
+            const baselineOneRepMax = this.average(baselineSlice.map(session => session.oneRepMax));
+            const recentOneRepMax = this.average(recentSlice.map(session => session.oneRepMax));
+
+            if (!baselineWeight || !recentWeight || !baselineOneRepMax || !recentOneRepMax) return;
+
+            const deltaWeight = recentWeight - baselineWeight;
+            const deltaPercent = (deltaWeight / baselineWeight) * 100;
+            const deltaOneRepMax = recentOneRepMax - baselineOneRepMax;
+
+            const analysis = {
+                ...entry,
+                sessions,
+                deltaWeight,
+                deltaPercent,
+                deltaOneRepMax,
+                baselineWeight,
+                recentWeight
+            };
+
+            if (!bestProgress || analysis.deltaPercent > bestProgress.deltaPercent) {
+                bestProgress = analysis;
+            }
+            if (!biggestDrop || analysis.deltaPercent < biggestDrop.deltaPercent) {
+                biggestDrop = analysis;
+            }
+        });
+
+        if (bestProgress && bestProgress.deltaPercent >= 4 && bestProgress.deltaWeight >= 5) {
+            return {
+                type: 'positive',
+                text: `${bestProgress.name} is trending up ${bestProgress.deltaPercent.toFixed(0)}% (${bestProgress.baselineWeight.toFixed(1)} to ${bestProgress.recentWeight.toFixed(1)} lbs top set). Keep loading in 2.5-5 lb jumps when reps are strong.`,
+                category: 'strength'
+            };
+        }
+
+        if (biggestDrop && biggestDrop.deltaPercent <= -6 && Math.abs(biggestDrop.deltaWeight) >= 5) {
+            return {
+                type: 'warning',
+                text: `${biggestDrop.name} dropped ${Math.abs(biggestDrop.deltaPercent).toFixed(0)}% in recent sessions. Consider a lighter week and rebuild from your recent working weight.`,
+                category: 'strength'
+            };
+        }
+
+        if (trackedExercises >= 3) {
+            return {
+                type: 'info',
+                text: `You're tracking ${trackedExercises} weighted exercises consistently. To spark progress, prioritize adding reps at the same load before increasing weight.`,
+                category: 'strength'
+            };
+        }
+
+        return null;
+    },
+
+    // Analyze short-term training load shifts and recovery response.
+    analyzeTrainingLoadTrend(workouts) {
+        if (workouts.length < 8) return null;
+
+        const sessions = workouts
+            .map(workout => {
+                const volume = (workout.exercises || []).reduce((workoutSum, exercise) => {
+                    return workoutSum + (exercise.sets || []).reduce((setSum, set) => {
+                        const reps = Number(set.reps);
+                        const weight = Number(set.weight);
+                        if (!Number.isFinite(reps) || reps <= 0 || !Number.isFinite(weight) || weight <= 0) {
+                            return setSum;
+                        }
+                        return setSum + (reps * weight);
+                    }, 0);
+                }, 0);
+
+                return {
+                    date: workout.date,
+                    volume,
+                    energy: Number(workout.energyLevel)
+                };
+            })
+            .filter(session => session.volume > 0)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        if (sessions.length < 8) return null;
+
+        const recent = sessions.slice(-4);
+        const previous = sessions.slice(-8, -4);
+
+        const recentVolume = this.average(recent.map(session => session.volume));
+        const previousVolume = this.average(previous.map(session => session.volume));
+        if (!recentVolume || !previousVolume) return null;
+
+        const loadPercentChange = ((recentVolume - previousVolume) / previousVolume) * 100;
+        const recentEnergy = this.average(recent.map(session => session.energy).filter(Number.isFinite));
+        const previousEnergy = this.average(previous.map(session => session.energy).filter(Number.isFinite));
+        const energyDelta = (recentEnergy !== null && previousEnergy !== null)
+            ? recentEnergy - previousEnergy
+            : null;
+
+        if (loadPercentChange >= 18 && energyDelta !== null && energyDelta <= -0.8) {
+            return {
+                type: 'warning',
+                text: `Training volume jumped ${loadPercentChange.toFixed(0)}% while energy fell ${Math.abs(energyDelta).toFixed(1)} points. Consider one lower-volume session this week to recover.`,
+                category: 'recovery'
+            };
+        }
+
+        if (loadPercentChange >= 12 && (energyDelta === null || energyDelta >= -0.2)) {
+            return {
+                type: 'positive',
+                text: `Recent training volume is up ${loadPercentChange.toFixed(0)}% with stable energy. This is a strong overload block if sleep and protein stay consistent.`,
+                category: 'recovery'
+            };
+        }
+
+        if (loadPercentChange <= -20) {
+            return {
+                type: 'info',
+                text: `Training volume is down ${Math.abs(loadPercentChange).toFixed(0)}% vs your previous block. If this wasn't intentional deloading, add one extra hard set per lift this week.`,
+                category: 'recovery'
+            };
+        }
+
+        return null;
+    },
+
+    // Analyze balance across the configured workout split.
+    analyzeSplitBalance(workouts) {
+        if (workouts.length < 8) return null;
+
+        const settings = Storage.settings.get();
+        const split = Array.isArray(settings.workoutSplit)
+            ? settings.workoutSplit.filter(type => Workouts.WORKOUT_TYPES.includes(type))
+            : ['push', 'pull', 'legs'];
+        const trackedTypes = split.length > 0 ? split : ['push', 'pull', 'legs'];
+        if (trackedTypes.length < 2) return null;
+
+        const endDate = Storage.getToday();
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 42);
+        const startStr = startDate.toISOString().split('T')[0];
+
+        const recentWorkouts = workouts.filter(workout => workout.date >= startStr && workout.date <= endDate);
+        if (recentWorkouts.length < trackedTypes.length + 2) return null;
+
+        const counts = trackedTypes.map(type => ({
+            type,
+            count: recentWorkouts.filter(workout => workout.type === type).length
+        }));
+
+        const highest = counts.reduce((best, current) => current.count > best.count ? current : best, counts[0]);
+        const lowest = counts.reduce((best, current) => current.count < best.count ? current : best, counts[0]);
+
+        if (lowest.count === 0 && highest.count >= 3) {
+            return {
+                type: 'warning',
+                text: `No ${lowest.type} workouts logged in the last 6 weeks. Add ${lowest.type} back in this week to keep your split balanced.`,
+                category: 'programming'
+            };
+        }
+
+        if (highest.count - lowest.count >= 3) {
+            return {
+                type: 'info',
+                text: `Your ${highest.type} volume is outpacing ${lowest.type} (${highest.count} vs ${lowest.count} sessions in 6 weeks). Schedule ${lowest.type} first next week.`,
+                category: 'programming'
+            };
+        }
+
+        if (counts.every(entry => entry.count >= 2)) {
+            return {
+                type: 'positive',
+                text: `Your training split is well balanced: every workout type has at least 2 sessions over the past 6 weeks.`,
+                category: 'programming'
+            };
+        }
+
+        return null;
     },
 
     // Analyze sleep impact on workout performance
