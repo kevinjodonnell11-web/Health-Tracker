@@ -527,7 +527,7 @@
 
     <script src="../js/firebase-config.js?v=10"></script>
     <script src="../js/storage.js?v=11"></script>
-    <script src="../js/auth.js?v=10"></script>
+    <script src="../js/auth.js?v=11"></script>
     <script src="../js/cloud-storage.js?v=11"></script>
     <script src="../js/metrics.js?v=10"></script>
     <script src="../js/workouts.js?v=10"></script>
@@ -548,6 +548,10 @@
             window.addEventListener('authStateChanged', (e) => {
                 updateAccountSection(e.detail.user);
             });
+
+            // Ensure account section reflects current state even if auth event fired before listener.
+            const currentUser = window.Auth?.currentUser || window.firebaseAuth?.currentUser || null;
+            updateAccountSection(currentUser);
         });
 
         function updateAccountSection(user) {
