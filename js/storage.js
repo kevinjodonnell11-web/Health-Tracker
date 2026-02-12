@@ -34,6 +34,20 @@ const Storage = {
         return new Date().toISOString().split('T')[0];
     },
 
+    normalizeThemeValue(theme, darkMode) {
+        if (theme === 'light' || theme === 'dark') return theme;
+        if (darkMode === false) return 'light';
+        return 'dark';
+    },
+
+    applyTheme(theme) {
+        const resolvedTheme = this.normalizeThemeValue(theme, null);
+        if (typeof document !== 'undefined' && document.documentElement) {
+            document.documentElement.setAttribute('data-theme', resolvedTheme);
+        }
+        return resolvedTheme;
+    },
+
     // Format date to display format
     formatDate(dateStr) {
         const date = new Date(dateStr + 'T00:00:00');
@@ -204,14 +218,37 @@ const Storage = {
         get() {
             const defaults = {
                 darkMode: true,
+                theme: 'dark',
                 workoutSplit: ['push', 'pull', 'legs'],
                 defaultFastingWindow: { start: '12:00', end: '20:00' }
             };
             const saved = Storage.get(Storage.KEYS.SETTINGS);
-            return Array.isArray(saved) || !saved ? defaults : { ...defaults, ...saved };
+            if (Array.isArray(saved) || !saved) {
+                return defaults;
+            }
+
+            const merged = { ...defaults, ...saved };
+            const theme = Storage.normalizeThemeValue(merged.theme, merged.darkMode);
+            return {
+                ...merged,
+                theme,
+                darkMode: theme === 'dark'
+            };
         },
         set(settings) {
-            return Storage.set(Storage.KEYS.SETTINGS, settings);
+            const current = this.get();
+            const merged = { ...current, ...(settings || {}) };
+            const theme = Storage.normalizeThemeValue(merged.theme, merged.darkMode);
+            const normalized = {
+                ...merged,
+                theme,
+                darkMode: theme === 'dark'
+            };
+            const saved = Storage.set(Storage.KEYS.SETTINGS, normalized);
+            if (saved) {
+                Storage.applyTheme(theme);
+            }
+            return saved;
         }
     },
 
@@ -246,8 +283,23 @@ const Storage = {
     // Clear all data
     clearAll() {
         Object.values(this.KEYS).forEach(key => localStorage.removeItem(key));
+        this.applyTheme('dark');
     }
 };
 
 // Make Storage available globally
 window.Storage = Storage;
+
+// Apply persisted theme as soon as Storage is available.
+Storage.applyTheme(Storage.settings.get().theme);
+
+// Keep theme in sync when settings are updated from other tabs/windows.
+window.addEventListener('storage', (event) => {
+    if (event.key !== Storage.KEYS.SETTINGS) return;
+    Storage.applyTheme(Storage.settings.get().theme);
+});
+
+// Re-apply theme after cloud sync loads account settings.
+window.addEventListener('cloudDataLoaded', () => {
+    Storage.applyTheme(Storage.settings.get().theme);
+});

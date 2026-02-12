@@ -340,7 +340,7 @@ const Charts = {
     },
 
     // Create workout type distribution pie chart
-    createWorkoutTypeChart(canvasId) {
+    createWorkoutTypeChart(canvasId, days = 0) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return null;
 
@@ -348,8 +348,30 @@ const Charts = {
             this.instances[canvasId].destroy();
         }
 
-        const stats = Workouts.getStats();
-        const types = Object.entries(stats.byType).filter(([_, count]) => count > 0);
+        const allWorkouts = Storage.workouts.getAll();
+        const hasDateWindow = Number.isFinite(days) && days > 0;
+        let workouts = allWorkouts;
+        if (hasDateWindow) {
+            const endDate = Storage.getToday();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - days);
+            const startStr = startDate.toISOString().split('T')[0];
+            workouts = allWorkouts.filter(workout => workout.date >= startStr && workout.date <= endDate);
+        }
+
+        const byType = {};
+        Workouts.WORKOUT_TYPES.forEach(type => {
+            byType[type] = 0;
+        });
+        workouts.forEach(workout => {
+            if (byType[workout.type] !== undefined) {
+                byType[workout.type] += 1;
+            }
+        });
+
+        const types = Object.entries(byType)
+            .filter(([_, count]) => count > 0)
+            .sort((a, b) => b[1] - a[1]);
 
         if (types.length === 0) return null;
 
@@ -379,7 +401,7 @@ const Charts = {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'right',
+                        position: 'bottom',
                         labels: {
                             color: '#a0a0a0',
                             font: { size: 11 },
@@ -389,8 +411,8 @@ const Charts = {
                                 const values = chart.data.datasets[0]?.data || [];
                                 const total = values.reduce((sum, value) => sum + value, 0);
 
-                                return defaultLabels.map(label => {
-                                    const index = Number.isInteger(label.index) ? label.index : 0;
+                                return defaultLabels.map((label, i) => {
+                                    const index = Number.isInteger(label.index) ? label.index : i;
                                     const count = Number(values[index] || 0);
                                     const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
                                     return {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Health Tracker</title>
-    <link rel="stylesheet" href="../css/styles.css?v=10">
+    <link rel="stylesheet" href="../css/styles.css?v=11">
     <link rel="stylesheet" href="../css/dashboard.css?v=10">
     <link rel="stylesheet" href="../css/auth.css?v=10">
     <!-- Firebase SDK -->
@@ -66,6 +66,65 @@
 
         .setting-input {
             width: 120px;
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.14);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            border-radius: 30px;
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            top: 3px;
+            background: #fff;
+            transition: var(--transition);
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: rgba(233, 69, 96, 0.32);
+            border-color: rgba(233, 69, 96, 0.4);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(22px);
+        }
+
+        .theme-mode-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            min-width: 74px;
+            text-align: right;
+            font-weight: 600;
         }
 
         .data-stats {
@@ -358,6 +417,24 @@
                 </div>
             </div>
 
+            <!-- Appearance -->
+            <div class="settings-card">
+                <h3>Appearance</h3>
+                <div class="setting-row">
+                    <div class="setting-label">
+                        <span>Dark Mode</span>
+                        <small>Default style for the app (recommended)</small>
+                    </div>
+                    <div class="theme-toggle">
+                        <label class="toggle-switch" title="Toggle light/dark theme">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="theme-mode-label" id="themeModeLabel">Dark</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Data Management -->
             <div class="settings-card full-width">
                 <h3>Data Management</h3>
@@ -449,9 +526,9 @@
     </div>
 
     <script src="../js/firebase-config.js?v=10"></script>
-    <script src="../js/storage.js?v=10"></script>
+    <script src="../js/storage.js?v=11"></script>
     <script src="../js/auth.js?v=10"></script>
-    <script src="../js/cloud-storage.js?v=10"></script>
+    <script src="../js/cloud-storage.js?v=11"></script>
     <script src="../js/metrics.js?v=10"></script>
     <script src="../js/workouts.js?v=10"></script>
     <script src="../js/nutrition.js?v=10"></script>
@@ -512,6 +589,14 @@
                 document.getElementById('fastingStart').value = settings.defaultFastingWindow.start || '';
                 document.getElementById('fastingEnd').value = settings.defaultFastingWindow.end || '';
             }
+
+            const theme = settings.theme || (settings.darkMode === false ? 'light' : 'dark');
+            const isDark = theme === 'dark';
+            const toggle = document.getElementById('darkModeToggle');
+            if (toggle) {
+                toggle.checked = isDark;
+            }
+            updateThemeModeLabel(isDark);
         }
 
         function renderSplitConfig(split) {
@@ -580,6 +665,17 @@
                 };
                 Storage.settings.set(settings);
                 showSuccess('Fasting window saved!');
+            });
+
+            // Appearance
+            document.getElementById('darkModeToggle').addEventListener('change', (e) => {
+                const isDark = !!e.target.checked;
+                const settings = Storage.settings.get();
+                settings.theme = isDark ? 'dark' : 'light';
+                settings.darkMode = isDark;
+                Storage.settings.set(settings);
+                updateThemeModeLabel(isDark);
+                showSuccess(`Theme updated to ${isDark ? 'Dark' : 'Light'} mode.`);
             });
 
             // Export data
@@ -686,6 +782,12 @@
             settings.workoutSplit.splice(index, 1);
             Storage.settings.set(settings);
             renderSplitConfig(settings.workoutSplit);
+        }
+
+        function updateThemeModeLabel(isDark) {
+            const label = document.getElementById('themeModeLabel');
+            if (!label) return;
+            label.textContent = isDark ? 'Dark' : 'Light';
         }
 
         function showSuccess(message) {

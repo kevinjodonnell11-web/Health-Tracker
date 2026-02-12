@@ -28,6 +28,33 @@
     --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+    --bg-primary: #f3f6fa;
+    --bg-secondary: #e8edf5;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f6f9fe;
+    --bg-accent: #dbe8fb;
+    --bg-glass: rgba(255, 255, 255, 0.9);
+    --color-primary: #d73b57;
+    --color-primary-glow: rgba(215, 59, 87, 0.2);
+    --color-success: #0f9f6e;
+    --color-success-glow: rgba(15, 159, 110, 0.18);
+    --color-warning: #b8740f;
+    --color-danger: #d14b4b;
+    --color-info: #2b7fc8;
+    --text-primary: #1a2230;
+    --text-secondary: #4f5d73;
+    --text-muted: #6a778b;
+    --border-color: rgba(15, 23, 42, 0.12);
+    --border-glow: rgba(215, 59, 87, 0.2);
+    --shadow-sm: 0 2px 5px rgba(15, 23, 42, 0.08);
+    --shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+    --shadow-lg: 0 14px 36px rgba(15, 23, 42, 0.14);
+    --shadow-glow: 0 0 16px var(--color-primary-glow);
+    color-scheme: light;
 }
 
 * {
@@ -78,6 +105,51 @@ body::after {
     width: 520px;
     height: 520px;
     background: radial-gradient(circle at center, rgba(116, 185, 255, 0.14), rgba(116, 185, 255, 0) 70%);
+}
+
+:root[data-theme="light"] body::before {
+    opacity: 0.26;
+}
+
+:root[data-theme="light"] body::after {
+    opacity: 0.22;
+}
+
+:root[data-theme="light"] .form-input,
+:root[data-theme="light"] .form-select,
+:root[data-theme="light"] .form-textarea {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(15, 23, 42, 0.18);
+}
+
+:root[data-theme="light"] .form-input:hover,
+:root[data-theme="light"] .form-select:hover,
+:root[data-theme="light"] .form-textarea:hover {
+    border-color: rgba(15, 23, 42, 0.28);
+}
+
+:root[data-theme="light"] .form-input:focus,
+:root[data-theme="light"] .form-select:focus,
+:root[data-theme="light"] .form-textarea:focus {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(215, 59, 87, 0.16), inset 0 0 0 1px var(--color-primary);
+}
+
+:root[data-theme="light"] .btn-secondary {
+    background: rgba(15, 23, 42, 0.04);
+    border-color: rgba(15, 23, 42, 0.16);
+    color: var(--text-primary);
+}
+
+:root[data-theme="light"] .btn-secondary:hover {
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.24);
+}
+
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .analytics-card,
+:root[data-theme="light"] .settings-card {
+    background: linear-gradient(145deg, var(--bg-card) 0%, #f7f9fc 100%);
 }
 
 .main-header,

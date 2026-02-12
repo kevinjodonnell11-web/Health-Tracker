@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - Health Tracker</title>
-    <link rel="stylesheet" href="../css/styles.css?v=10">
+    <link rel="stylesheet" href="../css/styles.css?v=11">
     <link rel="stylesheet" href="../css/dashboard.css?v=10">
     <link rel="stylesheet" href="../css/auth.css?v=10">
     <script src="https://cdn.jsdelivr.net/npm/chart.js?v=10"></script>
@@ -234,6 +234,18 @@
             font-size: 0.9rem;
         }
 
+        .exercise-header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .exercise-header-controls .time-range-selector {
+            margin-left: auto;
+        }
+
         .correlation-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -292,6 +304,20 @@
 
             .correlation-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .exercise-header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .exercise-header-controls .exercise-select {
+                flex: 1;
+                min-width: 160px;
+            }
+
+            .exercise-header-controls .time-range-selector {
+                margin-left: 0;
             }
         }
     </style>
@@ -406,8 +432,14 @@
             <div class="analytics-card" id="cardWorkoutDistribution">
                 <div class="card-header">
                     <h3>Workout Distribution</h3>
+                    <div class="time-range-selector" data-chart="workoutTypeChart">
+                        <button class="time-range-btn" data-days="30">30d</button>
+                        <button class="time-range-btn" data-days="90">90d</button>
+                        <button class="time-range-btn" data-days="365">1y</button>
+                        <button class="time-range-btn active" data-days="0">All</button>
+                    </div>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container" id="workoutTypeContainer">
                     <canvas id="workoutTypeChart"></canvas>
                 </div>
                 <div class="chart-actions">
@@ -419,9 +451,17 @@
             <div class="analytics-card" id="cardExerciseProgress">
                 <div class="card-header">
                     <h3>Exercise Progress</h3>
-                    <select class="exercise-select" id="exerciseSelect">
-                        <option value="">Select exercise...</option>
-                    </select>
+                    <div class="exercise-header-controls">
+                        <select class="exercise-select" id="exerciseSelect">
+                            <option value="">Select exercise...</option>
+                        </select>
+                        <div class="time-range-selector" data-chart="exerciseProgressChart">
+                            <button class="time-range-btn" data-days="30">30d</button>
+                            <button class="time-range-btn" data-days="90">90d</button>
+                            <button class="time-range-btn" data-days="365">1y</button>
+                            <button class="time-range-btn active" data-days="0">All</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="chart-container" id="exerciseProgressContainer">
                     <canvas id="exerciseProgressChart"></canvas>
@@ -482,14 +522,14 @@
     </div>
 
     <script src="../js/firebase-config.js?v=10"></script>
-    <script src="../js/storage.js?v=10"></script>
+    <script src="../js/storage.js?v=11"></script>
     <script src="../js/auth.js?v=10"></script>
-    <script src="../js/cloud-storage.js?v=10"></script>
+    <script src="../js/cloud-storage.js?v=11"></script>
     <script src="../js/metrics.js?v=10"></script>
     <script src="../js/workouts.js?v=10"></script>
     <script src="../js/nutrition.js?v=10"></script>
-    <script src="../js/charts.js?v=11"></script>
-    <script src="../js/analytics.js?v=11"></script>
+    <script src="../js/charts.js?v=12"></script>
+    <script src="../js/analytics.js?v=12"></script>
     <script src="../js/pwa-utils.js?v=10"></script>
     <script>
         function safeText(value) {
@@ -515,7 +555,9 @@
         const chartTimeRanges = {
             weightTrendChart: 30,
             workoutFrequencyChart: 8,
-            nutritionChart: 30
+            nutritionChart: 30,
+            workoutTypeChart: 0,
+            exerciseProgressChart: 0
         };
         const focusKeyToCardId = {
             'weight-trend': 'cardWeightTrend',
@@ -527,7 +569,7 @@
 
         function setupEventListeners() {
             document.getElementById('exerciseSelect').addEventListener('change', (e) => {
-                renderExerciseProgress(e.target.value);
+                renderExerciseProgress(e.target.value, chartTimeRanges.exerciseProgressChart);
             });
 
             document.getElementById('statsRow').addEventListener('click', (e) => {
@@ -625,6 +667,14 @@
                 case 'nutritionChart':
                     Charts.createNutritionChart('nutritionChart', value);
                     break;
+                case 'workoutTypeChart':
+                    renderWorkoutDistribution(value);
+                    break;
+                case 'exerciseProgressChart': {
+                    const selectedExercise = document.getElementById('exerciseSelect').value;
+                    renderExerciseProgress(selectedExercise, value);
+                    break;
+                }
             }
         }
 
@@ -688,12 +738,30 @@
                     '<div class="empty-chart">Log nutrition data to see trends</div>';
             }
 
-            // Workout type chart
-            if (workoutStats.totalWorkouts > 0) {
-                Charts.createWorkoutTypeChart('workoutTypeChart');
-            } else {
-                document.getElementById('workoutTypeChart').parentElement.innerHTML =
-                    '<div class="empty-chart">Log workouts to see distribution</div>';
+            renderWorkoutDistribution(chartTimeRanges.workoutTypeChart);
+        }
+
+        function ensureWorkoutTypeCanvas() {
+            const container = document.getElementById('workoutTypeContainer');
+            if (!document.getElementById('workoutTypeChart')) {
+                container.innerHTML = '<canvas id="workoutTypeChart"></canvas>';
+            }
+        }
+
+        function renderWorkoutDistribution(days) {
+            const rangeDays = Number.isFinite(days) ? days : chartTimeRanges.workoutTypeChart;
+            const container = document.getElementById('workoutTypeContainer');
+
+            if (Charts.instances?.workoutTypeChart) {
+                Charts.instances.workoutTypeChart.destroy();
+                delete Charts.instances.workoutTypeChart;
+            }
+
+            ensureWorkoutTypeCanvas();
+            const chart = Charts.createWorkoutTypeChart('workoutTypeChart', rangeDays);
+            if (!chart) {
+                const rangeText = rangeDays > 0 ? ` in the last ${rangeDays} days` : '';
+                container.innerHTML = `<div class="empty-chart">No workouts found${rangeText}</div>`;
             }
         }
 
@@ -803,7 +871,7 @@
             }
         }
 
-        function renderExerciseProgress(exerciseName) {
+        function renderExerciseProgress(exerciseName, daysOverride = null) {
             const container = document.getElementById('exerciseProgressContainer');
             if (Charts.instances?.exerciseProgressChart) {
                 Charts.instances.exerciseProgressChart.destroy();
@@ -816,7 +884,8 @@
             }
 
             ensureExerciseCanvas();
-            const chart = Charts.createExerciseProgressChart('exerciseProgressChart', exerciseName);
+            const days = Number.isFinite(daysOverride) ? daysOverride : chartTimeRanges.exerciseProgressChart;
+            const chart = Charts.createExerciseProgressChart('exerciseProgressChart', exerciseName, days);
             if (!chart) {
                 container.innerHTML = `<div class="empty-chart">No weighted history logged for ${safeText(exerciseName)} yet</div>`;
             }
