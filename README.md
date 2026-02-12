@@ -37,6 +37,10 @@ A personal health and fitness tracking web application with workout logging, nut
 # Install dependencies
 npm install
 
+# Run server checks
+npm run lint
+npm test
+
 # Start server
 npm start
 
@@ -68,7 +72,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Charts**: Chart.js
-- **Storage**: Browser localStorage
+- **Storage**: Browser localStorage + optional Firebase cloud sync
 - **Server**: Node.js + Express (optional)
 
 ## Project Structure
@@ -93,7 +97,11 @@ health-tracker/
 
 ## Data Privacy
 
-All your health data is stored **locally in your browser**. Nothing is sent to any server. Your data stays on your device.
+By default, data is stored in your browser (`localStorage`).
+
+If you sign in with Google, your data is synced to your own Firestore document so it can be used across devices.
+
+Firestore security rules restrict reads/writes to the authenticated user that owns the document.
 
 To backup your data:
 1. Go to Settings

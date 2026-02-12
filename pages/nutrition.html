@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nutrition - Health Tracker</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/styles.css?v=10">
+    <link rel="stylesheet" href="../css/dashboard.css?v=10">
+    <link rel="stylesheet" href="../css/auth.css?v=10">
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js?v=10"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js?v=10"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js?v=10"></script>
     <style>
         .nutrition-stats {
             display: grid;
@@ -436,16 +436,20 @@
         <span>Pull down to refresh</span>
     </div>
 
-    <script src="../js/firebase-config.js"></script>
-    <script src="../js/storage.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/cloud-storage.js"></script>
-    <script src="../js/metrics.js"></script>
-    <script src="../js/nutrition.js"></script>
-    <script src="../js/dayview.js"></script>
-    <script src="../js/pwa-utils.js"></script>
+    <script src="../js/firebase-config.js?v=10"></script>
+    <script src="../js/storage.js?v=10"></script>
+    <script src="../js/auth.js?v=10"></script>
+    <script src="../js/cloud-storage.js?v=10"></script>
+    <script src="../js/metrics.js?v=10"></script>
+    <script src="../js/nutrition.js?v=10"></script>
+    <script src="../js/dayview.js?v=10"></script>
+    <script src="../js/pwa-utils.js?v=10"></script>
     <script>
         let currentDate = new Date();
+
+        function safeText(value) {
+            return window.escapeHtml ? window.escapeHtml(value ?? '') : String(value ?? '');
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             renderStats();
@@ -598,7 +602,7 @@
             container.innerHTML = entries.map(entry => `
                 <div class="nutrition-entry">
                     <div class="nutrition-header">
-                        <div class="nutrition-date">${Storage.formatDate(entry.date)}</div>
+                        <div class="nutrition-date">${safeText(Storage.formatDate(entry.date))}</div>
                         <div class="nutrition-totals">
                             <div class="total-item">
                                 <div class="total-value calories">${entry.totalCalories || 0}</div>
@@ -621,10 +625,10 @@
                         <div class="meals-list">
                             ${entry.meals.map(meal => `
                                 <div class="meal-item">
-                                    <div class="meal-time">${meal.time}</div>
+                                    <div class="meal-time">${safeText(meal.time)}</div>
                                     ${meal.items.map(item => `
                                         <div class="food-item">
-                                            <span class="food-name">${item.name}</span>
+                                            <span class="food-name">${safeText(item.name)}</span>
                                             <span class="food-macros">${item.calories} cal, ${item.protein}g</span>
                                         </div>
                                     `).join('')}
@@ -636,17 +640,17 @@
                     <div class="nutrition-meta">
                         ${entry.foodWindow?.start ? `
                             <div class="meta-item">
-                                <span>Window: ${entry.foodWindow.start} - ${entry.foodWindow.end}</span>
+                                <span>Window: ${safeText(entry.foodWindow.start)} - ${safeText(entry.foodWindow.end)}</span>
                             </div>
                         ` : ''}
                         ${entry.supplements && entry.supplements.length > 0 ? `
                             <div class="supplements-list">
-                                ${entry.supplements.map(s => `<span class="supplement-tag">${s}</span>`).join('')}
+                                ${entry.supplements.map(s => `<span class="supplement-tag">${safeText(s)}</span>`).join('')}
                             </div>
                         ` : ''}
                         ${entry.alcohol?.drinks > 0 ? `
                             <div class="meta-item text-warning">
-                                Alcohol: ${entry.alcohol.drinks} ${entry.alcohol.type || 'drinks'}
+                                Alcohol: ${entry.alcohol.drinks} ${safeText(entry.alcohol.type || 'drinks')}
                             </div>
                         ` : ''}
                     </div>

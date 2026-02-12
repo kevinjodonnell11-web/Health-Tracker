@@ -2,58 +2,24 @@
 
 const PWAUtils = {
     init() {
-        this.setupPullToRefresh();
+        // Disable pull-to-refresh as it causes click offset issues on iOS
+        // this.setupPullToRefresh();
         this.setupRefreshButton();
+        this.hidePullIndicator();
     },
 
-    // Pull to refresh for PWA
-    setupPullToRefresh() {
+    // Hide the pull indicator element
+    hidePullIndicator() {
         const pullIndicator = document.getElementById('pullToRefresh');
-        if (!pullIndicator) return;
+        if (pullIndicator) {
+            pullIndicator.style.display = 'none';
+        }
+    },
 
-        let startY = 0;
-        let currentY = 0;
-        let isPulling = false;
-        const threshold = 80;
-
-        document.addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) {
-                startY = e.touches[0].clientY;
-                isPulling = true;
-            }
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isPulling) return;
-
-            currentY = e.touches[0].clientY;
-            const pullDistance = currentY - startY;
-
-            if (pullDistance > 0 && window.scrollY === 0) {
-                pullIndicator.classList.add('visible');
-                if (pullDistance > threshold) {
-                    pullIndicator.querySelector('span').textContent = 'Release to refresh';
-                } else {
-                    pullIndicator.querySelector('span').textContent = 'Pull down to refresh';
-                }
-            }
-        }, { passive: true });
-
-        document.addEventListener('touchend', () => {
-            if (!isPulling) return;
-
-            const pullDistance = currentY - startY;
-            if (pullDistance > threshold && window.scrollY === 0) {
-                pullIndicator.classList.add('refreshing');
-                this.refreshPage();
-            } else {
-                pullIndicator.classList.remove('visible');
-            }
-
-            isPulling = false;
-            startY = 0;
-            currentY = 0;
-        }, { passive: true });
+    // Pull to refresh - DISABLED due to iOS click offset issues
+    setupPullToRefresh() {
+        // This feature is disabled - it causes touch position bugs on iOS Safari
+        return;
     },
 
     // Refresh button for PWA when pull-to-refresh isn't intuitive

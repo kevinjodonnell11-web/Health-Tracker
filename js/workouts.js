@@ -29,6 +29,27 @@ const Workouts = {
         ]
     },
 
+    normalizeWorkoutType(type) {
+        return this.WORKOUT_TYPES.includes(type) ? type : this.WORKOUT_TYPES[0];
+    },
+
+    escapeText(value) {
+        if (window.escapeHtml) {
+            return window.escapeHtml(value ?? '');
+        }
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+
+    safeNumber(value) {
+        const num = Number(value);
+        return Number.isFinite(num) ? String(num) : '';
+    },
+
     // Get workout streak info
     getStreakInfo() {
         const workouts = Storage.workouts.getAll()
@@ -87,7 +108,11 @@ const Workouts = {
     // Get suggested next workout based on rotation
     getSuggestedWorkout() {
         const settings = Storage.settings.get();
-        const split = settings.workoutSplit || ['push', 'pull', 'legs'];
+        const rawSplit = Array.isArray(settings.workoutSplit) ? settings.workoutSplit : ['push', 'pull', 'legs'];
+        const split = rawSplit.filter(type => this.WORKOUT_TYPES.includes(type));
+        if (split.length === 0) {
+            split.push('push', 'pull', 'legs');
+        }
         const workouts = Storage.workouts.getLatest(10);
 
         if (workouts.length === 0) {
@@ -144,14 +169,41 @@ const Workouts = {
         };
     },
 
+    // Get the next workout day number (finds max existing + 1)
+    getNextDayNumber() {
+        const workouts = Storage.workouts.getAll();
+        if (workouts.length === 0) return 1;
+        const maxDayNumber = Math.max(...workouts.map(w => w.dayNumber || 0));
+        return maxDayNumber + 1;
+    },
+
+    // Recalculate all workout day numbers based on date order
+    recalculateDayNumbers() {
+        const workouts = Storage.workouts.getAll();
+        // Sort by date ascending
+        workouts.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        let updated = 0;
+        workouts.forEach((workout, index) => {
+            const correctDayNumber = index + 1;
+            if (workout.dayNumber !== correctDayNumber) {
+                Storage.workouts.update(workout.id, { dayNumber: correctDayNumber });
+                updated++;
+            }
+        });
+
+        return updated;
+    },
+
     // Create a new workout entry
     createWorkout(data) {
-        const workoutCount = Storage.workouts.getCount();
+        const nextDayNumber = this.getNextDayNumber();
+        const safeType = this.normalizeWorkoutType(data.type);
 
         const workout = {
             date: data.date || Storage.getToday(),
-            type: data.type,
-            dayNumber: workoutCount + 1,
+            type: safeType,
+            dayNumber: nextDayNumber,
             preWeight: data.preWeight || null,
             exercises: data.exercises || [],
             cardio: data.cardio || null,
@@ -190,19 +242,27 @@ const Workouts = {
         const energyLevel = existingWorkout?.energyLevel || '';
         const notes = existingWorkout?.notes || '';
         const cardio = existingWorkout?.cardio || {};
+        const safeType = this.normalizeWorkoutType(type);
+        const safeEditId = this.escapeText(existingWorkout?.id || '');
+        const safeDate = this.escapeText(date);
+        const safePreWeight = this.safeNumber(preWeight);
+        const safeEnergyLevel = this.safeNumber(energyLevel);
+        const safeCardioDistance = this.safeNumber(cardio.distance || '');
+        const safeCardioDuration = this.escapeText(cardio.duration || '');
+        const safeNotes = this.escapeText(notes);
 
         return `
-            <form id="workoutForm" class="workout-form" data-edit-id="${existingWorkout?.id || ''}">
+            <form id="workoutForm" class="workout-form" data-edit-id="${safeEditId}">
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Date</label>
-                        <input type="date" class="form-input" name="date" value="${date}" required>
+                        <input type="date" class="form-input" name="date" value="${safeDate}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Workout Type</label>
                         <select class="form-select" name="type" id="workoutType" required>
                             ${this.WORKOUT_TYPES.map(t =>
-                                `<option value="${t}" ${t === type ? 'selected' : ''}>
+                                `<option value="${t}" ${t === safeType ? 'selected' : ''}>
                                     ${t.charAt(0).toUpperCase() + t.slice(1)}
                                 </option>`
                             ).join('')}
@@ -213,11 +273,11 @@ const Workouts = {
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Pre-Workout Weight (lbs)</label>
-                        <input type="number" class="form-input" name="preWeight" step="0.1" placeholder="225.0" value="${preWeight}">
+                        <input type="number" class="form-input" name="preWeight" step="0.1" placeholder="225.0" value="${safePreWeight}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Energy Level (1-10)</label>
-                        <input type="number" class="form-input" name="energyLevel" min="1" max="10" placeholder="7" value="${energyLevel}">
+                        <input type="number" class="form-input" name="energyLevel" min="1" max="10" placeholder="7" value="${safeEnergyLevel}">
                     </div>
                 </div>
 
@@ -241,14 +301,14 @@ const Workouts = {
                             <option value="incline" ${cardio.type === 'incline' ? 'selected' : ''}>Incline Walk</option>
                             <option value="bike" ${cardio.type === 'bike' ? 'selected' : ''}>Bike</option>
                         </select>
-                        <input type="number" class="form-input" name="cardioDistance" step="0.1" placeholder="Distance (mi)" value="${cardio.distance || ''}">
-                        <input type="text" class="form-input" name="cardioDuration" placeholder="Duration (mm:ss)" value="${cardio.duration || ''}">
+                        <input type="number" class="form-input" name="cardioDistance" step="0.1" placeholder="Distance (mi)" value="${safeCardioDistance}">
+                        <input type="text" class="form-input" name="cardioDuration" placeholder="Duration (mm:ss)" value="${safeCardioDuration}">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Notes</label>
-                    <textarea class="form-textarea" name="notes" rows="2" placeholder="How did it feel?">${notes}</textarea>
+                    <textarea class="form-textarea" name="notes" rows="2" placeholder="How did it feel?">${safeNotes}</textarea>
                 </div>
 
                 <div class="modal-footer">
@@ -269,7 +329,7 @@ const Workouts = {
     updateWorkout(id, data) {
         const workout = {
             date: data.date,
-            type: data.type,
+            type: this.normalizeWorkoutType(data.type),
             preWeight: data.preWeight || null,
             exercises: data.exercises || [],
             cardio: data.cardio || null,
@@ -288,7 +348,8 @@ const Workouts = {
 
     // Render exercise input block (with 3 sets by default, or existing sets for editing)
     renderExerciseBlock(index, workoutType, exerciseName = '', existingSets = null) {
-        const defaultExercises = this.COMMON_EXERCISES[workoutType] || [];
+        const safeWorkoutType = this.normalizeWorkoutType(workoutType);
+        const defaultExercises = this.COMMON_EXERCISES[safeWorkoutType] || [];
         // Get custom exercises from settings
         const settings = Storage.settings.get();
         const customExercises = settings.customExercises || [];
@@ -297,6 +358,7 @@ const Workouts = {
 
         // Check if exerciseName is a custom one (not in the list)
         const isCustom = exerciseName && !allExercises.includes(exerciseName);
+        const safeExerciseName = this.escapeText(exerciseName);
 
         // Get last workout data for this exercise if available (only if not editing with existing sets)
         let prefillReps = '';
@@ -328,13 +390,13 @@ const Workouts = {
                 <div class="exercise-header">
                     <select class="form-select exercise-select" data-index="${index}">
                         <option value="">Select exercise...</option>
-                        ${allExercises.map(ex => `<option value="${ex}" ${ex === exerciseName ? 'selected' : ''}>${ex}</option>`).join('')}
+                        ${allExercises.map(ex => `<option value="${this.escapeText(ex)}" ${ex === exerciseName ? 'selected' : ''}>${this.escapeText(ex)}</option>`).join('')}
                         <option value="__custom__" ${isCustom ? 'selected' : ''}>+ Add custom...</option>
                     </select>
                     <input type="text" class="form-input exercise-custom" data-index="${index}"
-                           placeholder="Enter exercise name..." value="${isCustom ? exerciseName : ''}"
+                           placeholder="Enter exercise name..." value="${isCustom ? safeExerciseName : ''}"
                            style="display: ${isCustom ? 'block' : 'none'};">
-                    <input type="hidden" class="exercise-name" name="exercise_${index}_name" value="${exerciseName}">
+                    <input type="hidden" class="exercise-name" name="exercise_${index}_name" value="${safeExerciseName}">
                     <button type="button" class="btn btn-danger btn-sm remove-exercise" data-index="${index}">
                         ✕
                     </button>
@@ -351,13 +413,15 @@ const Workouts = {
 
     // Render set row (simplified - no notes per set)
     renderSetRow(exerciseIndex, setIndex, prefillReps = '', prefillWeight = '') {
+        const safeReps = this.safeNumber(prefillReps);
+        const safeWeight = this.safeNumber(prefillWeight);
         return `
             <div class="set-row" data-set="${setIndex}">
                 <span class="set-number">${setIndex + 1}</span>
                 <input type="number" class="form-input set-reps" name="exercise_${exerciseIndex}_set_${setIndex}_reps"
-                       placeholder="Reps" min="1" value="${prefillReps}" inputmode="numeric">
+                       placeholder="Reps" min="1" value="${safeReps}" inputmode="numeric">
                 <input type="number" class="form-input set-weight" name="exercise_${exerciseIndex}_set_${setIndex}_weight"
-                       placeholder="Wt" step="2.5" value="${prefillWeight}" inputmode="decimal">
+                       placeholder="Wt" step="2.5" value="${safeWeight}" inputmode="decimal">
                 <button type="button" class="btn btn-sm copy-set-btn" title="Copy to next set" data-exercise="${exerciseIndex}" data-set="${setIndex}">⬇</button>
                 <button type="button" class="btn btn-sm remove-set-btn" title="Remove set" data-exercise="${exerciseIndex}" data-set="${setIndex}">✕</button>
             </div>
@@ -366,12 +430,17 @@ const Workouts = {
 
     // Handle workout form submission
     handleWorkoutSubmit(formData) {
+        const rawPreWeight = formData.get('preWeight');
+        const rawEnergy = formData.get('energyLevel');
+        const parsedPreWeight = rawPreWeight !== null && rawPreWeight !== '' ? Number(rawPreWeight) : null;
+        const parsedEnergy = rawEnergy !== null && rawEnergy !== '' ? Number(rawEnergy) : null;
+        const rawNotes = formData.get('notes');
         const workout = {
             date: formData.get('date'),
-            type: formData.get('type'),
-            preWeight: formData.get('preWeight') ? parseFloat(formData.get('preWeight')) : null,
-            energyLevel: formData.get('energyLevel') ? parseInt(formData.get('energyLevel')) : null,
-            notes: formData.get('notes') || null,
+            type: this.normalizeWorkoutType(formData.get('type')),
+            preWeight: Number.isFinite(parsedPreWeight) ? parsedPreWeight : null,
+            energyLevel: Number.isInteger(parsedEnergy) ? parsedEnergy : null,
+            notes: rawNotes ? rawNotes.trim() : null,
             exercises: [],
             cardio: null
         };
@@ -380,8 +449,20 @@ const Workouts = {
         const exerciseBlocks = document.querySelectorAll('.exercise-block');
         exerciseBlocks.forEach((block) => {
             const blockIndex = block.dataset.index;
-            const exerciseName = formData.get(`exercise_${blockIndex}_name`);
-            if (!exerciseName) return;
+            let exerciseName = formData.get(`exercise_${blockIndex}_name`);
+
+            // Check if custom input was used but hidden input wasn't updated
+            const customInput = block.querySelector('.exercise-custom');
+            const selectInput = block.querySelector('.exercise-select');
+            if (selectInput && selectInput.value === '__custom__' && customInput && customInput.value) {
+                // Force sync from custom input
+                exerciseName = customInput.value;
+            }
+
+            exerciseName = String(exerciseName || '').trim();
+            if (!exerciseName) {
+                return;
+            }
 
             const exercise = {
                 name: exerciseName,
@@ -395,11 +476,15 @@ const Workouts = {
                 const weight = formData.get(`exercise_${blockIndex}_set_${setIndex}_weight`);
 
                 if (reps) {
-                    exercise.sets.push({
-                        reps: parseInt(reps),
-                        weight: weight ? parseFloat(weight) : null,
-                        notes: formData.get(`exercise_${blockIndex}_set_${setIndex}_notes`) || null
-                    });
+                    const parsedReps = Number(reps);
+                    const parsedWeight = weight !== null && weight !== '' ? Number(weight) : null;
+                    if (Number.isFinite(parsedReps) && parsedReps > 0) {
+                        exercise.sets.push({
+                            reps: Math.round(parsedReps),
+                            weight: Number.isFinite(parsedWeight) ? parsedWeight : null,
+                            notes: formData.get(`exercise_${blockIndex}_set_${setIndex}_notes`) || null
+                        });
+                    }
                 }
                 setIndex++;
             }
@@ -412,22 +497,35 @@ const Workouts = {
         // Parse cardio
         const cardioType = formData.get('cardioType');
         if (cardioType) {
+            const rawDistance = formData.get('cardioDistance');
+            const parsedDistance = rawDistance !== null && rawDistance !== '' ? Number(rawDistance) : null;
             workout.cardio = {
-                type: cardioType,
-                distance: formData.get('cardioDistance') ? parseFloat(formData.get('cardioDistance')) : null,
-                duration: formData.get('cardioDuration') || null
+                type: String(cardioType).trim(),
+                distance: Number.isFinite(parsedDistance) ? parsedDistance : null,
+                duration: formData.get('cardioDuration') ? String(formData.get('cardioDuration')).trim() : null
             };
         }
 
         // Save any custom exercises to settings for future autocomplete
         this.saveCustomExercises(workout.exercises, workout.type);
 
-        return this.createWorkout(workout);
+        // Check if this is an edit operation
+        const form = document.getElementById('workoutForm');
+        const editId = form?.dataset.editId;
+
+        if (editId) {
+            // Update existing workout
+            return this.updateWorkout(editId, workout);
+        } else {
+            // Create new workout
+            return this.createWorkout(workout);
+        }
     },
 
     // Save custom exercises to settings
     saveCustomExercises(exercises, workoutType) {
-        const defaultExercises = this.COMMON_EXERCISES[workoutType] || [];
+        const safeWorkoutType = this.normalizeWorkoutType(workoutType);
+        const defaultExercises = this.COMMON_EXERCISES[safeWorkoutType] || [];
         const allDefaults = Object.values(this.COMMON_EXERCISES).flat();
 
         const settings = Storage.settings.get();
@@ -435,7 +533,7 @@ const Workouts = {
 
         let hasNew = false;
         exercises.forEach(ex => {
-            const name = ex.name.trim();
+            const name = String(ex.name || '').trim();
             // If not in any default list and not already saved as custom
             if (name && !allDefaults.includes(name) && !customExercises.includes(name)) {
                 customExercises.push(name);
@@ -446,7 +544,7 @@ const Workouts = {
 
         if (hasNew) {
             settings.customExercises = customExercises.sort();
-            Storage.settings.save(settings);
+            Storage.settings.set(settings);
         }
     },
 
@@ -470,6 +568,92 @@ const Workouts = {
             last30Days: last30Days.length,
             byType,
             averagePerWeek: last30Days.length > 0 ? (last30Days.length / 4).toFixed(1) : 0
+        };
+    },
+
+    // Get lifetime stats with fun metrics
+    getLifetimeStats() {
+        const workouts = Storage.workouts.getAll();
+
+        let totalVolume = 0; // Total pounds lifted (weight × reps)
+        let totalReps = 0;
+        let totalSets = 0;
+        const exerciseCounts = {}; // Track frequency of each exercise
+        const exercisePRs = {}; // Personal records per exercise (heaviest weight)
+        const typeCounts = {};
+
+        workouts.forEach(workout => {
+            // Count workout types
+            typeCounts[workout.type] = (typeCounts[workout.type] || 0) + 1;
+
+            // Process exercises
+            if (workout.exercises && workout.exercises.length > 0) {
+                workout.exercises.forEach(exercise => {
+                    const name = exercise.name;
+                    exerciseCounts[name] = (exerciseCounts[name] || 0) + 1;
+
+                    if (exercise.sets && exercise.sets.length > 0) {
+                        exercise.sets.forEach(set => {
+                            const reps = parseInt(set.reps) || 0;
+                            const weight = parseFloat(set.weight) || 0;
+
+                            totalReps += reps;
+                            totalSets++;
+                            totalVolume += weight * reps;
+
+                            // Track PR (heaviest weight used)
+                            if (weight > 0 && (!exercisePRs[name] || weight > exercisePRs[name].weight)) {
+                                exercisePRs[name] = {
+                                    weight,
+                                    reps,
+                                    date: workout.date
+                                };
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        // Find most frequent exercise
+        let mostFrequentExercise = null;
+        let maxExerciseCount = 0;
+        Object.entries(exerciseCounts).forEach(([name, count]) => {
+            if (count > maxExerciseCount) {
+                maxExerciseCount = count;
+                mostFrequentExercise = name;
+            }
+        });
+
+        // Find favorite workout type
+        let favoriteType = null;
+        let maxTypeCount = 0;
+        Object.entries(typeCounts).forEach(([type, count]) => {
+            if (count > maxTypeCount) {
+                maxTypeCount = count;
+                favoriteType = type;
+            }
+        });
+
+        // Format total volume for display
+        const formatVolume = (lbs) => {
+            if (lbs >= 1000000) return `${(lbs / 1000000).toFixed(1)}M`;
+            if (lbs >= 1000) return `${(lbs / 1000).toFixed(1)}K`;
+            return Math.round(lbs).toLocaleString();
+        };
+
+        return {
+            totalWorkouts: workouts.length,
+            totalVolume: Math.round(totalVolume),
+            totalVolumeFormatted: formatVolume(totalVolume),
+            totalReps,
+            totalSets,
+            mostFrequentExercise,
+            mostFrequentExerciseCount: maxExerciseCount,
+            favoriteType,
+            favoriteTypeCount: maxTypeCount,
+            exercisePRs,
+            uniqueExercises: Object.keys(exerciseCounts).length
         };
     },
 
@@ -609,12 +793,13 @@ const Workouts = {
 
     // Generate a complete workout based on history and workout type
     generateWorkout(workoutType) {
-        const exercises = this.COMMON_EXERCISES[workoutType] || [];
+        const safeWorkoutType = this.normalizeWorkoutType(workoutType);
+        const exercises = this.COMMON_EXERCISES[safeWorkoutType] || [];
         const settings = Storage.settings.get();
 
         // Get the last workout of this type to see which exercises were done
         const workouts = Storage.workouts.getAll()
-            .filter(w => w.type === workoutType)
+            .filter(w => w.type === safeWorkoutType)
             .sort((a, b) => new Date(b.date) - new Date(a.date));
 
         let selectedExercises;
@@ -638,7 +823,7 @@ const Workouts = {
         });
 
         return {
-            type: workoutType,
+            type: safeWorkoutType,
             exercises: generatedExercises,
             suggestion: this.getSuggestedWorkout()
         };
@@ -661,11 +846,12 @@ const Workouts = {
 
     // Start guided workout
     startGuidedWorkout(workoutType) {
-        const generated = this.generateWorkout(workoutType);
+        const safeWorkoutType = this.normalizeWorkoutType(workoutType);
+        const generated = this.generateWorkout(safeWorkoutType);
 
         this.guidedState = {
             active: true,
-            workoutType,
+            workoutType: safeWorkoutType,
             exercises: generated.exercises,
             currentExerciseIndex: 0,
             currentSetIndex: 0,
@@ -805,6 +991,9 @@ const Workouts = {
 
         const progressPercent = ((step.exerciseIndex - 1) / step.totalExercises) * 100 +
                                (step.completedSetsForExercise / step.totalSets / step.totalExercises) * 100;
+        const safeExerciseName = this.escapeText(step.exerciseName);
+        const safeSetNotes = this.escapeText(step.setNotes || '');
+        const safeReason = this.escapeText(step.recommendation.reason || '');
 
         return `
             <div class="guided-workout">
@@ -816,8 +1005,8 @@ const Workouts = {
                 </div>
 
                 <div class="guided-exercise">
-                    <h3 class="guided-exercise-name">${step.exerciseName}</h3>
-                    ${step.setNotes ? `<span class="guided-set-note">${step.setNotes}</span>` : ''}
+                    <h3 class="guided-exercise-name">${safeExerciseName}</h3>
+                    ${step.setNotes ? `<span class="guided-set-note">${safeSetNotes}</span>` : ''}
                 </div>
 
                 <div class="guided-suggestion">
@@ -826,7 +1015,7 @@ const Workouts = {
                         <span class="target-value">${step.suggestedReps} reps</span>
                         <span class="target-weight">${step.suggestedWeight ? step.suggestedWeight + ' lbs' : 'bodyweight'}</span>
                     </div>
-                    ${step.recommendation.reason ? `<p class="guided-reason">${step.recommendation.reason}</p>` : ''}
+                    ${step.recommendation.reason ? `<p class="guided-reason">${safeReason}</p>` : ''}
                 </div>
 
                 <form id="guidedSetForm" class="guided-form">
@@ -867,6 +1056,7 @@ const Workouts = {
     // Render workout type selection for guided mode
     renderGuidedWorkoutSelection() {
         const suggestion = this.getSuggestedWorkout();
+        const safeSuggestionReason = this.escapeText(suggestion.reason || '');
 
         return `
             <div class="guided-selection">
@@ -883,7 +1073,7 @@ const Workouts = {
                     `).join('')}
                 </div>
 
-                ${suggestion.reason ? `<p class="guided-suggestion-reason">${suggestion.reason}</p>` : ''}
+                ${suggestion.reason ? `<p class="guided-suggestion-reason">${safeSuggestionReason}</p>` : ''}
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Cancel</button>

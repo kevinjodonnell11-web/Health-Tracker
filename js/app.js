@@ -1,17 +1,32 @@
 // Main App Initialization
 
-// IMMEDIATELY clear all data on page load - data will be loaded from cloud after auth
-(function() {
-    localStorage.removeItem('health_tracker_workouts');
-    localStorage.removeItem('health_tracker_nutrition');
-    localStorage.removeItem('health_tracker_metrics');
-    localStorage.removeItem('health_tracker_goals');
-    localStorage.removeItem('health_tracker_settings');
-})();
+// Local data is intentionally preserved between refreshes.
+// Auth + cloud sync handle user isolation and synchronization.
+
+// Utility: Throttle function for scroll/resize events
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+function safeText(value) {
+    return window.escapeHtml ? window.escapeHtml(value ?? '') : String(value ?? '');
+}
+
+function safeInsightType(type) {
+    return ['positive', 'warning', 'negative', 'info'].includes(type) ? type : 'info';
+}
 
 const App = {
     currentWeightDays: 30, // Default time range for weight chart
     dataLoaded: false,
+    _renderQueued: false,
 
     init() {
         this.setupEventListeners();
@@ -21,9 +36,26 @@ const App = {
         this.setupFAB();
         this.setupPullToRefresh();
         this.setupRefreshButton();
+        this.setupHeaderScroll();
 
         // Wait for auth state before rendering
         this.checkAuthAndRender();
+    },
+
+    // Header scroll effect
+    setupHeaderScroll() {
+        const header = document.querySelector('.main-header');
+        if (!header) return;
+
+        const handleScroll = throttle(() => {
+            if (window.scrollY > 10) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }, 100);
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
     },
 
     // Check auth state and render appropriately
@@ -80,16 +112,35 @@ const App = {
         }
     },
 
-    // Render all dashboard components
+    // Render all dashboard components with batched updates
     renderDashboard() {
-        this.renderTodaySummary();
-        this.renderWeightChart();
-        this.renderWeekCalendar();
-        this.renderWorkoutStreak();
-        this.renderInsights();
-        this.renderUpcoming();
-        this.renderProgressRings();
-        this.renderWorkoutProgress();
+        // Prevent multiple renders in the same frame
+        if (this._renderQueued) return;
+        this._renderQueued = true;
+
+        requestAnimationFrame(() => {
+            this._renderQueued = false;
+
+            // Batch DOM reads first
+            const dashboard = document.querySelector('.dashboard');
+            if (!dashboard) return;
+
+            // Then batch DOM writes
+            this.renderTodaySummary();
+            this.renderWeekCalendar();
+            this.renderWorkoutStreak();
+            this.renderLifetimeStats();
+            this.renderInsights();
+            this.renderUpcoming();
+            this.renderProgressRings();
+            this.renderWorkoutProgress();
+            this.enhanceClickableStats();
+
+            // Defer heavy chart rendering
+            requestAnimationFrame(() => {
+                this.renderWeightChart();
+            });
+        });
     },
 
     // Render today's summary card
@@ -175,20 +226,69 @@ const App = {
         document.getElementById('workoutsThisWeek').textContent = `${weekStats.workoutCount} workout${weekStats.workoutCount !== 1 ? 's' : ''}`;
     },
 
+    // Render lifetime stats
+    renderLifetimeStats() {
+        const container = document.getElementById('lifetimeStats');
+        if (!container) return;
+
+        const stats = Workouts.getLifetimeStats();
+
+        // Find top PR to highlight
+        let topPR = null;
+        let topPRWeight = 0;
+        Object.entries(stats.exercisePRs).forEach(([name, pr]) => {
+            if (pr.weight > topPRWeight) {
+                topPRWeight = pr.weight;
+                topPR = { name, ...pr };
+            }
+        });
+
+        container.innerHTML = `
+            <div class="lifetime-stat clickable-stat" data-action="workouts" title="View all workouts">
+                <span class="stat-value">${stats.totalVolumeFormatted}</span>
+                <span class="stat-label">Lbs Lifted</span>
+            </div>
+            <div class="lifetime-stat clickable-stat" data-action="analytics-workouts" title="Open workout analytics">
+                <span class="stat-value">${stats.totalReps.toLocaleString()}</span>
+                <span class="stat-label">Total Reps</span>
+            </div>
+            <div class="lifetime-stat clickable-stat" data-action="analytics-workouts" title="Open workout analytics">
+                <span class="stat-value">${stats.totalSets.toLocaleString()}</span>
+                <span class="stat-label">Total Sets</span>
+            </div>
+            <div class="lifetime-stat clickable-stat" data-action="analytics-workouts" title="Open workout analytics">
+                <span class="stat-value">${stats.uniqueExercises}</span>
+                <span class="stat-label">Exercises</span>
+            </div>
+            ${stats.mostFrequentExercise ? `
+                <div class="lifetime-stat clickable-stat" data-action="workouts" style="grid-column: span 2;" title="View workout history">
+                    <span class="stat-value" style="font-size: 1rem;">${safeText(stats.mostFrequentExercise)}</span>
+                    <span class="stat-label">Most Frequent (${stats.mostFrequentExerciseCount}x)</span>
+                </div>
+            ` : ''}
+            ${topPR ? `
+                <div class="lifetime-stat clickable-stat" data-action="analytics-exercise" style="grid-column: span 2;" title="Open exercise progress">
+                    <span class="stat-value" style="font-size: 1rem;">${safeText(topPR.name)}: ${topPR.weight} lbs</span>
+                    <span class="stat-label">Top PR (${topPR.reps} reps)</span>
+                </div>
+            ` : ''}
+        `;
+    },
+
     // Render insights
     renderInsights() {
         const insights = Analytics.generateInsights();
         const container = document.getElementById('insightsList');
 
         if (insights.length === 0 || (insights.length === 1 && insights[0].category === 'general')) {
-            container.innerHTML = `<p class="insight-placeholder">${insights[0]?.text || 'Log more data to see personalized insights'}</p>`;
+            container.innerHTML = `<p class="insight-placeholder">${safeText(insights[0]?.text || 'Log more data to see personalized insights')}</p>`;
             return;
         }
 
         // Show top 3 insights
         container.innerHTML = insights.slice(0, 3).map(insight => `
-            <div class="insight-item ${insight.type}">
-                <p class="insight-text">${insight.text}</p>
+            <div class="insight-item ${safeInsightType(insight.type)}">
+                <p class="insight-text">${safeText(insight.text)}</p>
             </div>
         `).join('');
     },
@@ -200,10 +300,10 @@ const App = {
 
         container.innerHTML = `
             <div class="suggested-workout">
-                <div class="workout-type-badge">${suggestion.type}</div>
+                <div class="workout-type-badge">${safeText(suggestion.type)}</div>
                 <div class="workout-suggestion-text">
                     <strong>Suggested Next Workout</strong>
-                    <p class="workout-suggestion-reason">${suggestion.reason}</p>
+                    <p class="workout-suggestion-reason">${safeText(suggestion.reason)}</p>
                 </div>
             </div>
         `;
@@ -217,6 +317,109 @@ const App = {
         document.getElementById('logMealBtn')?.addEventListener('click', () => this.openModal('meal'));
         document.getElementById('logWeightBtn')?.addEventListener('click', () => this.openModal('weight'));
         document.getElementById('logMetricsBtn')?.addEventListener('click', () => this.openModal('metrics'));
+
+        // Clickable stats - event delegation
+        this.setupClickableStats();
+    },
+
+    // Setup clickable stats for navigation
+    setupClickableStats() {
+        document.addEventListener('click', (e) => {
+            // Don't interfere with modal interactions
+            if (e.target.closest('.modal')) return;
+
+            // Don't interfere with any interactive elements
+            if (e.target.closest('button') ||
+                e.target.closest('a') ||
+                e.target.closest('input') ||
+                e.target.closest('select') ||
+                e.target.closest('textarea') ||
+                e.target.closest('form') ||
+                e.target.closest('.btn') ||
+                e.target.closest('[onclick]')) {
+                return;
+            }
+
+            const clickableStat = e.target.closest('.clickable-stat');
+            if (!clickableStat) return;
+
+            const action = clickableStat.dataset.action;
+            if (!action) return;
+
+            e.preventDefault();
+            this.handleStatAction(action);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            const target = e.target.closest('.clickable-stat');
+            if (!target) return;
+            if (target.matches('button, a, input, select, textarea')) return;
+            const action = target.dataset.action;
+            if (!action) return;
+            e.preventDefault();
+            this.handleStatAction(action);
+        });
+    },
+
+    handleStatAction(action) {
+        switch (action) {
+            case 'weight':
+                window.location.href = 'pages/analytics.html?focus=weight-trend';
+                break;
+
+            case 'nutrition':
+            case 'nutrition-week':
+                window.location.href = 'pages/nutrition.html';
+                break;
+
+            case 'metrics':
+                if (window.DayView) {
+                    DayView.open(Storage.getToday());
+                }
+                break;
+
+            case 'workouts':
+                window.location.href = 'pages/workouts.html?view=all';
+                break;
+
+            case 'workouts-week':
+                window.location.href = 'pages/workouts.html?view=recent';
+                break;
+
+            case 'analytics-workouts':
+                window.location.href = 'pages/analytics.html?focus=workout-frequency';
+                break;
+
+            case 'analytics-exercise':
+                window.location.href = 'pages/analytics.html?focus=exercise-progress';
+                break;
+
+            case 'last-workout': {
+                const streak = Workouts.getStreakInfo();
+                if (streak.lastWorkout && window.DayView) {
+                    DayView.open(streak.lastWorkout);
+                } else {
+                    window.location.href = 'pages/workouts.html?view=all';
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+    },
+
+    enhanceClickableStats() {
+        document.querySelectorAll('.clickable-stat').forEach((el) => {
+            if (el.matches('a, button, input, select, textarea')) return;
+            if (!el.hasAttribute('tabindex')) {
+                el.setAttribute('tabindex', '0');
+            }
+            if (!el.hasAttribute('role')) {
+                el.setAttribute('role', 'button');
+            }
+        });
     },
 
     // Setup modal
@@ -225,6 +428,12 @@ const App = {
         const closeBtn = document.getElementById('modalClose');
 
         closeBtn?.addEventListener('click', () => this.closeModal());
+        // Also handle touchend for reliable mobile close
+        closeBtn?.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.closeModal();
+        }, { passive: false });
+
         modal?.addEventListener('click', (e) => {
             if (e.target === modal) this.closeModal();
         });
@@ -296,7 +505,12 @@ const App = {
 
             case 'workout':
                 title = 'Log Workout';
-                content = Workouts.renderWorkoutForm();
+                try {
+                    content = Workouts.renderWorkoutForm();
+                } catch (error) {
+                    console.error('Error rendering workout form:', error);
+                    content = '<p>Error loading form</p>';
+                }
                 break;
 
             case 'meal':
@@ -329,8 +543,22 @@ const App = {
         modalBody.innerHTML = content;
         modal.classList.add('active');
 
-        // Setup form handlers
-        this.setupFormHandlers(type);
+        // Setup form handlers and mobile touch handlers after DOM is updated
+        requestAnimationFrame(() => {
+            try {
+                this.setupFormHandlers(type);
+                // Add touchend handlers for all action buttons inside the modal (for mobile)
+                modalBody.querySelectorAll('.action-btn[onclick]').forEach(btn => {
+                    btn.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        // Trigger the onclick
+                        btn.click();
+                    }, { passive: false });
+                });
+            } catch (error) {
+                console.error('Error in setupFormHandlers:', error);
+            }
+        });
     },
 
     // Close modal
@@ -369,9 +597,12 @@ const App = {
     setupGuidedWorkoutForm() {
         const form = document.getElementById('guidedSetForm');
         if (form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
+            const handleGuidedSubmit = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                const formData = new FormData(form);
                 const reps = formData.get('reps');
                 const weight = formData.get('weight');
 
@@ -386,7 +617,18 @@ const App = {
                     // Next set - re-render the form
                     this.openModal('guided-active');
                 }
-            });
+            };
+
+            form.addEventListener('submit', handleGuidedSubmit);
+
+            // Add touchend handler for mobile
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    handleGuidedSubmit(e);
+                }, { passive: false });
+            }
         }
     },
 
@@ -414,16 +656,30 @@ const App = {
 
     // Workout form setup
     setupWorkoutForm() {
+        const form = document.getElementById('workoutForm');
+        const exercisesList = document.getElementById('exercisesList');
+        const addExerciseBtn = document.getElementById('addExerciseBtn');
+        const workoutTypeSelect = document.getElementById('workoutType');
+
+        if (!form || !exercisesList || !addExerciseBtn || !workoutTypeSelect) {
+            console.error('Workout form elements not found:', { form, exercisesList, addExerciseBtn, workoutTypeSelect });
+            return;
+        }
+
         let exerciseCount = 0;
 
         const addExercise = () => {
-            const workoutType = document.getElementById('workoutType').value;
-            const container = document.getElementById('exercisesList');
+            const workoutType = workoutTypeSelect.value;
             const exerciseHtml = Workouts.renderExerciseBlock(exerciseCount, workoutType);
-            container.insertAdjacentHTML('beforeend', exerciseHtml);
+            exercisesList.insertAdjacentHTML('beforeend', exerciseHtml);
 
-            const block = container.querySelector(`[data-index="${exerciseCount}"]`);
-            block.querySelector('.remove-exercise').addEventListener('click', () => block.remove());
+            const block = exercisesList.querySelector(`[data-index="${exerciseCount}"]`);
+            if (block) {
+                const removeBtn = block.querySelector('.remove-exercise');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', () => block.remove());
+                }
+            }
 
             exerciseCount++;
         };
@@ -431,10 +687,24 @@ const App = {
         // Add first exercise
         addExercise();
 
-        document.getElementById('addExerciseBtn').addEventListener('click', addExercise);
+        addExerciseBtn.addEventListener('click', addExercise);
+        addExerciseBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            addExercise();
+        }, { passive: false });
 
         // Event delegation for dynamic elements (add set, copy set, exercise select)
-        const exercisesList = document.getElementById('exercisesList');
+        // Handle touchend for mobile - delegate same as click
+        exercisesList.addEventListener('touchend', (e) => {
+            const addSetBtn = e.target.closest('.add-set-btn');
+            const copyBtn = e.target.closest('.copy-set-btn');
+            const removeSetBtn = e.target.closest('.remove-set-btn');
+            if (addSetBtn || copyBtn || removeSetBtn) {
+                e.preventDefault();
+                // Let the click handler do the work
+                (addSetBtn || copyBtn || removeSetBtn).click();
+            }
+        }, { passive: false });
 
         exercisesList.addEventListener('click', (e) => {
             // Add set button
@@ -525,13 +795,13 @@ const App = {
             }
         });
 
-        document.getElementById('workoutType').addEventListener('change', (e) => {
+        workoutTypeSelect.addEventListener('change', (e) => {
             const workoutType = e.target.value;
             // Update exercise dropdowns for all exercise blocks
             document.querySelectorAll('.exercise-block').forEach(block => {
                 const select = block.querySelector('.exercise-select');
                 const hiddenInput = block.querySelector('.exercise-name');
-                const currentValue = hiddenInput.value;
+                const currentValue = hiddenInput?.value || '';
 
                 if (select) {
                     const defaultExercises = Workouts.COMMON_EXERCISES[workoutType] || [];
@@ -544,40 +814,87 @@ const App = {
 
                     select.innerHTML = `
                         <option value="">Select exercise...</option>
-                        ${allExercises.map(ex => `<option value="${ex}" ${ex === currentValue ? 'selected' : ''}>${ex}</option>`).join('')}
+                        ${allExercises.map(ex => `<option value="${safeText(ex)}" ${ex === currentValue ? 'selected' : ''}>${safeText(ex)}</option>`).join('')}
                         <option value="__custom__" ${currentValue && !isInList ? 'selected' : ''}>+ Add custom...</option>
                     `;
                 }
             });
         });
 
-        document.getElementById('workoutForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            if (Workouts.handleWorkoutSubmit(formData)) {
-                this.closeModal();
-                this.renderDashboard();
-                this.showToast('Workout logged successfully!', 'success');
+        // Form submission handler function
+        const handleSubmit = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
-        });
+
+            try {
+                const formData = new FormData(form);
+                const result = Workouts.handleWorkoutSubmit(formData);
+                if (result) {
+                    this.closeModal();
+                    this.renderDashboard();
+                    this.showToast('Workout logged successfully!', 'success');
+                } else {
+                    this.showToast('Failed to save workout', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving workout:', error);
+                this.showToast('Error saving workout: ' + error.message, 'error');
+            }
+
+            return false;
+        };
+
+        // Attach to form submit event
+        form.onsubmit = handleSubmit;
+
+        // Also attach click and touchend handlers directly to submit button for mobile compatibility
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', (e) => {
+                handleSubmit(e);
+            });
+            // Touchend handler for mobile Safari
+            submitBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleSubmit(e);
+            }, { passive: false });
+        } else {
+            console.error('Submit button not found in form');
+        }
     },
 
     // Meal form setup
     setupMealForm() {
+        const form = document.getElementById('mealForm');
+        const foodList = document.getElementById('foodItemsList');
+        const foodQuickAdd = document.getElementById('foodQuickAdd');
+        const addCustomFoodBtn = document.getElementById('addCustomFood');
+
+        if (!form || !foodList) {
+            console.error('Meal form elements not found');
+            return;
+        }
+
         let foodItemCount = 0;
 
         const addFoodItem = (name = '', calories = '', protein = '') => {
-            const foodList = document.getElementById('foodItemsList');
             foodList.insertAdjacentHTML('beforeend', Nutrition.renderFoodItemRow(foodItemCount, name, calories, protein));
 
             const row = foodList.querySelector(`[data-index="${foodItemCount}"]`);
-            row.querySelector('.remove-food').addEventListener('click', () => {
-                row.remove();
-                updateMealTotals();
-            });
-            row.querySelectorAll('input').forEach(input => {
-                input.addEventListener('change', updateMealTotals);
-            });
+            if (row) {
+                const removeBtn = row.querySelector('.remove-food');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', () => {
+                        row.remove();
+                        updateMealTotals();
+                    });
+                }
+                row.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('change', updateMealTotals);
+                });
+            }
 
             foodItemCount++;
         };
@@ -585,62 +902,134 @@ const App = {
         const updateMealTotals = () => {
             let totalCal = 0, totalPro = 0;
             document.querySelectorAll('.food-item-row').forEach(row => {
-                totalCal += parseInt(row.querySelector('.food-calories').value) || 0;
-                totalPro += parseInt(row.querySelector('.food-protein').value) || 0;
+                const calInput = row.querySelector('.food-calories');
+                const proInput = row.querySelector('.food-protein');
+                totalCal += parseInt(calInput?.value) || 0;
+                totalPro += parseInt(proInput?.value) || 0;
             });
-            document.getElementById('mealCalTotal').textContent = totalCal;
-            document.getElementById('mealProTotal').textContent = totalPro;
+            const calTotalEl = document.getElementById('mealCalTotal');
+            const proTotalEl = document.getElementById('mealProTotal');
+            if (calTotalEl) calTotalEl.textContent = totalCal;
+            if (proTotalEl) proTotalEl.textContent = totalPro;
         };
 
         // Add first food item
         addFoodItem();
 
-        document.getElementById('foodQuickAdd').addEventListener('change', (e) => {
-            if (e.target.value) {
-                const food = Nutrition.FOOD_DATABASE[e.target.value];
-                addFoodItem(e.target.value, food.calories, food.protein);
-                e.target.value = '';
-                updateMealTotals();
-            }
-        });
+        if (foodQuickAdd) {
+            foodQuickAdd.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    const food = Nutrition.FOOD_DATABASE[e.target.value];
+                    if (food) {
+                        addFoodItem(e.target.value, food.calories, food.protein);
+                        e.target.value = '';
+                        updateMealTotals();
+                    }
+                }
+            });
+        }
 
-        document.getElementById('addCustomFood').addEventListener('click', () => addFoodItem());
+        if (addCustomFoodBtn) {
+            addCustomFoodBtn.addEventListener('click', () => addFoodItem());
+        }
 
-        document.getElementById('mealForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            if (Nutrition.handleMealSubmit(formData)) {
-                this.closeModal();
-                this.renderDashboard();
-                this.showToast('Meal logged successfully!', 'success');
+        const handleMealSubmit = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
-        });
+
+            try {
+                const formData = new FormData(form);
+                if (Nutrition.handleMealSubmit(formData)) {
+                    this.closeModal();
+                    this.renderDashboard();
+                    this.showToast('Meal logged successfully!', 'success');
+                } else {
+                    this.showToast('Failed to save meal', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving meal:', error);
+                this.showToast('Error saving meal: ' + error.message, 'error');
+            }
+        };
+
+        form.addEventListener('submit', handleMealSubmit);
+
+        // Add touchend handler for mobile
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleMealSubmit(e);
+            }, { passive: false });
+        }
     },
 
     // Weight form setup
     setupWeightForm() {
-        document.getElementById('weightForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
+        const form = document.getElementById('weightForm');
+        if (!form) {
+            console.error('Weight form not found');
+            return;
+        }
+
+        const handleWeightSubmit = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const formData = new FormData(form);
             if (Metrics.handleWeightSubmit(formData)) {
                 this.closeModal();
                 this.renderDashboard();
                 this.showToast('Weight logged successfully!', 'success');
             }
-        });
+        };
+
+        form.addEventListener('submit', handleWeightSubmit);
+
+        // Add touchend handler for mobile
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleWeightSubmit(e);
+            }, { passive: false });
+        }
     },
 
     // Metrics form setup
     setupMetricsForm() {
-        document.getElementById('metricsForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
+        const form = document.getElementById('metricsForm');
+        if (!form) {
+            console.error('Metrics form not found');
+            return;
+        }
+
+        const handleMetricsSubmit = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const formData = new FormData(form);
             if (Metrics.handleMetricsSubmit(formData)) {
                 this.closeModal();
                 this.renderDashboard();
                 this.showToast('Metrics logged successfully!', 'success');
             }
-        });
+        };
+
+        form.addEventListener('submit', handleMetricsSubmit);
+
+        // Add touchend handler for mobile
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleMetricsSubmit(e);
+            }, { passive: false });
+        }
     },
 
     // Setup keyboard shortcuts
@@ -707,20 +1096,32 @@ const App = {
 
         if (!fabContainer || !fabMain) return;
 
-        // Toggle FAB menu
-        fabMain.addEventListener('click', () => {
+        // Toggle FAB menu - use both click and touchend for mobile
+        const toggleFAB = (e) => {
+            e.stopPropagation();
             fabContainer.classList.toggle('active');
-        });
+        };
+        fabMain.addEventListener('click', toggleFAB);
 
-        // Handle FAB option clicks
-        fabMenu?.addEventListener('click', (e) => {
+        // Handle FAB option clicks/taps
+        const handleFABOption = (e) => {
             const option = e.target.closest('.fab-option');
             if (option) {
+                e.preventDefault();
+                e.stopPropagation();
                 const action = option.dataset.action;
                 fabContainer.classList.remove('active');
                 this.openModal(action);
             }
-        });
+        };
+        fabMenu?.addEventListener('click', handleFABOption);
+        fabMenu?.addEventListener('touchend', (e) => {
+            const option = e.target.closest('.fab-option');
+            if (option) {
+                e.preventDefault();
+                handleFABOption(e);
+            }
+        }, { passive: false });
 
         // Close FAB when clicking outside
         document.addEventListener('click', (e) => {
@@ -778,10 +1179,10 @@ const App = {
         const radius = 28;
         const circumference = 2 * Math.PI * radius;
 
-        const createRing = (pct, colorClass, value, label) => {
+        const createRing = (pct, colorClass, value, label, action) => {
             const offset = circumference - (pct / 100) * circumference;
             return `
-                <div class="progress-ring-item">
+                <div class="progress-ring-item clickable-stat" data-action="${action}" title="View ${label.toLowerCase()} details">
                     <div class="progress-ring">
                         <svg viewBox="0 0 70 70">
                             <circle class="progress-ring-bg" cx="35" cy="35" r="${radius}"></circle>
@@ -798,9 +1199,9 @@ const App = {
         };
 
         container.innerHTML = `
-            ${createRing(caloriesPct, 'calories', calories, 'Calories')}
-            ${createRing(proteinPct, 'protein', protein, 'Protein')}
-            ${createRing(stepsPct, 'steps', steps, 'Steps')}
+            ${createRing(caloriesPct, 'calories', calories, 'Calories', 'nutrition')}
+            ${createRing(proteinPct, 'protein', protein, 'Protein', 'nutrition')}
+            ${createRing(stepsPct, 'steps', steps, 'Steps', 'metrics')}
         `;
     },
 
@@ -821,54 +1222,14 @@ const App = {
         fillEl.style.width = `${pct}%`;
     },
 
-    // Pull to refresh for PWA
+    // Pull to refresh for PWA - DISABLED due to mobile click offset issues
     setupPullToRefresh() {
+        // This feature is disabled - it causes touch position bugs on iOS Safari
+        // Use the refresh button instead (setupRefreshButton)
         const pullIndicator = document.getElementById('pullToRefresh');
-        if (!pullIndicator) return;
-
-        let startY = 0;
-        let currentY = 0;
-        let isPulling = false;
-        const threshold = 80;
-
-        document.addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) {
-                startY = e.touches[0].clientY;
-                isPulling = true;
-            }
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isPulling) return;
-
-            currentY = e.touches[0].clientY;
-            const pullDistance = currentY - startY;
-
-            if (pullDistance > 0 && window.scrollY === 0) {
-                pullIndicator.classList.add('visible');
-                if (pullDistance > threshold) {
-                    pullIndicator.querySelector('span').textContent = 'Release to refresh';
-                } else {
-                    pullIndicator.querySelector('span').textContent = 'Pull down to refresh';
-                }
-            }
-        }, { passive: true });
-
-        document.addEventListener('touchend', () => {
-            if (!isPulling) return;
-
-            const pullDistance = currentY - startY;
-            if (pullDistance > threshold && window.scrollY === 0) {
-                pullIndicator.classList.add('refreshing');
-                this.refreshPage();
-            } else {
-                pullIndicator.classList.remove('visible');
-            }
-
-            isPulling = false;
-            startY = 0;
-            currentY = 0;
-        }, { passive: true });
+        if (pullIndicator) {
+            pullIndicator.style.display = 'none';
+        }
     },
 
     // Refresh button for PWA when pull-to-refresh isn't intuitive

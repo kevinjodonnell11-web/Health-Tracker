@@ -3,6 +3,34 @@
 const CloudStorage = {
     isSyncing: false,
     lastSync: null,
+    OWNER_KEY: 'health_tracker_owner_uid',
+    DATA_KEYS: [
+        'health_tracker_workouts',
+        'health_tracker_nutrition',
+        'health_tracker_metrics',
+        'health_tracker_goals',
+        'health_tracker_settings',
+    ],
+
+    getLocalSnapshot() {
+        const snapshot = {};
+        this.DATA_KEYS.forEach((key) => {
+            const value = localStorage.getItem(key);
+            if (value !== null) {
+                snapshot[key] = value;
+            }
+        });
+        return snapshot;
+    },
+
+    restoreLocalSnapshot(snapshot) {
+        if (!snapshot || typeof snapshot !== 'object') return;
+
+        this.DATA_KEYS.forEach((key) => localStorage.removeItem(key));
+        Object.entries(snapshot).forEach(([key, value]) => {
+            localStorage.setItem(key, value);
+        });
+    },
 
     // Sync all data from cloud to local
     async syncFromCloud() {
@@ -12,9 +40,15 @@ const CloudStorage = {
         this.isSyncing = true;
         this.updateSyncStatus('Syncing...');
 
+        const localOwnerId = localStorage.getItem(this.OWNER_KEY);
+        const isDifferentUser = !!(localOwnerId && localOwnerId !== userId);
+        const localSnapshot = isDifferentUser ? null : this.getLocalSnapshot();
+
         try {
-            // ALWAYS clear local data first to prevent data leakage between users
-            this.clearAllLocalData();
+            // Only clear immediately when we know a different user previously owned this local cache.
+            if (isDifferentUser) {
+                this.clearAllLocalData();
+            }
 
             // Get user's data document
             const userDataRef = firebaseDb.collection('userData').doc(userId);
@@ -22,6 +56,9 @@ const CloudStorage = {
 
             if (doc.exists) {
                 const cloudData = doc.data();
+
+                // Cloud is source of truth when present.
+                this.clearAllLocalData();
 
                 // Load cloud data (NOT merge - replace completely)
                 if (cloudData.workouts) {
@@ -42,8 +79,10 @@ const CloudStorage = {
 
                 // Data loaded from cloud
             } else {
-                // No cloud data for this user - they start fresh (empty)
+                // No cloud data yet: keep local snapshot for this user if available.
             }
+
+            localStorage.setItem(this.OWNER_KEY, userId);
 
             this.lastSync = new Date();
             this.updateSyncStatus('Synced');
@@ -52,6 +91,11 @@ const CloudStorage = {
             window.dispatchEvent(new CustomEvent('cloudDataLoaded'));
         } catch (error) {
             console.error('Sync from cloud failed:', error);
+            // Recover local data if sync failed to avoid destructive data loss.
+            if (localSnapshot && Object.keys(localSnapshot).length > 0) {
+                this.restoreLocalSnapshot(localSnapshot);
+                localStorage.setItem(this.OWNER_KEY, userId);
+            }
             this.updateSyncStatus('Sync failed');
             // Still notify so app can render (with empty data)
             window.dispatchEvent(new CustomEvent('cloudDataLoaded'));
@@ -81,6 +125,7 @@ const CloudStorage = {
             await firebaseDb.collection('userData').doc(userId).set(userData, { merge: true });
 
             this.lastSync = new Date();
+            localStorage.setItem(this.OWNER_KEY, userId);
             this.updateSyncStatus('Synced');
             // Data synced to cloud
         } catch (error) {
@@ -157,11 +202,8 @@ const CloudStorage = {
 
     // Clear ALL local data (on sign out or user switch)
     clearAllLocalData() {
-        localStorage.removeItem('health_tracker_workouts');
-        localStorage.removeItem('health_tracker_nutrition');
-        localStorage.removeItem('health_tracker_metrics');
-        localStorage.removeItem('health_tracker_goals');
-        localStorage.removeItem('health_tracker_settings');
+        this.DATA_KEYS.forEach((key) => localStorage.removeItem(key));
+        localStorage.removeItem(this.OWNER_KEY);
         this.lastSync = null;
         // All local data cleared
     },
@@ -171,7 +213,7 @@ const CloudStorage = {
         const syncStatus = document.getElementById('syncStatus');
         if (syncStatus) {
             syncStatus.textContent = status;
-            syncStatus.className = 'sync-status ' + status.toLowerCase().replace(' ', '-');
+            syncStatus.className = 'sync-status ' + status.toLowerCase().replace(/\s+/g, '-');
         }
     },
 

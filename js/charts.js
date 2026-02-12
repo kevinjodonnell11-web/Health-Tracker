@@ -1,5 +1,33 @@
 // Charts Module - Chart.js configurations and rendering
 
+// Custom crosshair plugin for vertical line on hover
+const crosshairPlugin = {
+    id: 'crosshair',
+    afterDraw: (chart) => {
+        if (chart.tooltip._active && chart.tooltip._active.length) {
+            const ctx = chart.ctx;
+            const activePoint = chart.tooltip._active[0];
+            const x = activePoint.element.x;
+            const topY = chart.scales.y.top;
+            const bottomY = chart.scales.y.bottom;
+
+            // Draw vertical line
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x, topY);
+            ctx.lineTo(x, bottomY);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(233, 69, 96, 0.5)';
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+};
+
+// Register the plugin globally
+Chart.register(crosshairPlugin);
+
 const Charts = {
     instances: {},
 
@@ -7,6 +35,14 @@ const Charts = {
     commonOptions: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+        hover: {
+            mode: 'index',
+            intersect: false
+        },
         plugins: {
             legend: {
                 display: false
@@ -110,6 +146,14 @@ const Charts = {
             },
             options: {
                 ...this.commonOptions,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                hover: {
+                    mode: 'index',
+                    intersect: false
+                },
                 plugins: {
                     legend: {
                         display: true,
@@ -121,15 +165,28 @@ const Charts = {
                         }
                     },
                     tooltip: {
-                        backgroundColor: '#16213e',
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(22, 33, 62, 0.95)',
                         titleColor: '#eee',
                         bodyColor: '#eee',
-                        borderColor: '#2a2a4a',
+                        borderColor: 'rgba(233, 69, 96, 0.5)',
                         borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
                         callbacks: {
-                            label: (context) => `${context.dataset.label}: ${context.parsed.y?.toFixed(1)} lbs`
-                        }
-                    }
+                            title: (tooltipItems) => {
+                                return tooltipItems[0]?.label || '';
+                            },
+                            label: (context) => {
+                                if (context.parsed.y === null) return null;
+                                return ` ${context.dataset.label}: ${context.parsed.y?.toFixed(1)} lbs`;
+                            }
+                        },
+                        filter: (tooltipItem) => tooltipItem.parsed.y !== null
+                    },
+                    crosshair: true
                 },
                 scales: {
                     ...this.commonOptions.scales,
@@ -138,6 +195,9 @@ const Charts = {
                         min: minWeight,
                         max: maxWeight
                     }
+                },
+                onHover: (event, activeElements, chart) => {
+                    chart.canvas.style.cursor = activeElements.length ? 'crosshair' : 'default';
                 }
             }
         });

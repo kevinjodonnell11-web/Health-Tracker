@@ -3,6 +3,23 @@
 const DayView = {
     currentDate: null,
 
+    escapeText(value) {
+        if (window.escapeHtml) {
+            return window.escapeHtml(value ?? '');
+        }
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+
+    normalizeWorkoutType(type) {
+        if (window.Workouts?.WORKOUT_TYPES?.includes(type)) return type;
+        return 'push';
+    },
+
     // Open day view modal for a specific date
     open(dateStr) {
         this.currentDate = dateStr;
@@ -54,6 +71,7 @@ const DayView = {
             day: 'numeric',
             year: 'numeric'
         });
+        const safeFormattedDate = this.escapeText(formattedDate);
 
         const isToday = this.currentDate === Storage.getToday();
 
@@ -65,7 +83,7 @@ const DayView = {
                     </svg>
                 </button>
                 <div class="dayview-date">
-                    <h2>${formattedDate}</h2>
+                    <h2>${safeFormattedDate}</h2>
                     ${isToday ? '<span class="today-badge">Today</span>' : ''}
                 </div>
                 <button class="dayview-nav-btn" onclick="DayView.navigate(1)">
@@ -171,13 +189,15 @@ const DayView = {
             `;
         }
 
-        const typeBadgeClass = `badge-${workout.type}`;
+        const safeType = this.normalizeWorkoutType(workout.type);
+        const typeBadgeClass = `badge-${safeType}`;
+        const safeTypeLabel = this.escapeText(safeType);
 
         return `
             <div class="dayview-section">
                 <div class="dayview-section-header">
                     <h3>Workout</h3>
-                    <span class="badge ${typeBadgeClass}">${workout.type}</span>
+                    <span class="badge ${typeBadgeClass}">${safeTypeLabel}</span>
                     ${workout.dayNumber ? `<span class="workout-day-num">#${workout.dayNumber}</span>` : ''}
                 </div>
 
@@ -185,7 +205,7 @@ const DayView = {
                     <div class="dayview-exercises">
                         ${workout.exercises.map(ex => `
                             <div class="dayview-exercise">
-                                <span class="exercise-name">${ex.name}</span>
+                                <span class="exercise-name">${this.escapeText(ex.name)}</span>
                                 <div class="exercise-sets">
                                     ${ex.sets.map(set => `
                                         <span class="set-chip">${set.reps || '?'}${set.weight ? ` x ${set.weight}` : ''}</span>
@@ -198,14 +218,14 @@ const DayView = {
 
                 ${workout.cardio ? `
                     <div class="dayview-cardio">
-                        <span class="cardio-badge">${workout.cardio.type}</span>
+                        <span class="cardio-badge">${this.escapeText(workout.cardio.type)}</span>
                         ${workout.cardio.distance ? `<span>${workout.cardio.distance} mi</span>` : ''}
-                        ${workout.cardio.duration ? `<span>${workout.cardio.duration}</span>` : ''}
+                        ${workout.cardio.duration ? `<span>${this.escapeText(workout.cardio.duration)}</span>` : ''}
                     </div>
                 ` : ''}
 
                 ${workout.notes ? `
-                    <div class="dayview-notes">"${workout.notes}"</div>
+                    <div class="dayview-notes">"${this.escapeText(workout.notes)}"</div>
                 ` : ''}
 
                 ${workout.energyLevel ? `
@@ -246,11 +266,11 @@ const DayView = {
                     <div class="dayview-meals">
                         ${nutrition.meals.map(meal => `
                             <div class="dayview-meal">
-                                <div class="meal-time-badge">${meal.time}</div>
+                                <div class="meal-time-badge">${this.escapeText(meal.time)}</div>
                                 <div class="meal-items">
                                     ${meal.items.map(item => `
                                         <div class="meal-item">
-                                            <span class="item-name">${item.name}</span>
+                                            <span class="item-name">${this.escapeText(item.name)}</span>
                                             <span class="item-macros">${item.calories} cal, ${item.protein}g</span>
                                         </div>
                                     `).join('')}
@@ -263,7 +283,7 @@ const DayView = {
                 ${nutrition.foodWindow?.start ? `
                     <div class="dayview-food-window">
                         <span class="window-label">Food Window:</span>
-                        <span class="window-times">${nutrition.foodWindow.start} - ${nutrition.foodWindow.end}</span>
+                        <span class="window-times">${this.escapeText(nutrition.foodWindow.start)} - ${this.escapeText(nutrition.foodWindow.end)}</span>
                     </div>
                 ` : ''}
 
@@ -271,14 +291,14 @@ const DayView = {
                     <div class="dayview-supplements">
                         <span class="supplements-label">Supplements:</span>
                         <div class="supplements-list">
-                            ${nutrition.supplements.map(s => `<span class="supplement-tag">${s}</span>`).join('')}
+                            ${nutrition.supplements.map(s => `<span class="supplement-tag">${this.escapeText(s)}</span>`).join('')}
                         </div>
                     </div>
                 ` : ''}
 
                 ${nutrition.alcohol?.drinks > 0 ? `
                     <div class="dayview-alcohol">
-                        Alcohol: ${nutrition.alcohol.drinks} ${nutrition.alcohol.type || 'drinks'}
+                        Alcohol: ${nutrition.alcohol.drinks} ${this.escapeText(nutrition.alcohol.type || 'drinks')}
                     </div>
                 ` : ''}
             </div>

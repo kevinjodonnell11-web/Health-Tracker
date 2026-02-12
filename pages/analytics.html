@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - Health Tracker</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/auth.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../css/styles.css?v=10">
+    <link rel="stylesheet" href="../css/dashboard.css?v=10">
+    <link rel="stylesheet" href="../css/auth.css?v=10">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js?v=10"></script>
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js?v=10"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js?v=10"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js?v=10"></script>
     <style>
         .analytics-grid {
             display: grid;
@@ -142,6 +142,21 @@
             border: 1px solid var(--border-color);
         }
 
+        .stat-box.stat-box-btn {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .stat-box.stat-box-btn:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-1px);
+        }
+
+        .stat-box.stat-box-btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
         .stat-box .value {
             font-size: 2rem;
             font-weight: 700;
@@ -162,6 +177,23 @@
         .stat-box .change.up { color: var(--color-danger); }
         .stat-box .change.down { color: var(--color-success); }
         .stat-box .change.neutral { color: var(--text-muted); }
+
+        .chart-actions {
+            margin-top: 0.75rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .chart-jump-btn {
+            min-height: 38px;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.7rem;
+        }
+
+        .focused-card {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(233, 69, 96, 0.2);
+        }
 
         .exercise-select {
             padding: 0.5rem;
@@ -260,7 +292,7 @@
 
         <div class="analytics-grid">
             <!-- Weight Trend -->
-            <div class="analytics-card">
+            <div class="analytics-card" id="cardWeightTrend">
                 <div class="card-header">
                     <h3>Weight Trend</h3>
                     <div class="time-range-selector" data-chart="weightTrendChart">
@@ -273,10 +305,13 @@
                 <div class="chart-container">
                     <canvas id="weightTrendChart"></canvas>
                 </div>
+                <div class="chart-actions">
+                    <button type="button" class="btn btn-secondary chart-jump-btn" data-chart-action="dashboard">Open Dashboard</button>
+                </div>
             </div>
 
             <!-- Workout Frequency -->
-            <div class="analytics-card">
+            <div class="analytics-card" id="cardWorkoutFrequency">
                 <div class="card-header">
                     <h3>Workout Frequency</h3>
                     <div class="time-range-selector" data-chart="workoutFrequencyChart">
@@ -289,10 +324,13 @@
                 <div class="chart-container">
                     <canvas id="workoutFrequencyChart"></canvas>
                 </div>
+                <div class="chart-actions">
+                    <button type="button" class="btn btn-secondary chart-jump-btn" data-chart-action="workouts">Open Workout Log</button>
+                </div>
             </div>
 
             <!-- Nutrition Trend -->
-            <div class="analytics-card full-width">
+            <div class="analytics-card full-width" id="cardNutritionTrend">
                 <div class="card-header">
                     <h3>Nutrition Trend</h3>
                     <div class="time-range-selector" data-chart="nutritionChart">
@@ -304,6 +342,9 @@
                 </div>
                 <div class="chart-container tall">
                     <canvas id="nutritionChart"></canvas>
+                </div>
+                <div class="chart-actions">
+                    <button type="button" class="btn btn-secondary chart-jump-btn" data-chart-action="nutrition">Open Nutrition Log</button>
                 </div>
             </div>
 
@@ -328,17 +369,20 @@
             </div>
 
             <!-- Workout Type Distribution -->
-            <div class="analytics-card">
+            <div class="analytics-card" id="cardWorkoutDistribution">
                 <div class="card-header">
                     <h3>Workout Distribution</h3>
                 </div>
                 <div class="chart-container">
                     <canvas id="workoutTypeChart"></canvas>
                 </div>
+                <div class="chart-actions">
+                    <button type="button" class="btn btn-secondary chart-jump-btn" data-chart-action="workouts">Open Workout Log</button>
+                </div>
             </div>
 
             <!-- Exercise Progress -->
-            <div class="analytics-card">
+            <div class="analytics-card" id="cardExerciseProgress">
                 <div class="card-header">
                     <h3>Exercise Progress</h3>
                     <select class="exercise-select" id="exerciseSelect">
@@ -347,6 +391,9 @@
                 </div>
                 <div class="chart-container" id="exerciseProgressContainer">
                     <canvas id="exerciseProgressChart"></canvas>
+                </div>
+                <div class="chart-actions">
+                    <button type="button" class="btn btn-secondary chart-jump-btn" data-chart-action="workouts">Open Workout Log</button>
                 </div>
             </div>
         </div>
@@ -400,17 +447,25 @@
         <span>Pull down to refresh</span>
     </div>
 
-    <script src="../js/firebase-config.js"></script>
-    <script src="../js/storage.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/cloud-storage.js"></script>
-    <script src="../js/metrics.js"></script>
-    <script src="../js/workouts.js"></script>
-    <script src="../js/nutrition.js"></script>
-    <script src="../js/charts.js"></script>
-    <script src="../js/analytics.js"></script>
-    <script src="../js/pwa-utils.js"></script>
+    <script src="../js/firebase-config.js?v=10"></script>
+    <script src="../js/storage.js?v=10"></script>
+    <script src="../js/auth.js?v=10"></script>
+    <script src="../js/cloud-storage.js?v=10"></script>
+    <script src="../js/metrics.js?v=10"></script>
+    <script src="../js/workouts.js?v=10"></script>
+    <script src="../js/nutrition.js?v=10"></script>
+    <script src="../js/charts.js?v=10"></script>
+    <script src="../js/analytics.js?v=10"></script>
+    <script src="../js/pwa-utils.js?v=10"></script>
     <script>
+        function safeText(value) {
+            return window.escapeHtml ? window.escapeHtml(value ?? '') : String(value ?? '');
+        }
+
+        function safeInsightType(type) {
+            return ['positive', 'warning', 'negative', 'info'].includes(type) ? type : 'info';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             renderStats();
             renderCharts();
@@ -418,6 +473,7 @@
             renderSuggestions();
             populateExerciseSelect();
             setupEventListeners();
+            applyFocusFromQuery();
         });
 
         // Track current time ranges
@@ -426,12 +482,38 @@
             workoutFrequencyChart: 8,
             nutritionChart: 30
         };
+        const focusKeyToCardId = {
+            'weight-trend': 'cardWeightTrend',
+            'workout-frequency': 'cardWorkoutFrequency',
+            'nutrition-trend': 'cardNutritionTrend',
+            'workout-distribution': 'cardWorkoutDistribution',
+            'exercise-progress': 'cardExerciseProgress'
+        };
 
         function setupEventListeners() {
             document.getElementById('exerciseSelect').addEventListener('change', (e) => {
                 if (e.target.value) {
                     Charts.createExerciseProgressChart('exerciseProgressChart', e.target.value);
                 }
+            });
+
+            document.getElementById('statsRow').addEventListener('click', (e) => {
+                const statBox = e.target.closest('.stat-box-btn[data-focus-target]');
+                if (!statBox) return;
+                focusCard(statBox.dataset.focusTarget);
+            });
+            document.getElementById('statsRow').addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                const statBox = e.target.closest('.stat-box-btn[data-focus-target]');
+                if (!statBox) return;
+                e.preventDefault();
+                focusCard(statBox.dataset.focusTarget);
+            });
+
+            document.querySelector('.analytics-grid').addEventListener('click', (e) => {
+                const chartActionBtn = e.target.closest('.chart-jump-btn[data-chart-action]');
+                if (!chartActionBtn) return;
+                handleChartAction(chartActionBtn.dataset.chartAction);
             });
 
             // Setup time range selectors
@@ -464,6 +546,41 @@
             });
         }
 
+        function handleChartAction(action) {
+            if (action === 'workouts') {
+                window.location.href = 'workouts.html?view=all';
+                return;
+            }
+            if (action === 'nutrition') {
+                window.location.href = 'nutrition.html';
+                return;
+            }
+            if (action === 'dashboard') {
+                window.location.href = '../index.html';
+            }
+        }
+
+        function focusCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            card.classList.add('focused-card');
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+                card.classList.remove('focused-card');
+            }, 2200);
+        }
+
+        function applyFocusFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const focusKey = params.get('focus');
+            if (!focusKey) return;
+            const targetCardId = focusKeyToCardId[focusKey];
+            if (!targetCardId) return;
+            setTimeout(() => {
+                focusCard(targetCardId);
+            }, 120);
+        }
+
         function updateChartWithTimeRange(chartId, value) {
             switch (chartId) {
                 case 'weightTrendChart':
@@ -485,24 +602,24 @@
             const streak = Workouts.getStreakInfo();
 
             document.getElementById('statsRow').innerHTML = `
-                <div class="stat-box">
+                <div class="stat-box stat-box-btn" data-focus-target="cardWeightTrend" role="button" tabindex="0" title="Jump to Weight Trend">
                     <div class="value">${weightTrend.currentWeight?.toFixed(1) || '--'}</div>
                     <div class="label">Current Weight (lbs)</div>
                     <div class="change ${weightTrend.weeklyChange < 0 ? 'down' : weightTrend.weeklyChange > 0 ? 'up' : 'neutral'}">
                         ${weightTrend.weeklyChange ? (weightTrend.weeklyChange > 0 ? '+' : '') + weightTrend.weeklyChange + '/week' : '--'}
                     </div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box stat-box-btn" data-focus-target="cardWorkoutFrequency" role="button" tabindex="0" title="Jump to Workout Frequency">
                     <div class="value">${workoutStats.last30Days}</div>
                     <div class="label">Workouts (30 days)</div>
                     <div class="change neutral">${workoutStats.averagePerWeek}/week avg</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box stat-box-btn" data-focus-target="cardNutritionTrend" role="button" tabindex="0" title="Jump to Nutrition Trend">
                     <div class="value">${nutritionStats.avgCalories || '--'}</div>
                     <div class="label">Avg Daily Calories</div>
                     <div class="change neutral">${nutritionStats.daysLogged} days logged</div>
                 </div>
-                <div class="stat-box">
+                <div class="stat-box stat-box-btn" data-focus-target="cardWorkoutFrequency" role="button" tabindex="0" title="Jump to Workout Frequency">
                     <div class="value">${streak.streak}</div>
                     <div class="label">Workout Streak</div>
                     <div class="change neutral">Last: ${streak.lastType || '--'}</div>
@@ -558,15 +675,18 @@
                 info: 'ℹ'
             };
 
-            container.innerHTML = insights.map(insight => `
-                <div class="insight-item ${insight.type}">
-                    <div class="insight-icon">${iconMap[insight.type] || 'ℹ'}</div>
+            container.innerHTML = insights.map(insight => {
+                const insightType = safeInsightType(insight.type);
+                return `
+                <div class="insight-item ${insightType}">
+                    <div class="insight-icon">${iconMap[insightType] || 'ℹ'}</div>
                     <div class="insight-content">
-                        <div class="insight-text">${insight.text}</div>
-                        <div class="insight-category">${insight.category}</div>
+                        <div class="insight-text">${safeText(insight.text)}</div>
+                        <div class="insight-category">${safeText(insight.category)}</div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function renderSuggestions() {
@@ -577,14 +697,14 @@
                 if (suggestion.type === 'next_workout') {
                     return `
                         <div class="suggestion-item">
-                            <div class="suggestion-badge">${suggestion.workout}</div>
-                            <div class="suggestion-text">${suggestion.reason}</div>
+                            <div class="suggestion-badge">${safeText(suggestion.workout)}</div>
+                            <div class="suggestion-text">${safeText(suggestion.reason)}</div>
                         </div>
                     `;
                 } else {
                     return `
                         <div class="suggestion-item">
-                            <div class="suggestion-text">${suggestion.text}</div>
+                            <div class="suggestion-text">${safeText(suggestion.text)}</div>
                         </div>
                     `;
                 }

@@ -1,8 +1,11 @@
 /**
  * Health Tracker - Production Server
  *
- * A lightweight Express server for serving the static health tracking app.
- * Includes security headers, compression, and proper caching.
+ * Serves the static app with:
+ * - secure defaults (helmet/CSP)
+ * - compressed responses
+ * - predictable cache strategy
+ * - explicit page routing without path traversal
  */
 
 const express = require('express');
@@ -11,155 +14,180 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const APP_VERSION = process.env.npm_package_version || '1.0.0';
+const IS_PRODUCTION = NODE_ENV === 'production';
 
-// ============================================
-// MIDDLEWARE
-// ============================================
+const PAGE_FILES = new Set([
+    'workouts.html',
+    'nutrition.html',
+    'analytics.html',
+    'settings.html',
+]);
 
-// Request logging
-if (NODE_ENV === 'production') {
-    app.use(morgan('combined'));
-} else {
-    app.use(morgan('dev'));
-}
-
-// Security headers (relaxed for local storage usage)
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "blob:"],
-            connectSrc: ["'self'"],
-        },
-    },
-    crossOriginEmbedderPolicy: false,
-}));
-
-// Gzip compression
-app.use(compression());
-
-// ============================================
-// STATIC FILE SERVING
-// ============================================
-
-// Cache static assets for 1 year in production
-const staticOptions = {
-    maxAge: NODE_ENV === 'production' ? '1y' : 0,
+const STATIC_OPTIONS = {
+    maxAge: 0,
     etag: true,
     lastModified: true,
-    index: false, // We'll handle index.html manually
+    index: false,
+    setHeaders: (res) => {
+        res.setHeader('Cache-Control', IS_PRODUCTION ? 'public, max-age=0, must-revalidate' : 'no-store');
+    },
 };
 
-// Serve CSS with appropriate cache
-app.use('/css', express.static(path.join(__dirname, 'css'), {
-    ...staticOptions,
-    setHeaders: (res) => {
-        res.setHeader('Content-Type', 'text/css');
-    }
-}));
+function setNoStoreHtml(res) {
+    res.setHeader('Cache-Control', 'no-store');
+}
 
-// Serve JS with appropriate cache
-app.use('/js', express.static(path.join(__dirname, 'js'), {
-    ...staticOptions,
-    setHeaders: (res) => {
-        res.setHeader('Content-Type', 'application/javascript');
-    }
-}));
+function createApp() {
+    const app = express();
+    app.disable('x-powered-by');
 
-// Serve data files (JSON) - shorter cache
-app.use('/data', express.static(path.join(__dirname, 'data'), {
-    maxAge: NODE_ENV === 'production' ? '1h' : 0,
-    etag: true,
-}));
+    app.use(morgan(IS_PRODUCTION ? 'combined' : 'dev'));
+    app.use(helmet({
+        contentSecurityPolicy: {
+            useDefaults: true,
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: [
+                    "'self'",
+                    "'unsafe-inline'",
+                    "'unsafe-eval'",
+                    'https://cdn.jsdelivr.net',
+                    'https://apis.google.com',
+                    'https://www.gstatic.com',
+                ],
+                styleSrc: [
+                    "'self'",
+                    "'unsafe-inline'",
+                    'https://fonts.googleapis.com',
+                ],
+                fontSrc: [
+                    "'self'",
+                    'https://fonts.gstatic.com',
+                    'data:',
+                ],
+                imgSrc: [
+                    "'self'",
+                    'data:',
+                    'blob:',
+                    'https:',
+                ],
+                connectSrc: [
+                    "'self'",
+                    'https://firestore.googleapis.com',
+                    'https://identitytoolkit.googleapis.com',
+                    'https://securetoken.googleapis.com',
+                    'https://www.googleapis.com',
+                    'https://apis.google.com',
+                    'https://firebaseinstallations.googleapis.com',
+                    'https://www.gstatic.com',
+                ],
+                frameSrc: [
+                    "'self'",
+                    'https://*.firebaseapp.com',
+                    'https://accounts.google.com',
+                ],
+                objectSrc: ["'none'"],
+            },
+        },
+        crossOriginEmbedderPolicy: false,
+        crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+    }));
+    app.use(compression());
 
-// Serve pages
-app.use('/pages', express.static(path.join(__dirname, 'pages'), staticOptions));
+    app.use('/css', express.static(path.join(__dirname, 'css'), STATIC_OPTIONS));
+    app.use('/js', express.static(path.join(__dirname, 'js'), STATIC_OPTIONS));
 
-// ============================================
-// ROUTES
-// ============================================
+    app.use('/data', express.static(path.join(__dirname, 'data'), {
+        maxAge: IS_PRODUCTION ? '1h' : 0,
+        etag: true,
+        lastModified: true,
+        index: false,
+    }));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        environment: NODE_ENV,
-    });
-});
-
-// API info endpoint
-app.get('/api/info', (req, res) => {
-    res.json({
-        name: 'Health Tracker',
-        version: '1.0.0',
-        description: 'Personal health and fitness tracking dashboard',
-        features: [
-            'Workout logging with guided mode',
-            'Nutrition tracking',
-            'Weight monitoring',
-            'Sleep tracking',
-            'Progress analytics',
-        ],
-    });
-});
-
-// Main app route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// SPA fallback - serve index.html for any unmatched routes
-// This allows client-side routing if implemented later
-app.get('*', (req, res) => {
-    // Check if it's a page request
-    if (req.path.startsWith('/pages/')) {
-        const pagePath = path.join(__dirname, req.path);
-        res.sendFile(pagePath, (err) => {
-            if (err) {
-                res.status(404).sendFile(path.join(__dirname, 'index.html'));
-            }
+    app.get('/health', (req, res) => {
+        res.status(200).json({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            uptime: process.uptime(),
+            environment: NODE_ENV,
         });
-    } else {
-        // For all other routes, serve the main app
+    });
+
+    app.get('/api/info', (req, res) => {
+        res.json({
+            name: 'Health Tracker',
+            version: APP_VERSION,
+            description: 'Personal health and fitness tracking dashboard',
+            features: [
+                'Workout logging with guided mode',
+                'Nutrition tracking',
+                'Weight monitoring',
+                'Sleep tracking',
+                'Progress analytics',
+            ],
+        });
+    });
+
+    app.get(['/', '/index.html'], (req, res) => {
+        setNoStoreHtml(res);
         res.sendFile(path.join(__dirname, 'index.html'));
-    }
-});
-
-// ============================================
-// ERROR HANDLING
-// ============================================
-
-// 404 handler
-app.use((req, res, next) => {
-    res.status(404).json({
-        error: 'Not Found',
-        message: `Cannot ${req.method} ${req.path}`,
     });
-});
 
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error('Server error:', err);
-    res.status(500).json({
-        error: 'Internal Server Error',
-        message: NODE_ENV === 'development' ? err.message : 'Something went wrong',
+    // Explicit allow-list prevents path traversal (e.g. /pages/../server.js).
+    app.get('/pages/:page', (req, res, next) => {
+        const page = req.params.page;
+        if (!PAGE_FILES.has(page)) {
+            return next();
+        }
+
+        setNoStoreHtml(res);
+        return res.sendFile(path.join(__dirname, 'pages', page));
     });
-});
 
-// ============================================
-// SERVER START
-// ============================================
+    // SPA-style fallback for extensionless routes only.
+    app.get('*', (req, res, next) => {
+        if (req.path === '/health' || req.path.startsWith('/api/')) {
+            return next();
+        }
 
-app.listen(PORT, () => {
-    console.log(`
+        if (req.path.startsWith('/pages/')) {
+            return next();
+        }
+
+        if (path.extname(req.path)) {
+            return next();
+        }
+
+        setNoStoreHtml(res);
+        return res.sendFile(path.join(__dirname, 'index.html'));
+    });
+
+    app.use((req, res) => {
+        res.status(404).json({
+            error: 'Not Found',
+            message: `Cannot ${req.method} ${req.path}`,
+        });
+    });
+
+    app.use((err, req, res, next) => {
+        console.error('Server error:', err);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: IS_PRODUCTION ? 'Something went wrong' : err.message,
+        });
+    });
+
+    return app;
+}
+
+const app = createApp();
+
+if (require.main === module) {
+    const server = app.listen(PORT, () => {
+        console.log(`
 ╔════════════════════════════════════════════════╗
 ║           HEALTH TRACKER SERVER                ║
 ╠════════════════════════════════════════════════╣
@@ -168,18 +196,17 @@ app.listen(PORT, () => {
 ║  Environment: ${NODE_ENV.padEnd(34)}║
 ║  URL:         http://localhost:${PORT.toString().padEnd(18)}║
 ╚════════════════════════════════════════════════╝
-    `);
-});
+        `);
+    });
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully...');
-    process.exit(0);
-});
+    const shutdown = (signal) => {
+        console.log(`${signal} received, shutting down gracefully...`);
+        server.close(() => process.exit(0));
+        setTimeout(() => process.exit(1), 10_000).unref();
+    };
 
-process.on('SIGINT', () => {
-    console.log('SIGINT received, shutting down gracefully...');
-    process.exit(0);
-});
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
+}
 
-module.exports = app;
+module.exports = { app, createApp };

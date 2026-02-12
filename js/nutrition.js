@@ -27,6 +27,23 @@ const Nutrition = {
 
     SUPPLEMENTS: ['creatine', 'protein shake', 'multivitamin', 'fish oil', 'vitamin D', 'magnesium'],
 
+    escapeText(value) {
+        if (window.escapeHtml) {
+            return window.escapeHtml(value ?? '');
+        }
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+
+    safeNumber(value) {
+        const num = Number(value);
+        return Number.isFinite(num) ? String(num) : '';
+    },
+
     // Get or create nutrition entry for a date
     getOrCreate(date = null) {
         date = date || Storage.getToday();
@@ -241,7 +258,7 @@ const Nutrition = {
 
         // Build food database options
         const foodOptions = Object.entries(this.FOOD_DATABASE)
-            .map(([name, info]) => `<option value="${name}">${name} (${info.calories} cal, ${info.protein}g)</option>`)
+            .map(([name, info]) => `<option value="${this.escapeText(name)}">${this.escapeText(name)} (${info.calories} cal, ${info.protein}g)</option>`)
             .join('');
 
         return `
@@ -285,14 +302,17 @@ const Nutrition = {
 
     // Render food item row
     renderFoodItemRow(index, name = '', calories = '', protein = '') {
+        const safeName = this.escapeText(name);
+        const safeCalories = this.safeNumber(calories);
+        const safeProtein = this.safeNumber(protein);
         return `
             <div class="food-item-row" data-index="${index}">
                 <input type="text" class="form-input food-name" name="food_${index}_name"
-                       placeholder="Food name" value="${name}" required>
+                       placeholder="Food name" value="${safeName}" required>
                 <input type="number" class="form-input food-calories" name="food_${index}_calories"
-                       placeholder="Cal" value="${calories}" required>
+                       placeholder="Cal" value="${safeCalories}" required>
                 <input type="number" class="form-input food-protein" name="food_${index}_protein"
-                       placeholder="Pro" value="${protein}" required>
+                       placeholder="Pro" value="${safeProtein}" required>
                 <button type="button" class="btn btn-danger btn-sm remove-food" data-index="${index}">&times;</button>
             </div>
         `;
@@ -303,24 +323,32 @@ const Nutrition = {
         date = date || Storage.getToday();
         const entry = Storage.nutrition.findByDate(date);
         const settings = Storage.settings.get();
+        const safeDate = this.escapeText(date);
+        const safeWindowStart = this.escapeText(entry?.foodWindow?.start || settings.defaultFastingWindow?.start || '');
+        const safeWindowEnd = this.escapeText(entry?.foodWindow?.end || settings.defaultFastingWindow?.end || '');
+        const safeTotalCalories = this.safeNumber(entry?.totalCalories || '');
+        const safeTotalProtein = this.safeNumber(entry?.totalProtein || '');
+        const safeSteps = this.safeNumber(entry?.steps || '');
+        const safeAlcoholDrinks = this.safeNumber(entry?.alcohol?.drinks || 0);
+        const safeNotes = this.escapeText(entry?.notes || '');
 
         return `
             <form id="nutritionDayForm" class="nutrition-form">
                 <div class="form-group">
                     <label class="form-label">Date</label>
-                    <input type="date" class="form-input" name="date" value="${date}" required>
+                    <input type="date" class="form-input" name="date" value="${safeDate}" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Eating Window Start</label>
                         <input type="time" class="form-input" name="windowStart"
-                               value="${entry?.foodWindow?.start || settings.defaultFastingWindow?.start || ''}">
+                               value="${safeWindowStart}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Eating Window End</label>
                         <input type="time" class="form-input" name="windowEnd"
-                               value="${entry?.foodWindow?.end || settings.defaultFastingWindow?.end || ''}">
+                               value="${safeWindowEnd}">
                     </div>
                 </div>
 
@@ -328,19 +356,19 @@ const Nutrition = {
                     <div class="form-group">
                         <label class="form-label">Total Calories</label>
                         <input type="number" class="form-input" name="totalCalories"
-                               placeholder="1500" value="${entry?.totalCalories || ''}">
+                               placeholder="1500" value="${safeTotalCalories}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Total Protein (g)</label>
                         <input type="number" class="form-input" name="totalProtein"
-                               placeholder="150" value="${entry?.totalProtein || ''}">
+                               placeholder="150" value="${safeTotalProtein}">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Steps</label>
                     <input type="number" class="form-input" name="steps"
-                           placeholder="10000" value="${entry?.steps || ''}">
+                           placeholder="10000" value="${safeSteps}">
                 </div>
 
                 <div class="form-group">
@@ -350,7 +378,7 @@ const Nutrition = {
                             <label class="supplement-checkbox">
                                 <input type="checkbox" name="supplements" value="${supp}"
                                        ${entry?.supplements?.includes(supp) ? 'checked' : ''}>
-                                ${supp}
+                                ${this.escapeText(supp)}
                             </label>
                         `).join('')}
                     </div>
@@ -360,7 +388,7 @@ const Nutrition = {
                     <div class="form-group">
                         <label class="form-label">Alcohol (drinks)</label>
                         <input type="number" class="form-input" name="alcoholDrinks" min="0"
-                               placeholder="0" value="${entry?.alcohol?.drinks || 0}">
+                               placeholder="0" value="${safeAlcoholDrinks}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Alcohol Type</label>
@@ -377,7 +405,7 @@ const Nutrition = {
                 <div class="form-group">
                     <label class="form-label">Notes</label>
                     <textarea class="form-textarea" name="notes" rows="2"
-                              placeholder="Any notes about today's nutrition...">${entry?.notes || ''}</textarea>
+                              placeholder="Any notes about today's nutrition...">${safeNotes}</textarea>
                 </div>
 
                 <div class="modal-footer">

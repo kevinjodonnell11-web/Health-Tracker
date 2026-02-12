@@ -24,5 +24,3 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 window.firebaseAuth = auth;
 window.firebaseDb = db;
 window.googleProvider = googleProvider;
-
-console.log('Firebase initialized successfully');

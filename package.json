@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "node server.js",
     "build": "echo 'No build step required for static site'",
-    "test": "echo 'No tests configured'"
+    "lint": "node --check server.js && node --check js/*.js",
+    "test": "node --test",
+    "test:server": "node --test test/server.test.js"
   },
   "keywords": [
     "health",

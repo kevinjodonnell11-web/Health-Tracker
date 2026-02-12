@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Health Tracker</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/styles.css?v=10">
+    <link rel="stylesheet" href="../css/dashboard.css?v=10">
+    <link rel="stylesheet" href="../css/auth.css?v=10">
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js?v=10"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js?v=10"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js?v=10"></script>
     <style>
         .settings-grid {
             display: grid;
@@ -448,15 +448,19 @@
         <span>Pull down to refresh</span>
     </div>
 
-    <script src="../js/firebase-config.js"></script>
-    <script src="../js/storage.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/cloud-storage.js"></script>
-    <script src="../js/metrics.js"></script>
-    <script src="../js/workouts.js"></script>
-    <script src="../js/nutrition.js"></script>
-    <script src="../js/pwa-utils.js"></script>
+    <script src="../js/firebase-config.js?v=10"></script>
+    <script src="../js/storage.js?v=10"></script>
+    <script src="../js/auth.js?v=10"></script>
+    <script src="../js/cloud-storage.js?v=10"></script>
+    <script src="../js/metrics.js?v=10"></script>
+    <script src="../js/workouts.js?v=10"></script>
+    <script src="../js/nutrition.js?v=10"></script>
+    <script src="../js/pwa-utils.js?v=10"></script>
     <script>
+        function safeText(value) {
+            return window.escapeHtml ? window.escapeHtml(value ?? '') : String(value ?? '');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadGoals();
             loadSettings();
@@ -514,7 +518,7 @@
             const container = document.getElementById('splitConfig');
             container.innerHTML = split.map((type, index) => `
                 <div class="split-tag">
-                    <span>${type}</span>
+                    <span>${safeText(type)}</span>
                     <button type="button" onclick="removeSplitType(${index})">&times;</button>
                 </div>
             `).join('');

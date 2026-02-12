@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workouts - Health Tracker</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/styles.css?v=10">
+    <link rel="stylesheet" href="../css/dashboard.css?v=10">
+    <link rel="stylesheet" href="../css/auth.css?v=10">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -173,7 +173,89 @@
         .filter-bar {
             display: flex;
             gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
             margin-bottom: 1.5rem;
+        }
+
+        .view-mode-toggle {
+            display: inline-flex;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.2rem;
+            gap: 0.2rem;
+        }
+
+        .view-mode-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 0.45rem 0.7rem;
+            border-radius: calc(var(--radius-sm) - 2px);
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-mode-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .view-mode-btn.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .history-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .history-month {
+            margin-bottom: 1.25rem;
+        }
+
+        .history-month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+            padding: 0.25rem 0.1rem;
+        }
+
+        .history-month-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.01em;
+        }
+
+        .history-month-count {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stat-card-btn {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .stat-card-btn:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-1px);
+        }
+
+        .stat-card-btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
 
         .exercise-block {
@@ -246,72 +328,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Week Navigator */
-        .week-navigator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background-color: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-        }
-
-        .week-nav-btn {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .week-nav-btn:hover {
-            background-color: var(--bg-accent);
-            border-color: var(--color-primary);
-            color: var(--color-primary);
-        }
-
-        .week-display {
-            text-align: center;
-            min-width: 200px;
-        }
-
-        .week-display .week-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .week-display .week-range {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .week-workouts-mini {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-            margin-top: 0.5rem;
-        }
-
-        .week-workout-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-        }
-
-        .week-workout-dot.active {
-            background-color: var(--color-success);
-        }
-
         .workout-entry {
             cursor: pointer;
             transition: var(--transition);
@@ -322,25 +338,141 @@
             transform: translateY(-2px);
         }
 
-        .view-mode-toggle {
-            display: flex;
-            gap: 0.5rem;
+        #searchFilter {
+            flex: 1;
+            min-width: 150px;
         }
 
-        .view-mode-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border-color);
-            background: none;
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
             color: var(--text-secondary);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
         }
 
-        .view-mode-btn.active {
-            background-color: var(--color-primary);
-            border-color: var(--color-primary);
-            color: white;
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        /* Mobile optimizations for workouts page */
+        @media (max-width: 768px) {
+            .page-header {
+                margin-bottom: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.35rem;
+            }
+
+            /* Stats grid - 2x2 on mobile */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-card .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-card .stat-label {
+                font-size: 0.75rem;
+            }
+
+            /* Filter bar stacking */
+            .filter-bar {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .view-mode-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .view-mode-btn {
+                flex: 1;
+                text-align: center;
+            }
+
+            #searchFilter {
+                width: 100%;
+            }
+
+            /* Workout entries - compact */
+            .workout-entry {
+                padding: 1rem;
+            }
+
+            .workout-entry:hover {
+                transform: none;
+            }
+
+            .workout-entry:active {
+                background: var(--bg-card-hover);
+            }
+
+            .workout-header {
+                margin-bottom: 0.75rem;
+            }
+
+            .workout-title {
+                gap: 0.75rem;
+            }
+
+            .workout-day-number {
+                font-size: 1.25rem;
+            }
+
+            .workout-info h3 {
+                font-size: 1rem;
+            }
+
+            /* Exercise table - more compact */
+            .exercises-table th,
+            .exercises-table td {
+                padding: 0.4rem 0.25rem;
+                font-size: 0.8rem;
+            }
+
+            .set-chip {
+                font-size: 0.7rem;
+                padding: 0.15rem 0.35rem;
+            }
+
+            /* Workout actions - bigger touch targets */
+            .workout-actions .btn-sm {
+                min-width: 40px;
+                min-height: 40px;
+                padding: 0.5rem;
+            }
+
+            .workout-actions .btn-sm svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Workout meta info */
+            .workout-meta {
+                font-size: 0.8rem;
+                gap: 0.75rem;
+            }
+
+            /* New Workout button on mobile */
+            #newWorkoutBtn {
+                padding: 0.5rem 0.875rem;
+                font-size: 0.85rem;
+            }
+
+            .history-summary {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
         }
     </style>
 </head>
@@ -375,30 +507,10 @@
             <!-- Stats will be populated by JS -->
         </div>
 
-        <!-- Week Navigator -->
-        <div class="week-navigator" id="weekNavigator">
-            <button class="week-nav-btn" id="prevWeekBtn" title="Previous Week">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </button>
-            <div class="week-display">
-                <div class="week-label" id="weekLabel">This Week</div>
-                <div class="week-range" id="weekRange">Jan 13 - Jan 19</div>
-                <div class="week-workouts-mini" id="weekDots"></div>
-            </div>
-            <button class="week-nav-btn" id="nextWeekBtn" title="Next Week">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-            <button class="btn btn-secondary" id="todayBtn" style="margin-left: 1rem;">Today</button>
-        </div>
-
         <div class="filter-bar">
-            <div class="view-mode-toggle">
-                <button class="view-mode-btn active" data-mode="week">Week View</button>
-                <button class="view-mode-btn" data-mode="all">All Workouts</button>
+            <div class="view-mode-toggle" id="viewModeToggle" aria-label="Workout history mode">
+                <button type="button" class="view-mode-btn active" data-mode="all">All Workouts</button>
+                <button type="button" class="view-mode-btn" data-mode="recent">Last 30 Days</button>
             </div>
             <select class="form-select" id="typeFilter" style="width: 150px;">
                 <option value="">All Types</option>
@@ -409,7 +521,16 @@
                 <option value="cardio">Cardio</option>
                 <option value="superset">Superset</option>
             </select>
-            <input type="month" class="form-input" id="monthFilter" style="width: 180px; display: none;">
+            <select class="form-select" id="sortFilter" style="width: 170px;">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+            <input type="text" class="form-input" id="searchFilter" placeholder="Search exercises..." style="width: 200px;">
+        </div>
+
+        <div class="history-summary">
+            <span id="historyCount">0 workouts</span>
+            <span id="historyHint">Tip: tap any workout card to open the full day view.</span>
         </div>
 
         <div class="workout-list" id="workoutList">
@@ -478,87 +599,87 @@
         <span>Pull down to refresh</span>
     </div>
 
-    <script src="../js/firebase-config.js"></script>
-    <script src="../js/storage.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/cloud-storage.js"></script>
-    <script src="../js/metrics.js"></script>
-    <script src="../js/workouts.js"></script>
-    <script src="../js/dayview.js"></script>
-    <script src="../js/pwa-utils.js"></script>
+    <script src="../js/firebase-config.js?v=10"></script>
+    <script src="../js/storage.js?v=10"></script>
+    <script src="../js/auth.js?v=10"></script>
+    <script src="../js/cloud-storage.js?v=10"></script>
+    <script src="../js/metrics.js?v=10"></script>
+    <script src="../js/workouts.js?v=10"></script>
+    <script src="../js/dayview.js?v=10"></script>
+    <script src="../js/pwa-utils.js?v=10"></script>
     <script>
         // State
-        let currentWeekOffset = 0; // 0 = current week, -1 = last week, etc.
-        let viewMode = 'week'; // 'week' or 'all'
+        let viewMode = 'all'; // all | recent
+        const RECENT_WINDOW_DAYS = 30;
+
+        function safeText(value) {
+            return window.escapeHtml ? window.escapeHtml(value ?? '') : String(value ?? '');
+        }
+
+        function safeWorkoutType(type) {
+            return Workouts.WORKOUT_TYPES.includes(type) ? type : 'push';
+        }
+
+        function safeViewMode(mode) {
+            return mode === 'recent' ? 'recent' : 'all';
+        }
+
+        function refreshWorkoutPage() {
+            renderStats();
+            renderWorkoutList();
+        }
+
+        function applyQueryState() {
+            const params = new URLSearchParams(window.location.search);
+            const queryView = params.get('view');
+            const queryType = params.get('type');
+            const querySort = params.get('sort');
+            const querySearch = params.get('search');
+
+            if (queryView) {
+                viewMode = safeViewMode(queryView);
+            }
+            if (queryType && Workouts.WORKOUT_TYPES.includes(queryType)) {
+                document.getElementById('typeFilter').value = queryType;
+            }
+            if (querySort === 'oldest' || querySort === 'newest') {
+                document.getElementById('sortFilter').value = querySort;
+            }
+            if (querySearch) {
+                document.getElementById('searchFilter').value = querySearch.slice(0, 80);
+            }
+            syncViewModeButtons();
+        }
+
+        function syncViewModeButtons() {
+            document.querySelectorAll('.view-mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === viewMode);
+            });
+            const hint = document.getElementById('historyHint');
+            if (hint) {
+                hint.textContent = viewMode === 'all'
+                    ? 'Tip: tap any workout card to open the full day view.'
+                    : `Showing the last ${RECENT_WINDOW_DAYS} days. Switch to All Workouts for full history.`;
+            }
+        }
+
+        function setViewMode(nextMode) {
+            viewMode = safeViewMode(nextMode);
+            syncViewModeButtons();
+            renderWorkoutList();
+        }
 
         // Page initialization
         document.addEventListener('DOMContentLoaded', () => {
-            renderStats();
-            updateWeekDisplay();
-            renderWorkoutList();
-            setupEventListeners();
-
-            // Set default month filter to current month
-            const monthFilter = document.getElementById('monthFilter');
-            monthFilter.value = new Date().toISOString().slice(0, 7);
-        });
-
-        function getWeekBounds(offset = 0) {
-            const today = new Date();
-            const dayOfWeek = today.getDay();
-            const monday = new Date(today);
-            monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1) + (offset * 7));
-            const sunday = new Date(monday);
-            sunday.setDate(monday.getDate() + 6);
-
-            return {
-                start: monday.toISOString().split('T')[0],
-                end: sunday.toISOString().split('T')[0],
-                monday,
-                sunday
-            };
-        }
-
-        function updateWeekDisplay() {
-            const bounds = getWeekBounds(currentWeekOffset);
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-
-            // Week label
-            let label = 'This Week';
-            if (currentWeekOffset === -1) label = 'Last Week';
-            else if (currentWeekOffset < -1) label = `${Math.abs(currentWeekOffset)} Weeks Ago`;
-            else if (currentWeekOffset === 1) label = 'Next Week';
-            else if (currentWeekOffset > 1) label = `In ${currentWeekOffset} Weeks`;
-
-            document.getElementById('weekLabel').textContent = label;
-
-            // Date range
-            const startStr = bounds.monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const endStr = bounds.sunday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            document.getElementById('weekRange').textContent = `${startStr} - ${endStr}`;
-
-            // Week dots showing which days have workouts
-            const workouts = Storage.workouts.getByDateRange(bounds.start, bounds.end);
-            const workoutDates = new Set(workouts.map(w => w.date));
-
-            let dotsHtml = '';
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(bounds.monday);
-                date.setDate(bounds.monday.getDate() + i);
-                const dateStr = date.toISOString().split('T')[0];
-                const hasWorkout = workoutDates.has(dateStr);
-                const isToday = dateStr === todayStr;
-                dotsHtml += `<div class="week-workout-dot ${hasWorkout ? 'active' : ''}"
-                                  title="${date.toLocaleDateString('en-US', { weekday: 'short' })}${isToday ? ' (Today)' : ''}"
-                                  style="${isToday ? 'border: 2px solid var(--color-primary);' : ''}"></div>`;
+            // Fix any incorrect workout day numbers
+            if (typeof Workouts !== 'undefined' && Workouts.recalculateDayNumbers) {
+                Workouts.recalculateDayNumbers();
             }
-            document.getElementById('weekDots').innerHTML = dotsHtml;
 
-            // Disable next week button if already at current or future week
-            document.getElementById('nextWeekBtn').disabled = currentWeekOffset >= 0;
-            document.getElementById('nextWeekBtn').style.opacity = currentWeekOffset >= 0 ? '0.5' : '1';
-        }
+            applyQueryState();
+            refreshWorkoutPage();
+            setupEventListeners();
+        });
 
         function setupEventListeners() {
             // New workout button
@@ -570,124 +691,176 @@
                 if (e.target.id === 'workoutModal') closeModal();
             });
 
-            // Week navigation
-            document.getElementById('prevWeekBtn').addEventListener('click', () => {
-                currentWeekOffset--;
-                updateWeekDisplay();
-                renderWorkoutList();
-            });
-
-            document.getElementById('nextWeekBtn').addEventListener('click', () => {
-                if (currentWeekOffset < 0) {
-                    currentWeekOffset++;
-                    updateWeekDisplay();
-                    renderWorkoutList();
-                }
-            });
-
-            document.getElementById('todayBtn').addEventListener('click', () => {
-                currentWeekOffset = 0;
-                updateWeekDisplay();
-                renderWorkoutList();
-            });
-
             // View mode toggle
-            document.querySelectorAll('.view-mode-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    viewMode = btn.dataset.mode;
-
-                    // Show/hide appropriate controls
-                    document.getElementById('weekNavigator').style.display = viewMode === 'week' ? 'flex' : 'none';
-                    document.getElementById('monthFilter').style.display = viewMode === 'all' ? 'block' : 'none';
-
-                    renderWorkoutList();
-                });
+            document.getElementById('viewModeToggle').addEventListener('click', (e) => {
+                const modeBtn = e.target.closest('.view-mode-btn');
+                if (!modeBtn) return;
+                setViewMode(modeBtn.dataset.mode);
             });
 
             // Filters
-            document.getElementById('typeFilter').addEventListener('change', renderWorkoutList);
-            document.getElementById('monthFilter').addEventListener('change', renderWorkoutList);
+            document.getElementById('typeFilter').addEventListener('change', () => {
+                renderWorkoutList();
+            });
+            document.getElementById('sortFilter').addEventListener('change', renderWorkoutList);
+
+            // Search with debounce
+            let searchTimeout;
+            document.getElementById('searchFilter').addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    renderWorkoutList();
+                }, 300);
+            });
+
+            // Drill into stat cards
+            document.getElementById('workoutStats').addEventListener('click', (e) => {
+                const statCard = e.target.closest('[data-stat-action]');
+                if (!statCard) return;
+
+                const action = statCard.dataset.statAction;
+                if (action === 'all') {
+                    setViewMode('all');
+                } else if (action === 'recent') {
+                    setViewMode('recent');
+                } else if (action === 'analytics') {
+                    window.location.href = 'analytics.html?focus=workout-frequency';
+                }
+            });
+            document.getElementById('workoutStats').addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                const statCard = e.target.closest('[data-stat-action]');
+                if (!statCard) return;
+                e.preventDefault();
+                statCard.click();
+            });
+
+            // Open day detail by tapping workout card
+            document.getElementById('workoutList').addEventListener('click', (e) => {
+                if (e.target.closest('button, .btn, a, input, select, textarea')) {
+                    return;
+                }
+                const entry = e.target.closest('.workout-entry[data-workout-date]');
+                if (!entry) return;
+                if (window.DayView) {
+                    DayView.open(entry.dataset.workoutDate);
+                }
+            });
         }
 
         function renderStats() {
-            const stats = Workouts.getStats();
+            const stats = Workouts.getLifetimeStats();
+            const recentStats = Workouts.getStats();
             const streak = Workouts.getStreakInfo();
 
             document.getElementById('workoutStats').innerHTML = `
-                <div class="stat-card">
+                <div class="stat-card stat-card-btn" data-stat-action="all" role="button" tabindex="0" title="Show complete workout history">
                     <div class="stat-value">${stats.totalWorkouts}</div>
                     <div class="stat-label">Total Workouts</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.last30Days}</div>
+                <div class="stat-card stat-card-btn" data-stat-action="recent" role="button" tabindex="0" title="Show recent workouts">
+                    <div class="stat-value">${recentStats.last30Days}</div>
                     <div class="stat-label">Last 30 Days</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card stat-card-btn" data-stat-action="analytics" role="button" tabindex="0" title="Open workout analytics">
+                    <div class="stat-value">${stats.totalVolumeFormatted}</div>
+                    <div class="stat-label">Lbs Lifted (All Time)</div>
+                </div>
+                <div class="stat-card stat-card-btn" data-stat-action="recent" role="button" tabindex="0" title="Show recent workouts">
                     <div class="stat-value">${streak.streak}</div>
                     <div class="stat-label">Current Streak</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.averagePerWeek}</div>
-                    <div class="stat-label">Avg/Week (30d)</div>
                 </div>
             `;
         }
 
-        function renderWorkoutList() {
+        function workoutMatchesSearch(workout, searchFilter) {
+            if (!searchFilter) return true;
+            const exerciseText = (workout.exercises || [])
+                .map(ex => ex?.name || '')
+                .join(' ');
+            const searchable = [
+                workout.type,
+                workout.notes,
+                workout.cardio?.type,
+                exerciseText,
+                workout.date
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+            return searchable.includes(searchFilter);
+        }
+
+        function formatMonthLabel(monthKey) {
+            const [yearStr, monthStr] = monthKey.split('-');
+            const year = Number(yearStr);
+            const month = Number(monthStr);
+            if (!Number.isFinite(year) || !Number.isFinite(month)) {
+                return 'Unknown Month';
+            }
+            const date = new Date(year, month - 1, 1);
+            return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+
+        function getFilteredWorkouts() {
             const typeFilter = document.getElementById('typeFilter').value;
-            const monthFilter = document.getElementById('monthFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase().trim();
 
-            let workouts;
+            let workouts = Storage.workouts.getAll();
 
-            if (viewMode === 'week') {
-                const bounds = getWeekBounds(currentWeekOffset);
-                workouts = Storage.workouts.getByDateRange(bounds.start, bounds.end)
-                    .sort((a, b) => new Date(b.date) - new Date(a.date));
-            } else {
-                workouts = Storage.workouts.getAll()
-                    .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                if (monthFilter) {
-                    workouts = workouts.filter(w => w.date.startsWith(monthFilter));
-                }
+            if (viewMode === 'recent') {
+                const cutoff = new Date();
+                cutoff.setHours(0, 0, 0, 0);
+                cutoff.setDate(cutoff.getDate() - (RECENT_WINDOW_DAYS - 1));
+                workouts = workouts.filter(workout => new Date(`${workout.date}T00:00:00`) >= cutoff);
             }
 
-            // Apply type filter
             if (typeFilter) {
-                workouts = workouts.filter(w => w.type === typeFilter);
+                workouts = workouts.filter(workout => workout.type === typeFilter);
             }
 
-            const container = document.getElementById('workoutList');
-
-            if (workouts.length === 0) {
-                const bounds = getWeekBounds(currentWeekOffset);
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No workouts ${viewMode === 'week' ? 'this week' : 'found'}</h3>
-                        <p>${viewMode === 'week'
-                            ? 'Use the arrows to browse other weeks or click "+ New Workout" to log one!'
-                            : 'Click "+ New Workout" to log your first workout!'}</p>
-                    </div>
-                `;
-                return;
+            if (searchFilter) {
+                workouts = workouts.filter(workout => workoutMatchesSearch(workout, searchFilter));
             }
 
-            container.innerHTML = workouts.map(workout => `
-                <div class="workout-entry">
+            const sortDirection = sortFilter === 'oldest' ? 1 : -1;
+            workouts.sort((a, b) => sortDirection * (new Date(a.date) - new Date(b.date)));
+
+            return workouts;
+        }
+
+        function groupWorkoutsByMonth(workouts) {
+            const groups = new Map();
+            workouts.forEach(workout => {
+                const monthKey = String(workout.date || '').slice(0, 7);
+                if (!groups.has(monthKey)) {
+                    groups.set(monthKey, []);
+                }
+                groups.get(monthKey).push(workout);
+            });
+            return Array.from(groups.entries()).map(([monthKey, monthWorkouts]) => ({ monthKey, monthWorkouts }));
+        }
+
+        function renderWorkoutCard(workout) {
+            const type = safeWorkoutType(workout.type);
+            const safeWorkoutId = safeText(workout.id);
+            const safeDate = safeText(Storage.formatDate(workout.date));
+
+            return `
+                <div class="workout-entry" data-workout-date="${safeText(workout.date)}">
                     <div class="workout-header">
                         <div class="workout-title">
                             <span class="workout-day-number">#${workout.dayNumber || '?'}</span>
                             <div class="workout-info">
                                 <h3>
-                                    <span class="badge badge-${workout.type}">${workout.type}</span>
+                                    <span class="badge badge-${type}">${safeText(type)}</span>
                                 </h3>
-                                <div class="workout-date">${Storage.formatDate(workout.date)}</div>
+                                <div class="workout-date">${safeDate}</div>
                             </div>
                         </div>
                         <div class="workout-actions">
-                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); editWorkout('${workout.id}')" title="Edit">
+                            <button class="btn btn-sm btn-secondary" data-workout-id="${safeWorkoutId}" onclick="event.stopPropagation(); editWorkout(this.dataset.workoutId)" title="Edit">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -707,10 +880,10 @@
                             <tbody>
                                 ${workout.exercises.map(ex => `
                                     <tr>
-                                        <td class="exercise-name-cell">${ex.name}</td>
+                                        <td class="exercise-name-cell">${safeText(ex.name)}</td>
                                         <td>
                                             <div class="sets-display">
-                                                ${ex.sets.map((set, i) => `
+                                                ${ex.sets.map((set) => `
                                                     <span class="set-chip">
                                                         ${set.reps}${set.weight ? ` x ${set.weight}` : ''}
                                                     </span>
@@ -726,14 +899,14 @@
                     ${workout.cardio ? `
                         <div class="cardio-info">
                             <span class="cardio-icon">🏃</span>
-                            <span>${workout.cardio.type}</span>
+                            <span>${safeText(workout.cardio.type)}</span>
                             ${workout.cardio.distance ? `<span>${workout.cardio.distance} mi</span>` : ''}
-                            ${workout.cardio.duration ? `<span>${workout.cardio.duration}</span>` : ''}
+                            ${workout.cardio.duration ? `<span>${safeText(workout.cardio.duration)}</span>` : ''}
                         </div>
                     ` : ''}
 
                     ${workout.notes ? `
-                        <div class="workout-notes">"${workout.notes}"</div>
+                        <div class="workout-notes">"${safeText(workout.notes)}"</div>
                     ` : ''}
 
                     <div class="workout-meta" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
@@ -741,6 +914,38 @@
                         ${workout.energyLevel ? `<span>Energy: ${workout.energyLevel}/10</span>` : ''}
                     </div>
                 </div>
+            `;
+        }
+
+        function renderWorkoutList() {
+            const workouts = getFilteredWorkouts();
+            const container = document.getElementById('workoutList');
+            const historyCount = document.getElementById('historyCount');
+            historyCount.textContent = `${workouts.length} workout${workouts.length !== 1 ? 's' : ''}`;
+
+            if (workouts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No workouts found</h3>
+                        <p>${viewMode === 'recent'
+                            ? `No workouts in the last ${RECENT_WINDOW_DAYS} days. Switch to All Workouts or log a new session.`
+                            : 'Click "+ New Workout" to log your first workout!'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const grouped = groupWorkoutsByMonth(workouts);
+            container.innerHTML = grouped.map(group => `
+                <section class="history-month">
+                    <div class="history-month-header">
+                        <h3 class="history-month-title">${safeText(formatMonthLabel(group.monthKey))}</h3>
+                        <span class="history-month-count">${group.monthWorkouts.length} workout${group.monthWorkouts.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="workout-list">
+                        ${group.monthWorkouts.map(renderWorkoutCard).join('')}
+                    </div>
+                </section>
             `).join('');
         }
 
@@ -782,16 +987,47 @@
         function closeModal() {
             document.getElementById('workoutModal').classList.remove('active');
             currentEditWorkout = null;
+            formEventsSetup = false; // Reset so event listeners get attached on next open
         }
 
         let exerciseCount = 0;
+        let formEventsSetup = false; // Track if listeners are already attached
 
         function setupFormEvents(isEdit = false) {
+
+            const form = document.getElementById('workoutForm');
+            const addExerciseBtn = document.getElementById('addExerciseBtn');
+            const workoutTypeSelect = document.getElementById('workoutType');
+            const exercisesList = document.getElementById('exercisesList');
+
+            if (!form || !addExerciseBtn || !workoutTypeSelect || !exercisesList) {
+                console.error('Form elements not found:', { form, addExerciseBtn, workoutTypeSelect, exercisesList });
+                return;
+            }
+
+            // Only set up event listeners once
+            if (formEventsSetup) {
+                // Just handle delete button for this specific edit
+                const deleteBtn = document.getElementById('deleteWorkoutBtn');
+                if (deleteBtn && currentEditWorkout) {
+                    deleteBtn.onclick = () => {
+                        if (confirm('Are you sure you want to delete this workout? This cannot be undone.')) {
+                            Workouts.deleteWorkout(currentEditWorkout.id);
+                            closeModal();
+                            refreshWorkoutPage();
+                        }
+                    };
+                }
+                return;
+            }
+
+            formEventsSetup = true;
+
             // Add exercise button
-            document.getElementById('addExerciseBtn').addEventListener('click', () => addExercise());
+            addExerciseBtn.addEventListener('click', () => addExercise());
 
             // Workout type change - update exercise suggestions
-            document.getElementById('workoutType').addEventListener('change', (e) => {
+            workoutTypeSelect.addEventListener('change', (e) => {
                 // Update exercise dropdowns when type changes
                 const workoutType = e.target.value;
                 document.querySelectorAll('.exercise-block').forEach(block => {
@@ -808,53 +1044,77 @@
 
                         select.innerHTML = `
                             <option value="">Select exercise...</option>
-                            ${allExercises.map(ex => `<option value="${ex}" ${ex === currentValue ? 'selected' : ''}>${ex}</option>`).join('')}
+                            ${allExercises.map(ex => `<option value="${safeText(ex)}" ${ex === currentValue ? 'selected' : ''}>${safeText(ex)}</option>`).join('')}
                             <option value="__custom__" ${currentValue && !isInList ? 'selected' : ''}>+ Add custom...</option>
                         `;
                     }
                 });
             });
 
-            // Delete button (only for edits)
+            // Delete button (only for edits) - use onclick to allow reassignment
             const deleteBtn = document.getElementById('deleteWorkoutBtn');
             if (deleteBtn && currentEditWorkout) {
-                deleteBtn.addEventListener('click', () => {
+                deleteBtn.onclick = () => {
                     if (confirm('Are you sure you want to delete this workout? This cannot be undone.')) {
                         Workouts.deleteWorkout(currentEditWorkout.id);
                         closeModal();
-                        renderStats();
-                        updateWeekDisplay();
-                        renderWorkoutList();
+                        refreshWorkoutPage();
                     }
-                });
+                };
             }
 
-            // Form submission
-            document.getElementById('workoutForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const editId = e.target.dataset.editId;
+            // Form submission handler
+            const handleSubmit = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                const formData = new FormData(form);
+                const editId = form.dataset.editId;
 
                 let result;
-                if (editId) {
-                    // Update existing workout
-                    result = handleWorkoutUpdate(editId, formData);
-                } else {
-                    // Create new workout
-                    result = Workouts.handleWorkoutSubmit(formData);
-                }
+                try {
+                    if (editId) {
+                        // Update existing workout
+                        result = handleWorkoutUpdate(editId, formData);
+                    } else {
+                        // Create new workout
+                        result = Workouts.handleWorkoutSubmit(formData);
+                    }
 
-                if (result) {
-                    closeModal();
-                    renderStats();
-                    updateWeekDisplay();
-                    renderWorkoutList();
-                    exerciseCount = 0;
+                    if (result) {
+                        closeModal();
+                        refreshWorkoutPage();
+                        exerciseCount = 0;
+                    }
+                } catch (error) {
+                    console.error('Error submitting workout:', error);
                 }
-            });
+            };
+
+            // Attach to form submit
+            form.onsubmit = handleSubmit;
+
+            // Also attach click handler directly to submit button as fallback
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                // Use touchend for mobile, click for desktop
+                const handleButtonPress = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSubmit(e);
+                };
+                submitBtn.addEventListener('click', handleButtonPress);
+                // Add touchend listener for mobile Safari
+                submitBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    handleButtonPress(e);
+                }, { passive: false });
+            } else {
+                console.error('Submit button not found');
+            }
 
             // Event delegation for exercise select and custom input
-            const exercisesList = document.getElementById('exercisesList');
             exercisesList.addEventListener('change', (e) => {
                 if (e.target.classList.contains('exercise-select')) {
                     const block = e.target.closest('.exercise-block');
@@ -926,20 +1186,34 @@
         function handleWorkoutUpdate(id, formData) {
             const workout = {
                 date: formData.get('date'),
-                type: formData.get('type'),
-                preWeight: formData.get('preWeight') ? parseFloat(formData.get('preWeight')) : null,
-                energyLevel: formData.get('energyLevel') ? parseInt(formData.get('energyLevel')) : null,
-                notes: formData.get('notes') || null,
+                type: safeWorkoutType(formData.get('type')),
+                preWeight: formData.get('preWeight') && Number.isFinite(Number(formData.get('preWeight'))) ? Number(formData.get('preWeight')) : null,
+                energyLevel: formData.get('energyLevel') && Number.isFinite(Number(formData.get('energyLevel'))) ? Math.round(Number(formData.get('energyLevel'))) : null,
+                notes: formData.get('notes') ? String(formData.get('notes')).trim() : null,
                 exercises: [],
                 cardio: null
             };
 
+
             // Parse exercises (use data-index attribute, not loop index)
             const exerciseBlocks = document.querySelectorAll('.exercise-block');
+
             exerciseBlocks.forEach((block) => {
                 const blockIndex = block.dataset.index;
-                const exerciseName = formData.get(`exercise_${blockIndex}_name`);
-                if (!exerciseName) return;
+                let exerciseName = formData.get(`exercise_${blockIndex}_name`);
+
+                // Check if custom input was used but hidden input wasn't updated
+                const customInput = block.querySelector('.exercise-custom');
+                const selectInput = block.querySelector('.exercise-select');
+                if (selectInput && selectInput.value === '__custom__' && customInput && customInput.value) {
+                    // Force sync from custom input
+                    exerciseName = customInput.value;
+                }
+
+                exerciseName = String(exerciseName || '').trim();
+                if (!exerciseName) {
+                    return;
+                }
 
                 const exercise = { name: exerciseName, sets: [] };
                 let setIndex = 0;
@@ -947,10 +1221,14 @@
                     const reps = formData.get(`exercise_${blockIndex}_set_${setIndex}_reps`);
                     const weight = formData.get(`exercise_${blockIndex}_set_${setIndex}_weight`);
                     if (reps) {
-                        exercise.sets.push({
-                            reps: parseInt(reps),
-                            weight: weight ? parseFloat(weight) : null
-                        });
+                        const parsedReps = Number(reps);
+                        const parsedWeight = weight !== null && weight !== '' ? Number(weight) : null;
+                        if (Number.isFinite(parsedReps) && parsedReps > 0) {
+                            exercise.sets.push({
+                                reps: Math.round(parsedReps),
+                                weight: Number.isFinite(parsedWeight) ? parsedWeight : null
+                            });
+                        }
                     }
                     setIndex++;
                 }
@@ -959,20 +1237,22 @@
                 }
             });
 
+
             // Parse cardio
             const cardioType = formData.get('cardioType');
             if (cardioType) {
                 workout.cardio = {
-                    type: cardioType,
-                    distance: formData.get('cardioDistance') ? parseFloat(formData.get('cardioDistance')) : null,
-                    duration: formData.get('cardioDuration') || null
+                    type: String(cardioType).trim(),
+                    distance: formData.get('cardioDistance') && Number.isFinite(Number(formData.get('cardioDistance'))) ? Number(formData.get('cardioDistance')) : null,
+                    duration: formData.get('cardioDuration') ? String(formData.get('cardioDuration')).trim() : null
                 };
             }
 
             // Save custom exercises
             Workouts.saveCustomExercises(workout.exercises, workout.type);
 
-            return Workouts.updateWorkout(id, workout);
+            const result = Workouts.updateWorkout(id, workout);
+            return result;
         }
 
         function addExercise(exerciseName = '', existingSets = null) {
