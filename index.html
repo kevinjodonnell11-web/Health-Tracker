@@ -336,8 +336,82 @@
         </div>
     </div>
 
+    <!-- Setup Onboarding Modal -->
+    <div class="modal onboarding-modal" id="onboardingModal">
+        <div class="modal-content onboarding-content">
+            <div class="modal-header">
+                <h2>Profile Setup</h2>
+                <button class="modal-close" id="onboardingCloseBtn" aria-label="Close setup">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="onboarding-subtitle">Personalize your targets so insights and suggestions fit your training style.</p>
+                <form id="onboardingForm" class="onboarding-form">
+                    <div class="onboarding-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingDisplayName">Display Name</label>
+                            <input type="text" class="form-input" id="onboardingDisplayName" name="displayName" maxlength="60" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingUnits">Units</label>
+                            <select class="form-select" id="onboardingUnits" name="units">
+                                <option value="imperial">Imperial (lb, mi)</option>
+                                <option value="metric">Metric (kg, km)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingPrimaryGoal">Primary Goal</label>
+                            <select class="form-select" id="onboardingPrimaryGoal" name="primaryGoal">
+                                <option value="fat_loss">Fat Loss</option>
+                                <option value="muscle_gain">Muscle Gain</option>
+                                <option value="performance">Performance</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingExperienceLevel">Training Experience</label>
+                            <select class="form-select" id="onboardingExperienceLevel" name="experienceLevel">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="onboarding-targets-header">
+                        <h3>Target Defaults</h3>
+                        <button type="button" class="btn btn-secondary btn-sm" id="onboardingPresetBtn">Use Recommended</button>
+                    </div>
+
+                    <div class="onboarding-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingWeeklyWorkouts">Weekly Workouts</label>
+                            <input type="number" class="form-input" id="onboardingWeeklyWorkouts" name="weeklyWorkouts" min="1" max="7" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingDailySteps">Daily Steps</label>
+                            <input type="number" class="form-input" id="onboardingDailySteps" name="dailySteps" min="1000" step="500" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingDailyCalories">Daily Calories</label>
+                            <input type="number" class="form-input" id="onboardingDailyCalories" name="dailyCalories" min="1000" step="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="onboardingDailyProtein">Daily Protein (g)</label>
+                            <input type="number" class="form-input" id="onboardingDailyProtein" name="dailyProtein" min="40" step="5" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="onboardingDeferBtn">Remind Me Later</button>
+                        <button type="submit" class="btn btn-primary">Save Setup</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="js/firebase-config.js?v=10"></script>
-    <script src="js/storage.js?v=11"></script>
+    <script src="js/storage.js?v=12"></script>
     <script src="js/auth.js?v=11"></script>
     <script src="js/cloud-storage.js?v=11"></script>
     <script src="js/metrics.js?v=10"></script>
@@ -347,6 +421,6 @@
     <script src="js/analytics.js?v=12"></script>
     <script src="js/dayview.js?v=10"></script>
     <script src="js/pwa-utils.js?v=10"></script>
-    <script src="js/app.js?v=10"></script>
+    <script src="js/app.js?v=11"></script>
 </body>
 </html>

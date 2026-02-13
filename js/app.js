@@ -27,10 +27,13 @@ const App = {
     currentWeightDays: 30, // Default time range for weight chart
     dataLoaded: false,
     _renderQueued: false,
+    _onboardingReady: false,
+    _onboardingPrompted: false,
 
     init() {
         this.setupEventListeners();
         this.setupModal();
+        this.setupOnboardingModal();
         this.setupKeyboardShortcuts();
         this.setupTimeRangeSelectors();
         this.setupFAB();
@@ -66,6 +69,7 @@ const App = {
                 // User is signed in AND data is loaded - render dashboard
                 this.renderDashboard();
             } else if (!e.detail.user) {
+                this._onboardingPrompted = false;
                 // User is signed out - show login prompt
                 this.showLoginPrompt();
             }
@@ -140,6 +144,8 @@ const App = {
             requestAnimationFrame(() => {
                 this.renderWeightChart();
             });
+
+            this.maybeShowOnboarding();
         });
     },
 
@@ -442,6 +448,147 @@ const App = {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') this.closeModal();
         });
+    },
+
+    setupOnboardingModal() {
+        const onboardingModal = document.getElementById('onboardingModal');
+        const onboardingForm = document.getElementById('onboardingForm');
+        const deferBtn = document.getElementById('onboardingDeferBtn');
+        const presetBtn = document.getElementById('onboardingPresetBtn');
+        const goalSelect = document.getElementById('onboardingPrimaryGoal');
+        const closeBtn = document.getElementById('onboardingCloseBtn');
+
+        if (!onboardingModal || !onboardingForm) return;
+
+        closeBtn?.addEventListener('click', () => this.closeOnboardingModal());
+        deferBtn?.addEventListener('click', () => {
+            Storage.onboarding.defer(7);
+            this.closeOnboardingModal();
+            this.showToast('Setup reminder snoozed for 7 days.', 'info');
+        });
+
+        onboardingModal.addEventListener('click', (e) => {
+            if (e.target === onboardingModal) {
+                Storage.onboarding.defer(7);
+                this.closeOnboardingModal();
+            }
+        });
+
+        presetBtn?.addEventListener('click', () => {
+            const selectedGoal = goalSelect?.value || 'fat_loss';
+            this.applyOnboardingGoalPreset(selectedGoal);
+        });
+
+        onboardingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(onboardingForm);
+
+            const goals = {
+                weeklyWorkouts: Math.max(1, Math.min(7, Number.parseInt(formData.get('weeklyWorkouts'), 10) || 4)),
+                dailyCalories: Math.max(1000, Number.parseInt(formData.get('dailyCalories'), 10) || 1500),
+                dailyProtein: Math.max(40, Number.parseInt(formData.get('dailyProtein'), 10) || 150),
+                dailySteps: Math.max(1000, Number.parseInt(formData.get('dailySteps'), 10) || 10000)
+            };
+
+            const profile = {
+                displayName: String(formData.get('displayName') || '').trim(),
+                primaryGoal: String(formData.get('primaryGoal') || 'fat_loss'),
+                experienceLevel: String(formData.get('experienceLevel') || 'intermediate'),
+                units: String(formData.get('units') || 'imperial')
+            };
+
+            Storage.onboarding.complete({ profile, goals });
+            this.closeOnboardingModal();
+            this.renderDashboard();
+            this.showToast('Profile setup saved. Dashboard personalized.', 'success', 4000);
+        });
+
+        this._onboardingReady = true;
+    },
+
+    shouldForceOnboarding() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('onboarding') === '1';
+    },
+
+    clearOnboardingQueryParam() {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.has('onboarding')) return;
+        url.searchParams.delete('onboarding');
+        const query = url.searchParams.toString();
+        const nextUrl = `${url.pathname}${query ? `?${query}` : ''}${url.hash}`;
+        window.history.replaceState({}, '', nextUrl);
+    },
+
+    getOnboardingGoalPreset(primaryGoal) {
+        const presets = {
+            fat_loss: { dailyCalories: 1900, dailyProtein: 180, weeklyWorkouts: 4, dailySteps: 10000 },
+            muscle_gain: { dailyCalories: 2800, dailyProtein: 200, weeklyWorkouts: 5, dailySteps: 8000 },
+            performance: { dailyCalories: 2400, dailyProtein: 185, weeklyWorkouts: 5, dailySteps: 9000 },
+            maintenance: { dailyCalories: 2200, dailyProtein: 165, weeklyWorkouts: 4, dailySteps: 8500 }
+        };
+        return presets[primaryGoal] || presets.fat_loss;
+    },
+
+    applyOnboardingGoalPreset(primaryGoal) {
+        const preset = this.getOnboardingGoalPreset(primaryGoal);
+        const setValue = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.value = value;
+        };
+        setValue('onboardingWeeklyWorkouts', preset.weeklyWorkouts);
+        setValue('onboardingDailyCalories', preset.dailyCalories);
+        setValue('onboardingDailyProtein', preset.dailyProtein);
+        setValue('onboardingDailySteps', preset.dailySteps);
+        this.showToast('Recommended targets applied.', 'info', 1600);
+    },
+
+    populateOnboardingForm() {
+        const profile = Storage.profile.get();
+        const goals = Storage.goals.get();
+        const authName = window.Auth?.currentUser?.displayName || '';
+        const preferredName = profile.displayName || authName || '';
+
+        const setValue = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.value = value;
+        };
+
+        setValue('onboardingDisplayName', preferredName);
+        setValue('onboardingPrimaryGoal', profile.primaryGoal || 'fat_loss');
+        setValue('onboardingExperienceLevel', profile.experienceLevel || 'intermediate');
+        setValue('onboardingUnits', profile.units || 'imperial');
+        setValue('onboardingWeeklyWorkouts', goals.weeklyWorkouts || 4);
+        setValue('onboardingDailyCalories', goals.dailyCalories || 1500);
+        setValue('onboardingDailyProtein', goals.dailyProtein || 150);
+        setValue('onboardingDailySteps', goals.dailySteps || 10000);
+    },
+
+    openOnboardingModal() {
+        const onboardingModal = document.getElementById('onboardingModal');
+        if (!onboardingModal) return;
+        this.populateOnboardingForm();
+        onboardingModal.classList.add('active');
+    },
+
+    closeOnboardingModal() {
+        const onboardingModal = document.getElementById('onboardingModal');
+        onboardingModal?.classList.remove('active');
+        this.clearOnboardingQueryParam();
+    },
+
+    maybeShowOnboarding() {
+        if (!this._onboardingReady || this._onboardingPrompted) return;
+        if (!window.Auth?.currentUser) return;
+
+        const forceOpen = this.shouldForceOnboarding();
+        if (!forceOpen && !Storage.onboarding.shouldPrompt()) {
+            this._onboardingPrompted = true;
+            return;
+        }
+
+        this._onboardingPrompted = true;
+        this.openOnboardingModal();
     },
 
     // Open quick log menu

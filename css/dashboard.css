@@ -1042,6 +1042,47 @@
     margin-bottom: 0;
 }
 
+/* Onboarding setup modal */
+.onboarding-modal .modal-content.onboarding-content {
+    max-width: 760px;
+}
+
+.onboarding-subtitle {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+.onboarding-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.onboarding-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.onboarding-targets-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+}
+
+.onboarding-targets-header h3 {
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.onboarding-targets-header .btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.75rem;
+}
+
 /* Responsive Grid */
 @media (max-width: 1200px) {
     .dashboard {
@@ -1135,5 +1176,9 @@
     /* Insight items - disable hover transform */
     .insight-item:hover {
         transform: none;
+    }
+
+    .onboarding-grid {
+        grid-template-columns: 1fr;
     }
 }
