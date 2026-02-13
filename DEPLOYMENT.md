@@ -14,12 +14,12 @@ This guide covers deploying Health Tracker to various cloud platforms.
 
 ## Overview
 
-Health Tracker is a **client-side application** that stores all data in the browser's localStorage. This means:
+Health Tracker is a **client-first application** that always uses browser localStorage and can optionally sync to Firebase.
 
-- **No database required**
-- **No backend API needed** (server only serves static files)
+- **No custom backend API required** (server only serves static files)
 - **Works offline** after initial load
-- **Data stays on user's device** (privacy-friendly)
+- **Local-first data** for fast UX
+- **Optional Google sign-in + Firestore sync** for multi-device use
 
 The Node.js server (`server.js`) is a lightweight Express app that:
 - Serves static files with proper caching
@@ -237,9 +237,12 @@ Since data is stored in localStorage:
 4. Select JSON file
 
 ### Sync Between Devices
-Currently, data doesn't sync between devices. Options:
-1. Manual export/import
-2. Future: Add cloud sync feature with user accounts
+Sync is supported via Google sign-in + Firestore.
+
+For sync to work on your deployed domain:
+1. Enable Google provider in Firebase Auth.
+2. Add your domain under Firebase Auth `Authorized domains`.
+3. Deploy Firestore rules from `firestore.rules`.
 
 ---
 
@@ -278,12 +281,12 @@ Currently, data doesn't sync between devices. Options:
 
 ## Security Notes
 
-- All data stays client-side (no server storage)
-- HTTPS enforced on all platforms
-- Security headers added by server
-- No authentication required (personal use)
+- HTTPS enforced on all platforms.
+- Security headers added by server (`helmet` + CSP).
+- Local data stays in each user browser unless they opt into Google sync.
+- Firestore rules enforce owner-only read/write for both `userData/{uid}` and `users/{uid}`.
 
-For shared/public deployment, consider:
-- Adding basic auth
-- Implementing user accounts
-- Using encrypted localStorage
+For shared/public deployment:
+1. Verify Firestore rules are deployed after every auth/data model change.
+2. Restrict Firebase Auth authorized domains to your trusted app domains.
+3. Periodically export backups from Settings.

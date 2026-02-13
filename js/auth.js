@@ -56,22 +56,16 @@ const Auth = {
             if (userDoc.exists) {
                 this.isAdmin = userDoc.data().isAdmin || false;
             } else {
-                // New user - check if they're the first user (make them admin)
-                const usersSnapshot = await firebaseDb.collection('users').get();
-                const isFirstUser = usersSnapshot.empty;
-
-                // Create user document
+                // New user profile document (owner-only access by Firestore rules)
                 await firebaseDb.collection('users').doc(user.uid).set({
                     email: user.email,
                     displayName: user.displayName,
                     photoURL: user.photoURL,
-                    isAdmin: isFirstUser, // First user becomes admin
+                    isAdmin: false,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                this.isAdmin = isFirstUser;
-
-                // First user automatically granted admin privileges
+                this.isAdmin = false;
             }
         } catch (error) {
             console.error('Error checking admin status:', error);
@@ -91,6 +85,10 @@ const Auth = {
             console.error('Sign in error:', error);
             if (error.code === 'auth/popup-blocked') {
                 alert('Please allow popups to sign in with Google');
+            } else if (error.code === 'auth/unauthorized-domain') {
+                alert('This domain is not authorized in Firebase Auth yet. Add it in Firebase Console > Authentication > Settings > Authorized domains.');
+            } else if (error.code === 'auth/operation-not-allowed') {
+                alert('Google sign-in is not enabled in Firebase Auth. Enable Google provider in Firebase Console > Authentication.');
             } else if (error.code === 'auth/popup-closed-by-user') {
                 // User closed popup, no action needed
             } else {

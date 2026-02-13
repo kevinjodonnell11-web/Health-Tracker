@@ -25,7 +25,7 @@ A personal health and fitness tracking web application with workout logging, nut
 - **Personalized Insights** - AI-generated recommendations based on your data
 
 ### Additional Features
-- **Dark Mode** - Easy on the eyes, always
+- **Light/Dark Theme Toggle** - Default dark mode with optional light theme
 - **Mobile Responsive** - Works great on any device
 - **Offline Support** - Data stored locally, works without internet
 - **Data Export/Import** - Backup and transfer your data
@@ -102,6 +102,15 @@ By default, data is stored in your browser (`localStorage`).
 If you sign in with Google, your data is synced to your own Firestore document so it can be used across devices.
 
 Firestore security rules restrict reads/writes to the authenticated user that owns the document.
+
+## Sharing With Friends
+
+Yes, this app can be shared. Each friend signs in with their own Google account and gets their own isolated data.
+
+Before sharing, ensure:
+1. Your deployed domain is added in Firebase Console: `Authentication` -> `Settings` -> `Authorized domains`.
+2. Google provider is enabled in Firebase Console: `Authentication` -> `Sign-in method`.
+3. Firestore security rules are deployed from `firestore.rules`.
 
 To backup your data:
 1. Go to Settings
